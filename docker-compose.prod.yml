@@ -1,0 +1,87 @@
+services:
+  # ==============================================================================
+  # 1. Base de Datos PostgreSQL 16
+  # ==============================================================================
+  postgres:
+    image: postgres:16-alpine
+    container_name: upgrade_postgres_prod
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-upgrade_admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Requerido: define POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-upgrade_prod_db}
+    volumes:
+      - upgrade_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-upgrade_admin} -d ${POSTGRES_DB:-upgrade_prod_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - upgrade_network
+
+  # ==============================================================================
+  # 2. Aplicación Next.js 16 Standalone (ERP/CRM UPGRADE)
+  # ==============================================================================
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: upgrade_app_prod
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      HOSTNAME: "0.0.0.0"
+      DATABASE_URL: postgresql://${POSTGRES_USER:-upgrade_admin}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-upgrade_prod_db}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY:?Requerido: define ENCRYPTION_KEY de al menos 32 caracteres}
+      NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-https://erp.upgrade.com.ar}
+    ports:
+      - "${APP_PORT:-3000}:3000"
+    volumes:
+      # Persistencia de imágenes de la bóveda de seguridad optimizadas en WebP
+      - upgrade_uploads:/app/uploads
+    networks:
+      - upgrade_network
+
+  # ==============================================================================
+  # 3. Servicio de Backup Automatizado Diario (Rotación de 7 días)
+  # ==============================================================================
+  postgres-backup:
+    image: prodrigestivill/postgres-backup-local:16-alpine
+    container_name: upgrade_backup_cron
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_CLUSTER: 'TRUE'
+      POSTGRES_USER: ${POSTGRES_USER:-upgrade_admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-upgrade_prod_db}
+      SCHEDULE: "@daily" # Backup diario a medianoche
+      BACKUP_KEEP_DAYS: 7
+      BACKUP_KEEP_WEEKS: 4
+      BACKUP_KEEP_MONTHS: 6
+      HEALTHCHECK_PORT: 8080
+    volumes:
+      - upgrade_backups:/backups
+    networks:
+      - upgrade_network
+
+volumes:
+  upgrade_pgdata:
+    name: upgrade_prod_pgdata
+  upgrade_uploads:
+    name: upgrade_prod_uploads
+  upgrade_backups:
+    name: upgrade_prod_backups
+
+networks:
+  upgrade_network:
+    name: upgrade_prod_network
+    driver: bridge
