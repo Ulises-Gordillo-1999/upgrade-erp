@@ -1,93 +1,104 @@
--- ==========================================
--- Esquema de Base de Datos para UPGRADE (Supabase / PostgreSQL)
--- ==========================================
+-- ==============================================================================
+-- UPGRADE ERP/CRM - Esquema SQL Oficial de Producción (PostgreSQL 16)
+-- ==============================================================================
 
--- 1. Habilitar extensión para generar UUIDs nativos de Postgres
+-- 1. Habilitar extensión para UUIDs
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
--- 2. Creación de Tipos ENUM para estandarizar datos
+-- 2. Creación de Tipos ENUM
 CREATE TYPE condicion_iva_enum AS ENUM ('Responsable Inscripto', 'Monotributo', 'Consumidor Final', 'Exento');
 CREATE TYPE tipo_item_enum AS ENUM ('Fijo', 'Consumible', 'Servicio');
 CREATE TYPE estado_proyecto_enum AS ENUM ('Borrador_Bot', 'Pendiente_Aprobacion_Cliente', 'Aprobado', 'En_Ejecucion', 'Finalizado', 'Cancelado');
 CREATE TYPE tipo_dato_boveda_enum AS ENUM ('Password', 'IP_Publica', 'AnyDesk_ID', 'Config_Router', 'Otro');
 CREATE TYPE tipo_transaccion_enum AS ENUM ('Ingreso', 'Egreso');
+CREATE TYPE categoria_transaccion_enum AS ENUM ('Hardware', 'Cloud', 'Movilidad', 'Honorarios', 'Abono', 'Otros');
+CREATE TYPE moneda_enum AS ENUM ('ARS', 'USDT');
+CREATE TYPE metodo_pago_enum AS ENUM ('Efectivo', 'Transferencia', 'Tarjeta Virtual/Crypto');
+CREATE TYPE estado_pago_enum AS ENUM ('Pagado', 'Pendiente');
+CREATE TYPE rol_enum AS ENUM ('SuperAdmin', 'Admin', 'Tecnico');
 
--- 3. Creación de Tablas
+-- 3. Tabla de Usuarios (RBAC y Autenticación JWT)
+CREATE TABLE IF NOT EXISTS usuarios (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    nombre TEXT NOT NULL,
+    email TEXT UNIQUE NOT NULL,
+    password_hash TEXT NOT NULL,
+    rol rol_enum NOT NULL DEFAULT 'Tecnico',
+    telefono TEXT,
+    especialidad TEXT,
+    activo BOOLEAN NOT NULL DEFAULT true,
+    last_login_at TIMESTAMPTZ,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
 
-CREATE TABLE clientes (
+-- 4. Tabla de Clientes
+CREATE TABLE IF NOT EXISTS clientes (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     nombre_razon_social TEXT NOT NULL,
-    telefono TEXT UNIQUE, -- Útil para identificar al cliente desde el bot de WhatsApp
+    telefono TEXT UNIQUE,
     cuit_cuil TEXT,
     condicion_iva condicion_iva_enum,
     direccion TEXT,
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE TABLE inventario (
+-- 5. Tabla de Inventario / Catálogo IT
+CREATE TABLE IF NOT EXISTS inventario (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     sku TEXT UNIQUE,
     nombre TEXT NOT NULL,
     tipo tipo_item_enum NOT NULL,
-    precio_unitario DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+    precio_unitario NUMERIC(10,2) NOT NULL DEFAULT 0.00,
     stock_actual INT DEFAULT 0,
     stock_minimo INT DEFAULT 0,
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE TABLE proyectos (
+-- 6. Tabla de Proyectos (Problema del Cable)
+CREATE TABLE IF NOT EXISTS proyectos (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    cliente_id UUID REFERENCES clientes(id) ON DELETE RESTRICT,
-    estado estado_proyecto_enum DEFAULT 'Borrador_Bot',
+    cliente_id UUID NOT NULL REFERENCES clientes(id) ON DELETE RESTRICT,
+    estado estado_proyecto_enum NOT NULL DEFAULT 'Borrador_Bot',
     notas_tecnicas TEXT,
-    total_estimado DECIMAL(12,2) DEFAULT 0.00,
-    total_final DECIMAL(12,2) DEFAULT 0.00,
+    total_estimado NUMERIC(12,2) DEFAULT 0.00,
+    total_final NUMERIC(12,2) DEFAULT 0.00,
+    stock_descontado BOOLEAN NOT NULL DEFAULT false,
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE TABLE items_proyecto (
+-- 7. Tabla de Ítems de Proyecto (Estimado vs Real)
+CREATE TABLE IF NOT EXISTS items_proyecto (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    proyecto_id UUID REFERENCES proyectos(id) ON DELETE CASCADE,
-    inventario_id UUID REFERENCES inventario(id) ON DELETE RESTRICT,
-    precio_congelado DECIMAL(10,2) NOT NULL,
-    cantidad_estimada DECIMAL(10,2) NOT NULL DEFAULT 1,
-    cantidad_real DECIMAL(10,2), -- Se llena al finalizar (ej. metros reales de cable)
+    proyecto_id UUID NOT NULL REFERENCES proyectos(id) ON DELETE CASCADE,
+    inventario_id UUID NOT NULL REFERENCES inventario(id) ON DELETE RESTRICT,
+    precio_congelado NUMERIC(10,2) NOT NULL,
+    cantidad_estimada NUMERIC(10,2) NOT NULL DEFAULT 1.00,
+    cantidad_real NUMERIC(10,2),
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE TABLE boveda_seguridad (
+-- 8. Tabla de Bóveda de Seguridad (Cifrado AES-256)
+CREATE TABLE IF NOT EXISTS boveda_seguridad (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    proyecto_id UUID REFERENCES proyectos(id) ON DELETE CASCADE,
+    proyecto_id UUID NOT NULL REFERENCES proyectos(id) ON DELETE CASCADE,
     tipo_dato tipo_dato_boveda_enum NOT NULL,
     descripcion TEXT NOT NULL,
     valor_encriptado TEXT,
-    archivo_url TEXT, -- Para URLs de fotos de QR o números de serie en Supabase Storage
+    archivo_url TEXT,
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE TABLE transacciones_financieras (
+-- 9. Tabla de Transacciones Financieras
+CREATE TABLE IF NOT EXISTS transacciones (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    proyecto_id UUID REFERENCES proyectos(id) ON DELETE SET NULL, -- Si se borra el proyecto, el registro financiero queda
+    proyecto_id UUID REFERENCES proyectos(id) ON DELETE SET NULL,
     tipo tipo_transaccion_enum NOT NULL,
-    monto DECIMAL(12,2) NOT NULL,
-    concepto TEXT NOT NULL,
-    fecha TIMESTAMPTZ DEFAULT NOW()
+    categoria categoria_transaccion_enum NOT NULL,
+    monto NUMERIC(12,2) NOT NULL,
+    moneda moneda_enum NOT NULL DEFAULT 'ARS',
+    metodo_pago metodo_pago_enum NOT NULL DEFAULT 'Transferencia',
+    estado estado_pago_enum NOT NULL DEFAULT 'Pagado',
+    descripcion TEXT,
+    fecha_transaccion TIMESTAMPTZ DEFAULT NOW(),
+    created_at TIMESTAMPTZ DEFAULT NOW()
 );
-
--- 4. Seguridad de Nivel de Fila (RLS - Row Level Security)
--- Habilitamos RLS en todas las tablas por defecto para blindar la arquitectura desde el inicio
-ALTER TABLE clientes ENABLE ROW LEVEL SECURITY;
-ALTER TABLE inventario ENABLE ROW LEVEL SECURITY;
-ALTER TABLE proyectos ENABLE ROW LEVEL SECURITY;
-ALTER TABLE items_proyecto ENABLE ROW LEVEL SECURITY;
-ALTER TABLE boveda_seguridad ENABLE ROW LEVEL SECURITY;
-ALTER TABLE transacciones_financieras ENABLE ROW LEVEL SECURITY;
-
--- 5. Políticas base para SuperAdmin (Gabriel y Ulises)
--- Permite lectura y escritura total a los usuarios autenticados en el sistema
-CREATE POLICY "Acceso total a clientes" ON clientes FOR ALL USING (auth.role() = 'authenticated');
-CREATE POLICY "Acceso total a inventario" ON inventario FOR ALL USING (auth.role() = 'authenticated');
-CREATE POLICY "Acceso total a proyectos" ON proyectos FOR ALL USING (auth.role() = 'authenticated');
-CREATE POLICY "Acceso total a items_proyecto" ON items_proyecto FOR ALL USING (auth.role() = 'authenticated');
-CREATE POLICY "Acceso total a boveda_seguridad" ON boveda_seguridad FOR ALL USING (auth.role() = 'authenticated');
-CREATE POLICY "Acceso total a transacciones" ON transacciones_financieras FOR ALL USING (auth.role() = 'authenticated');
