@@ -64,7 +64,7 @@ export function ExportarPDFButton({ proyecto, items }: Props) {
     doc.setFont("helvetica", "normal");
     doc.setTextColor(...grayMedium);
     doc.text(
-      "erp.upgrade-informatica.com  •  Soporte y Seguridad IT  •  Catamarca, Argentina",
+      "Servicios IT & Infraestructura  •  Soporte y Ciberseguridad  •  Catamarca, Argentina",
       margin + 8,
       32
     );
@@ -245,7 +245,7 @@ export function ExportarPDFButton({ proyecto, items }: Props) {
           "Concepto / Detalle Técnico",
           "Clasificación",
           "Precio Unitario",
-          "Cantidad",
+          "Cant.",
           "Subtotal Final",
         ],
       ],
@@ -261,10 +261,10 @@ export function ExportarPDFButton({ proyecto, items }: Props) {
       },
       columnStyles: {
         0: { cellWidth: 10, halign: "center" },
-        1: { cellWidth: 77 },
+        1: { cellWidth: 76 },
         2: { cellWidth: 26, halign: "center" },
         3: { cellWidth: 27, halign: "right" },
-        4: { cellWidth: 15, halign: "center" },
+        4: { cellWidth: 16, halign: "center" },
         5: { cellWidth: 27, halign: "right", fontStyle: "bold" },
       },
       alternateRowStyles: {
