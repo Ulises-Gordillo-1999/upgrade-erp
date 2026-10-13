@@ -417,16 +417,32 @@ export async function cerrarProyectoConLiquidacion(data: {
 
     // 5. Registrar cobro en finanzas si fue solicitado
     if (data.registrar_transaccion && Number(proyectoActualizado.total_final || 0) > 0) {
-      await db.insert(transacciones).values({
-        proyecto_id: data.proyecto_id,
-        tipo: "Ingreso",
-        categoria: "Hardware",
-        monto: proyectoActualizado.total_final!,
-        moneda: data.transaccion_moneda || "ARS",
-        metodo_pago: data.transaccion_metodo_pago || "Transferencia",
-        estado: data.transaccion_estado || "Pagado",
-        descripcion: `Liquidación Cierre de Obra - Cliente: ${proyecto.cliente?.nombre_razon_social || "N/A"}`,
-      } as any);
+      const transaccionExistente = await db.query.transacciones.findFirst({
+        where: eq(transacciones.proyecto_id, data.proyecto_id),
+      });
+
+      if (transaccionExistente) {
+        await db
+          .update(transacciones)
+          .set({
+            monto: proyectoActualizado.total_final!,
+            moneda: data.transaccion_moneda || "ARS",
+            metodo_pago: data.transaccion_metodo_pago || "Transferencia",
+            estado: data.transaccion_estado || "Pagado",
+          })
+          .where(eq(transacciones.id, transaccionExistente.id));
+      } else {
+        await db.insert(transacciones).values({
+          proyecto_id: data.proyecto_id,
+          tipo: "Ingreso",
+          categoria: "Hardware",
+          monto: proyectoActualizado.total_final!,
+          moneda: data.transaccion_moneda || "ARS",
+          metodo_pago: data.transaccion_metodo_pago || "Transferencia",
+          estado: data.transaccion_estado || "Pagado",
+          descripcion: `Liquidación Cierre de Obra - Cliente: ${proyecto.cliente?.nombre_razon_social || "N/A"}`,
+        } as any);
+      }
     }
 
     revalidatePath(`/proyectos/${data.proyecto_id}`);
