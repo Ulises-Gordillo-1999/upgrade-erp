@@ -1,6 +1,7 @@
 {
-  "name": "upgrade-app",
-  "version": "0.1.0",
+  "name": "upgrade-erp",
+  "version": "1.0.0",
+  "description": "ERP/CRM integral para gestión de servicios IT, redes, control de inventario, bóveda criptográfica y cotizaciones de UPGRADE",
   "private": true,
   "scripts": {
     "dev": "next dev",
