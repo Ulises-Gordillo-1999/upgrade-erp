@@ -440,3 +440,32 @@ export async function updateProyectoDetalles(
     throw new Error(error.message || "Error al actualizar proyecto");
   }
 }
+
+export async function deleteProyecto(id: string) {
+  try {
+    const proyecto = await db.query.proyectos.findFirst({
+      where: eq(proyectos.id, id),
+    });
+
+    if (!proyecto) {
+      throw new Error("Proyecto no encontrado");
+    }
+
+    // Validación crítica de regla de negocio:
+    // Si el proyecto ya fue liquidado (Cierre de Obra con descuento de stock o estado Finalizado), no permitir eliminarlo
+    if (proyecto.stock_descontado || proyecto.estado === "Finalizado") {
+      throw new Error(
+        "No es posible eliminar este proyecto porque ya fue finalizado y liquidado (Cierre de Obra ejecutado y stock descontado del inventario)."
+      );
+    }
+
+    await db.delete(proyectos).where(eq(proyectos.id, id));
+
+    revalidatePath("/proyectos");
+    revalidatePath("/");
+    return { success: true };
+  } catch (error: any) {
+    console.error("Error al eliminar proyecto:", error);
+    throw new Error(error.message || "Error al eliminar el proyecto");
+  }
+}

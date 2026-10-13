@@ -12,6 +12,7 @@ import { DeleteBovedaButton } from "@/components/boveda/DeleteBovedaButton";
 import { MaskedValue } from "@/components/boveda/MaskedValue";
 import { BovedaImageModal } from "@/components/boveda/BovedaImageModal";
 import { ExportarPDFButton } from "@/components/proyectos/ExportarPDFButton";
+import { DeleteProyectoButton } from "@/components/proyectos/DeleteProyectoButton";
 import {
   FolderGit2,
   ArrowLeft,
@@ -79,6 +80,15 @@ export default async function ProyectoDetallePage({
             isFinalizado={isFinalizado}
             totalEstimado={proyecto.total_estimado || 0}
             totalFinal={proyecto.total_final || 0}
+          />
+          <DeleteProyectoButton
+            id={id}
+            nombreCliente={
+              proyecto.clientes?.nombre_razon_social || "este proyecto"
+            }
+            isLiquidado={Boolean(proyecto.stock_descontado || isFinalizado)}
+            redirectToProyectos={true}
+            variant="button"
           />
         </div>
       </div>

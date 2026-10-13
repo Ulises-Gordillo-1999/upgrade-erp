@@ -1,6 +1,7 @@
 import { getProyectos } from "@/app/actions/proyectos";
 import { getClientes } from "@/app/actions/clientes";
 import { ProyectoFormModal } from "@/components/proyectos/ProyectoFormModal";
+import { DeleteProyectoButton } from "@/components/proyectos/DeleteProyectoButton";
 import { FolderGit2, Calendar, FileText, Activity } from "lucide-react";
 import Link from "next/link";
 import { EstadoProyecto } from "@/types/database";
@@ -102,13 +103,21 @@ export default async function ProyectosPage() {
                       </div>
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <Link 
-                        href={`/proyectos/${proyecto.id}`}
-                        className="inline-flex items-center px-3 py-1 text-xs font-medium bg-zinc-800 hover:bg-zinc-700 text-zinc-300 rounded-md transition-colors border border-zinc-700"
-                      >
-                        <FileText className="w-3 h-3 mr-1.5" />
-                        Ver Detalle
-                      </Link>
+                      <div className="flex items-center justify-end gap-2">
+                        <Link 
+                          href={`/proyectos/${proyecto.id}`}
+                          className="inline-flex items-center px-3 py-1 text-xs font-medium bg-zinc-800 hover:bg-zinc-700 text-zinc-300 rounded-md transition-colors border border-zinc-700"
+                        >
+                          <FileText className="w-3 h-3 mr-1.5" />
+                          Ver Detalle
+                        </Link>
+                        <DeleteProyectoButton
+                          id={proyecto.id}
+                          nombreCliente={proyecto.clientes?.nombre_razon_social || "Proyecto"}
+                          isLiquidado={Boolean(proyecto.stock_descontado || proyecto.estado === "Finalizado")}
+                          variant="icon"
+                        />
+                      </div>
                     </td>
                   </tr>
                 ))
