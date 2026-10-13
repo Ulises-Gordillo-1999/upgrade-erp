@@ -1,5 +1,6 @@
 import { getProyectos } from "@/app/actions/proyectos";
 import { getClientes } from "@/app/actions/clientes";
+import { getSession } from "@/utils/auth";
 import { ProyectoFormModal } from "@/components/proyectos/ProyectoFormModal";
 import { DeleteProyectoButton } from "@/components/proyectos/DeleteProyectoButton";
 import { FolderGit2, Calendar, FileText, Activity } from "lucide-react";
@@ -26,10 +27,13 @@ const getEstadoBadge = (estado: EstadoProyecto) => {
 };
 
 export default async function ProyectosPage() {
-  const [proyectos, clientes] = await Promise.all([
+  const [proyectos, clientes, session] = await Promise.all([
     getProyectos(),
-    getClientes()
+    getClientes(),
+    getSession(),
   ]);
+
+  const isSuperAdmin = session?.rol === "SuperAdmin";
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -111,12 +115,14 @@ export default async function ProyectosPage() {
                           <FileText className="w-3 h-3 mr-1.5" />
                           Ver Detalle
                         </Link>
-                        <DeleteProyectoButton
-                          id={proyecto.id}
-                          nombreCliente={proyecto.clientes?.nombre_razon_social || "Proyecto"}
-                          isLiquidado={Boolean(proyecto.stock_descontado || proyecto.estado === "Finalizado")}
-                          variant="icon"
-                        />
+                        {isSuperAdmin && (
+                          <DeleteProyectoButton
+                            id={proyecto.id}
+                            nombreCliente={proyecto.clientes?.nombre_razon_social || "Proyecto"}
+                            isLiquidado={Boolean(proyecto.stock_descontado || proyecto.estado === "Finalizado")}
+                            variant="icon"
+                          />
+                        )}
                       </div>
                     </td>
                   </tr>

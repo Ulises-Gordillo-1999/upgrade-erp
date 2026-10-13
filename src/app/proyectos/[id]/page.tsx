@@ -26,6 +26,7 @@ import {
 import Link from "next/link";
 import { EstadoProyecto } from "@/types/database";
 import { revalidatePath } from "next/cache";
+import { getSession } from "@/utils/auth";
 
 export default async function ProyectoDetallePage({
   params,
@@ -33,13 +34,16 @@ export default async function ProyectoDetallePage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const [{ proyecto, items }, inventario, credenciales, clientes] =
+  const [{ proyecto, items }, inventario, credenciales, clientes, session] =
     await Promise.all([
       getProyectoById(id),
       getInventario(),
       getBovedaData(id),
       getClientes(),
+      getSession(),
     ]);
+
+  const isSuperAdmin = session?.rol === "SuperAdmin";
 
   // Server action to update status directly from the page
   async function handleUpdateEstado(formData: FormData) {
@@ -81,15 +85,17 @@ export default async function ProyectoDetallePage({
             totalEstimado={proyecto.total_estimado || 0}
             totalFinal={proyecto.total_final || 0}
           />
-          <DeleteProyectoButton
-            id={id}
-            nombreCliente={
-              proyecto.clientes?.nombre_razon_social || "este proyecto"
-            }
-            isLiquidado={Boolean(proyecto.stock_descontado || isFinalizado)}
-            redirectToProyectos={true}
-            variant="button"
-          />
+          {isSuperAdmin && (
+            <DeleteProyectoButton
+              id={id}
+              nombreCliente={
+                proyecto.clientes?.nombre_razon_social || "este proyecto"
+              }
+              isLiquidado={Boolean(proyecto.stock_descontado || isFinalizado)}
+              redirectToProyectos={true}
+              variant="button"
+            />
+          )}
         </div>
       </div>
 

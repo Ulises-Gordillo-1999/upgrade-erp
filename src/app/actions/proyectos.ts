@@ -12,6 +12,7 @@ import {
   EstadoPago,
 } from "@/types/database";
 import { revalidatePath } from "next/cache";
+import { getSession } from "@/utils/auth";
 
 export async function getProyectos() {
   try {
@@ -443,6 +444,13 @@ export async function updateProyectoDetalles(
 
 export async function deleteProyecto(id: string) {
   try {
+    const session = await getSession();
+    if (!session || session.rol !== "SuperAdmin") {
+      throw new Error(
+        "Acceso denegado. Solo los usuarios con rol SuperAdmin tienen autorización para eliminar proyectos."
+      );
+    }
+
     const proyecto = await db.query.proyectos.findFirst({
       where: eq(proyectos.id, id),
     });
