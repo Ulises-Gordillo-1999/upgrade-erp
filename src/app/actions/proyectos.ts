@@ -2,7 +2,7 @@
 
 import { db } from "@/db";
 import { proyectos, clientes, itemsProyecto, inventario, transacciones } from "@/db/schema";
-import { desc, asc, eq } from "drizzle-orm";
+import { desc, asc, eq, inArray } from "drizzle-orm";
 import {
   EstadoProyecto,
   Proyecto,
@@ -16,6 +16,9 @@ import { getSession } from "@/utils/auth";
 
 export async function getProyectos() {
   try {
+    // Sincronizar automáticamente cualquier variación de precio para presupuestos aún pendientes
+    await syncPreciosProyectosPendientes();
+
     const list = await db.query.proyectos.findMany({
       with: {
         cliente: true,
@@ -51,13 +54,50 @@ export async function getProyectoById(id: string) {
       throw new Error("Proyecto no encontrado");
     }
 
-    const itemsData = await db.query.itemsProyecto.findMany({
+    const esPendiente =
+      proyectoData.estado === "Pendiente_Aprobacion_Cliente" ||
+      proyectoData.estado === "Borrador_Bot";
+
+    let itemsData = await db.query.itemsProyecto.findMany({
       where: eq(itemsProyecto.proyecto_id, id),
       with: {
         inventario: true,
       },
       orderBy: [asc(itemsProyecto.created_at)],
     });
+
+    // REGLA DE NEGOCIO: Si el proyecto está en estado PENDIENTE, sincronizar automáticamente
+    // los precios de los ítems con el valor actual del catálogo de inventario.
+    // Una vez que el proyecto pasa a "Aprobado" (o En_Ejecucion/Finalizado), los precios quedan formalmente congelados.
+    if (esPendiente) {
+      let huboCambios = false;
+      for (const item of itemsData) {
+        if (!item.inventario) continue;
+        const precioCatalogo = Number(item.inventario.precio_unitario);
+        const precioActual = Number(item.precio_congelado);
+
+        if (precioCatalogo !== precioActual) {
+          await db
+            .update(itemsProyecto)
+            .set({ precio_congelado: item.inventario.precio_unitario })
+            .where(eq(itemsProyecto.id, item.id));
+
+          item.precio_congelado = item.inventario.precio_unitario;
+          huboCambios = true;
+        }
+      }
+
+      if (huboCambios) {
+        await recalculateProjectTotals(id);
+        const refreshed = await db.query.proyectos.findFirst({
+          where: eq(proyectos.id, id),
+        });
+        if (refreshed) {
+          proyectoData.total_estimado = refreshed.total_estimado;
+          proyectoData.total_final = refreshed.total_final;
+        }
+      }
+    }
 
     const proyecto = {
       ...proyectoData,
@@ -135,6 +175,33 @@ export async function updateEstadoProyecto(id: string, estado: EstadoProyecto) {
 
     if (!proyectoData) {
       throw new Error("Proyecto no encontrado");
+    }
+
+    const eraPendiente =
+      proyectoData.estado === "Borrador_Bot" ||
+      proyectoData.estado === "Pendiente_Aprobacion_Cliente";
+    const pasaAAprobadoOActivo =
+      estado !== "Borrador_Bot" && estado !== "Pendiente_Aprobacion_Cliente";
+
+    // Si el proyecto pasa de Pendiente a Aprobado (o a En_Ejecucion/Finalizado),
+    // se sincronizan los precios por última vez con el catálogo y quedan congelados.
+    if (eraPendiente && pasaAAprobadoOActivo) {
+      const items = await db.query.itemsProyecto.findMany({
+        where: eq(itemsProyecto.proyecto_id, id),
+        with: { inventario: true },
+      });
+
+      for (const item of items) {
+        if (!item.inventario) continue;
+        if (Number(item.precio_congelado) !== Number(item.inventario.precio_unitario)) {
+          await db
+            .update(itemsProyecto)
+            .set({ precio_congelado: item.inventario.precio_unitario })
+            .where(eq(itemsProyecto.id, item.id));
+        }
+      }
+
+      await recalculateProjectTotals(id);
     }
 
     const [updated] = await db
@@ -417,6 +484,58 @@ async function recalculateProjectTotals(proyecto_id: string) {
       total_final: total_final.toFixed(2),
     })
     .where(eq(proyectos.id, proyecto_id));
+}
+
+export async function syncPreciosProyectosPendientes(
+  inventarioId?: string,
+  nuevoPrecio?: string
+) {
+  try {
+    const proyectosPendientes = await db.query.proyectos.findMany({
+      where: inArray(proyectos.estado, [
+        "Borrador_Bot",
+        "Pendiente_Aprobacion_Cliente",
+      ]),
+      with: {
+        items: {
+          with: {
+            inventario: true,
+          },
+        },
+      },
+    });
+
+    for (const proj of proyectosPendientes) {
+      let huboCambios = false;
+
+      for (const it of proj.items) {
+        if (inventarioId && it.inventario_id !== inventarioId) continue;
+        if (!it.inventario) continue;
+
+        const precioAUsar =
+          inventarioId && nuevoPrecio !== undefined
+            ? Number(nuevoPrecio)
+            : Number(it.inventario.precio_unitario);
+
+        if (Number(it.precio_congelado) !== precioAUsar) {
+          await db
+            .update(itemsProyecto)
+            .set({ precio_congelado: precioAUsar.toFixed(2) })
+            .where(eq(itemsProyecto.id, it.id));
+          huboCambios = true;
+        }
+      }
+
+      if (huboCambios) {
+        await recalculateProjectTotals(proj.id);
+      }
+    }
+
+    revalidatePath("/proyectos");
+    revalidatePath("/");
+  } catch (error) {
+    console.error("Error al sincronizar precios en proyectos pendientes:", error);
+  }
 }
 
 export async function updateProyectoDetalles(

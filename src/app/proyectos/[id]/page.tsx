@@ -60,6 +60,9 @@ export default async function ProyectoDetallePage({
   }
 
   const isFinalizado = proyecto.estado === "Finalizado";
+  const isPendiente =
+    proyecto.estado === "Pendiente_Aprobacion_Cliente" ||
+    proyecto.estado === "Borrador_Bot";
   const hayConsumibles = items.some((i) => i.inventario?.tipo === "Consumible");
 
   return (
@@ -203,16 +206,33 @@ export default async function ProyectoDetallePage({
         </div>
 
         {/* Tip explicativo */}
-        {hayConsumibles && !isFinalizado && (
-          <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-300/90 text-xs flex items-center gap-2.5">
-            <Info className="w-4 h-4 shrink-0 text-amber-400" />
-            <span>
-              <strong>Problema del Cable:</strong> Puedes ajustar los metros reales
-              utilizados directamente en la columna &quot;Cant. Real&quot; o presionar{" "}
-              <strong>&quot;Cierre de Obra / Liquidar&quot;</strong> al finalizar la instalación.
+        <div className="space-y-2">
+          {hayConsumibles && !isFinalizado && (
+            <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-300/90 text-xs flex items-center gap-2.5">
+              <Info className="w-4 h-4 shrink-0 text-amber-400" />
+              <span>
+                <strong>Problema del Cable:</strong> Puedes ajustar los metros reales
+                utilizados directamente en la columna &quot;Cant. Real&quot; o presionar{" "}
+                <strong>&quot;Cierre de Obra / Liquidar&quot;</strong> al finalizar la instalación.
+              </span>
+            </div>
+          )}
+
+          <div className="p-3 rounded-xl bg-zinc-900/80 border border-zinc-800 text-xs flex items-center gap-2.5">
+            <Info className="w-4 h-4 shrink-0 text-cyan-400" />
+            <span className="text-zinc-300">
+              {isPendiente ? (
+                <>
+                  <strong>Presupuesto Pendiente de Aprobación:</strong> Los precios unitarios se mantienen sincronizados con el catálogo del inventario. Al cambiar el estado a <strong>Aprobado</strong>, los precios quedarán formalmente <strong>congelados ❄️</strong>.
+                </>
+              ) : (
+                <>
+                  <strong>Presupuesto Aprobado:</strong> Los precios unitarios de esta obra están <strong>congelados ❄️</strong> y no se verán afectados por incrementos futuros en el catálogo.
+                </>
+              )}
             </span>
           </div>
-        )}
+        </div>
 
         <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 backdrop-blur-md overflow-hidden shadow-sm">
           <div className="overflow-x-auto">
@@ -222,7 +242,7 @@ export default async function ProyectoDetallePage({
                   <th className="px-5 py-3.5 font-semibold">Concepto / Ítem</th>
                   <th className="px-5 py-3.5 font-semibold text-center">Tipo</th>
                   <th className="px-5 py-3.5 font-semibold text-right">
-                    Precio Congelado
+                    {isPendiente ? "Precio Catálogo" : "Precio Congelado"}
                   </th>
                   <th className="px-5 py-3.5 font-semibold text-center">
                     Cant. Estimada
@@ -292,10 +312,29 @@ export default async function ProyectoDetallePage({
                         </td>
 
                         <td className="px-5 py-3.5 text-right text-zinc-300">
-                          {new Intl.NumberFormat("es-AR", {
-                            style: "currency",
-                            currency: "ARS",
-                          }).format(item.precio_congelado)}
+                          <div className="flex items-center justify-end gap-1.5">
+                            <span>
+                              {new Intl.NumberFormat("es-AR", {
+                                style: "currency",
+                                currency: "ARS",
+                              }).format(item.precio_congelado)}
+                            </span>
+                            {!isPendiente ? (
+                              <span
+                                title="Precio congelado tras aprobación de la obra"
+                                className="text-xs"
+                              >
+                                ❄️
+                              </span>
+                            ) : (
+                              <span
+                                title="Sincronizado con inventario mientras el proyecto esté pendiente"
+                                className="text-[10px] text-amber-400/80 font-normal"
+                              >
+                                (Catálogo)
+                              </span>
+                            )}
+                          </div>
                         </td>
 
                         <td className="px-5 py-3.5 text-center text-zinc-400 font-medium">

@@ -4,6 +4,8 @@ import { db } from "@/db";
 import { inventario } from "@/db/schema";
 import { desc, eq } from "drizzle-orm";
 import { Inventario } from "@/types/database";
+import { revalidatePath } from "next/cache";
+import { syncPreciosProyectosPendientes } from "@/app/actions/proyectos";
 
 export async function getInventario() {
   try {
@@ -56,6 +58,16 @@ export async function updateItemInventario(id: string, item: Partial<Omit<Invent
       .set(valuesToUpdate)
       .where(eq(inventario.id, id))
       .returning();
+
+    // Si el precio unitario del catálogo se modificó, sincronizar automáticamente
+    // todos los presupuestos que todavía se encuentren en estado pendiente de aprobación.
+    if (item.precio_unitario !== undefined) {
+      await syncPreciosProyectosPendientes(id, valuesToUpdate.precio_unitario);
+      revalidatePath("/proyectos");
+      revalidatePath("/");
+    }
+
+    revalidatePath("/inventario");
 
     return {
       ...updated,
