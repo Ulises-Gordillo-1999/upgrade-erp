@@ -530,9 +530,6 @@ export async function syncPreciosProyectosPendientes(
         await recalculateProjectTotals(proj.id);
       }
     }
-
-    revalidatePath("/proyectos");
-    revalidatePath("/");
   } catch (error) {
     console.error("Error al sincronizar precios en proyectos pendientes:", error);
   }
