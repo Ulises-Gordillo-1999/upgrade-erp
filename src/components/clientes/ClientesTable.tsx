@@ -234,7 +234,10 @@ export function ClientesTable({ clientes }: Props) {
                           clienteInicial={cliente as any}
                           isEdit={true}
                         />
-                        <DeleteClienteButton id={cliente.id} />
+                        <DeleteClienteButton
+                          id={cliente.id}
+                          nombreCliente={cliente.nombre_razon_social}
+                        />
                       </div>
                     </td>
                   </tr>

@@ -292,7 +292,10 @@ export function InventarioTable({ inventario }: Props) {
                             itemInicial={item as any}
                             isEdit={true}
                           />
-                          <DeleteInventarioButton id={item.id} />
+                          <DeleteInventarioButton
+                            id={item.id}
+                            nombreItem={item.nombre}
+                          />
                         </div>
                       </td>
                     </tr>

@@ -348,7 +348,10 @@ export function FinanzasTable({ transacciones }: Props) {
                           transaccionInicial={t as any}
                           isEdit={true}
                         />
-                        <DeleteTransaccionButton id={t.id} />
+                        <DeleteTransaccionButton
+                          id={t.id}
+                          descripcion={t.descripcion || `Movimiento de ${t.tipo}`}
+                        />
                       </div>
                     </td>
                   </tr>
