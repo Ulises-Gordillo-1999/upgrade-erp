@@ -500,7 +500,7 @@ export function ExportarPDFButton({ proyecto, items }: Props) {
   return (
     <button
       onClick={handleExport}
-      className="flex items-center px-4 py-2 bg-gradient-to-r from-cyan-600 to-cyan-500 hover:from-cyan-500 hover:to-cyan-400 text-white rounded-lg transition-all duration-200 text-sm font-medium shadow-md shadow-cyan-950/40 hover:shadow-cyan-500/20 active:scale-95 border border-cyan-400/20"
+      className="flex items-center px-4 py-2 bg-gradient-to-r from-cyan-600 to-cyan-500 hover:from-cyan-500 hover:to-cyan-400 text-white rounded-lg transition-all duration-200 text-sm font-medium shadow-md shadow-cyan-950/20 dark:shadow-cyan-950/40 hover:shadow-cyan-500/20 active:scale-95 border border-cyan-400/20"
       title="Generar y descargar Presupuesto Oficial en PDF"
     >
       <FileText className="w-4 h-4 mr-2" />

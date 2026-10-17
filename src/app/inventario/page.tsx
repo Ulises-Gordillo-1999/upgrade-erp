@@ -9,8 +9,12 @@ export default async function InventarioPage() {
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-10">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight text-white">Inventario y Catálogo</h2>
-          <p className="text-zinc-400 mt-1">Control de stock, equipos y servicios ofrecidos.</p>
+          <h2 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white transition-colors">
+            Inventario y Catálogo
+          </h2>
+          <p className="text-slate-500 dark:text-zinc-400 mt-1 transition-colors">
+            Control de stock, equipos y servicios ofrecidos.
+          </p>
         </div>
         <InventarioFormModal />
       </div>

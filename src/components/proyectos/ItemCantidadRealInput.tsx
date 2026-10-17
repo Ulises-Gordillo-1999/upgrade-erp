@@ -70,10 +70,10 @@ export function ItemCantidadRealInput({
             }
           }}
           disabled={loading || isProyectoFinalizado}
-          className={`w-20 bg-zinc-950 border rounded-lg px-2.5 py-1 text-xs text-zinc-100 placeholder-zinc-600 focus:outline-none transition-all ${
+          className={`w-20 bg-slate-50 dark:bg-zinc-950 border rounded-lg px-2.5 py-1 text-xs text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-600 focus:outline-none transition-all ${
             esConsumible && cantidadRealInicial === null
-              ? "border-amber-500/50 focus:border-amber-400 focus:ring-1 focus:ring-amber-400"
-              : "border-zinc-800 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500"
+              ? "border-amber-500/50 focus:border-amber-500 dark:focus:border-amber-400 focus:ring-1 focus:ring-amber-500"
+              : "border-slate-300 dark:border-zinc-800 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500"
           } ${isProyectoFinalizado ? "opacity-60 cursor-not-allowed" : ""}`}
         />
 
@@ -85,8 +85,8 @@ export function ItemCantidadRealInput({
             title="Guardar cantidad real"
             className={`p-1 rounded-md text-xs transition-colors border ${
               saved
-                ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30"
-                : "bg-zinc-800 hover:bg-zinc-700 text-zinc-300 border-zinc-700 disabled:opacity-30"
+                ? "bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border-emerald-500/30"
+                : "bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-700 dark:text-zinc-300 border-slate-300 dark:border-zinc-700 disabled:opacity-30"
             }`}
           >
             {loading ? (
@@ -100,14 +100,14 @@ export function ItemCantidadRealInput({
 
       {/* Badges de ayuda contextual */}
       {cantidadRealInicial === null && esConsumible ? (
-        <span className="text-[10px] text-amber-400 flex items-center gap-0.5">
+        <span className="text-[10px] text-amber-600 dark:text-amber-400 flex items-center gap-0.5">
           <AlertCircle className="w-3 h-3 shrink-0" />
           Medición pendiente
         </span>
       ) : cantidadRealInicial !== null && delta !== 0 ? (
         <span
           className={`text-[10px] font-medium ${
-            delta > 0 ? "text-emerald-400" : "text-rose-400"
+            delta > 0 ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"
           }`}
         >
           {delta > 0 ? "+" : ""}

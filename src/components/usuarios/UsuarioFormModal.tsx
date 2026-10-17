@@ -76,7 +76,7 @@ export function UsuarioFormModal({ usuarioInicial, isEdit = false }: UsuarioForm
       {isEdit ? (
         <button
           onClick={() => setIsOpen(true)}
-          className="p-1.5 text-zinc-400 hover:text-cyan-400 hover:bg-cyan-500/10 rounded-lg transition-colors"
+          className="p-1.5 text-slate-400 hover:text-cyan-600 dark:text-zinc-400 dark:hover:text-cyan-400 hover:bg-cyan-500/10 rounded-lg transition-colors"
           title="Editar usuario"
         >
           <Pencil className="w-4 h-4" />
@@ -84,7 +84,7 @@ export function UsuarioFormModal({ usuarioInicial, isEdit = false }: UsuarioForm
       ) : (
         <button
           onClick={() => setIsOpen(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white text-sm font-medium rounded-xl shadow-lg shadow-cyan-950/40 transition-all"
+          className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white text-sm font-medium rounded-xl shadow-lg shadow-cyan-950/20 dark:shadow-cyan-950/40 transition-all"
         >
           <UserPlus className="w-4 h-4" />
           Nuevo Técnico / Usuario
@@ -92,32 +92,32 @@ export function UsuarioFormModal({ usuarioInicial, isEdit = false }: UsuarioForm
       )}
 
       {isOpen && mounted && createPortal(
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="relative w-full max-w-lg rounded-2xl border border-zinc-800 bg-zinc-900 p-6 shadow-2xl space-y-5 animate-in zoom-in-95 duration-200">
-            <div className="flex items-center justify-between pb-3 border-b border-zinc-800">
-              <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                {isEdit ? <Pencil className="w-5 h-5 text-cyan-400" /> : <UserPlus className="w-5 h-5 text-cyan-400" />}
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 dark:bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
+          <div className="relative w-full max-w-lg rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/95 p-6 sm:p-7 shadow-2xl backdrop-blur-xl space-y-5 animate-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-zinc-800">
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                {isEdit ? <Pencil className="w-5 h-5 text-cyan-600 dark:text-cyan-400" /> : <UserPlus className="w-5 h-5 text-cyan-600 dark:text-cyan-400" />}
                 {isEdit ? "Editar Usuario / Técnico" : "Alta de Nuevo Técnico"}
               </h3>
               <button
                 onClick={() => setIsOpen(false)}
-                className="text-zinc-500 hover:text-zinc-300 transition-colors"
+                className="text-slate-400 hover:text-slate-600 dark:text-zinc-500 dark:hover:text-zinc-300 transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             {error && (
-              <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs font-medium">
+              <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 text-xs font-medium">
                 {error}
               </div>
             )}
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-zinc-300 block">Nombre Completo *</label>
+                <label className="text-xs font-medium text-slate-700 dark:text-zinc-300 block">Nombre Completo *</label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-zinc-500">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 dark:text-zinc-500">
                     <User className="w-4 h-4" />
                   </div>
                   <input
@@ -126,15 +126,15 @@ export function UsuarioFormModal({ usuarioInicial, isEdit = false }: UsuarioForm
                     onChange={(e) => setNombre(e.target.value)}
                     required
                     placeholder="Ej. Lucas Gómez"
-                    className="w-full pl-9 pr-3 py-2 bg-zinc-950 border border-zinc-800 rounded-xl text-sm text-zinc-100 focus:outline-none focus:border-cyan-500"
+                    className="w-full pl-9 pr-3 py-2 bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl text-sm text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-600 focus:outline-none focus:border-cyan-500"
                   />
                 </div>
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-zinc-300 block">Correo Electrónico *</label>
+                <label className="text-xs font-medium text-slate-700 dark:text-zinc-300 block">Correo Electrónico *</label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-zinc-500">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 dark:text-zinc-500">
                     <Mail className="w-4 h-4" />
                   </div>
                   <input
@@ -143,16 +143,16 @@ export function UsuarioFormModal({ usuarioInicial, isEdit = false }: UsuarioForm
                     onChange={(e) => setEmail(e.target.value)}
                     required
                     placeholder="lucas@upgrade.com"
-                    className="w-full pl-9 pr-3 py-2 bg-zinc-950 border border-zinc-800 rounded-xl text-sm text-zinc-100 focus:outline-none focus:border-cyan-500"
+                    className="w-full pl-9 pr-3 py-2 bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl text-sm text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-600 focus:outline-none focus:border-cyan-500"
                   />
                 </div>
               </div>
 
               {!isEdit && (
                 <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-zinc-300 block">Contraseña Inicial *</label>
+                  <label className="text-xs font-medium text-slate-700 dark:text-zinc-300 block">Contraseña Inicial *</label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-zinc-500">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 dark:text-zinc-500">
                       <Lock className="w-4 h-4" />
                     </div>
                     <input
@@ -161,7 +161,7 @@ export function UsuarioFormModal({ usuarioInicial, isEdit = false }: UsuarioForm
                       onChange={(e) => setPassword(e.target.value)}
                       required
                       placeholder="Mínimo 6 caracteres"
-                      className="w-full pl-9 pr-3 py-2 bg-zinc-950 border border-zinc-800 rounded-xl text-sm text-zinc-100 focus:outline-none focus:border-cyan-500"
+                      className="w-full pl-9 pr-3 py-2 bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl text-sm text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-600 focus:outline-none focus:border-cyan-500"
                     />
                   </div>
                 </div>
@@ -169,15 +169,15 @@ export function UsuarioFormModal({ usuarioInicial, isEdit = false }: UsuarioForm
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-zinc-300 block">Rol en el Sistema *</label>
+                  <label className="text-xs font-medium text-slate-700 dark:text-zinc-300 block">Rol en el Sistema *</label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-zinc-500">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 dark:text-zinc-500">
                       <Shield className="w-4 h-4" />
                     </div>
                     <select
                       value={rol}
                       onChange={(e) => setRol(e.target.value as Rol)}
-                      className="w-full pl-9 pr-3 py-2 bg-zinc-950 border border-zinc-800 rounded-xl text-sm text-zinc-100 focus:outline-none focus:border-cyan-500"
+                      className="w-full pl-9 pr-3 py-2 bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl text-sm text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-cyan-500"
                     >
                       <option value="Tecnico">Técnico</option>
                       <option value="Admin">Administrador</option>
@@ -187,9 +187,9 @@ export function UsuarioFormModal({ usuarioInicial, isEdit = false }: UsuarioForm
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-zinc-300 block">Teléfono / WhatsApp</label>
+                  <label className="text-xs font-medium text-slate-700 dark:text-zinc-300 block">Teléfono / WhatsApp</label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-zinc-500">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 dark:text-zinc-500">
                       <Phone className="w-4 h-4" />
                     </div>
                     <input
@@ -197,16 +197,16 @@ export function UsuarioFormModal({ usuarioInicial, isEdit = false }: UsuarioForm
                       value={telefono}
                       onChange={(e) => setTelefono(e.target.value)}
                       placeholder="+54 9 11 ..."
-                      className="w-full pl-9 pr-3 py-2 bg-zinc-950 border border-zinc-800 rounded-xl text-sm text-zinc-100 focus:outline-none focus:border-cyan-500"
+                      className="w-full pl-9 pr-3 py-2 bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl text-sm text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-600 focus:outline-none focus:border-cyan-500"
                     />
                   </div>
                 </div>
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-zinc-300 block">Especialidad Técnica</label>
+                <label className="text-xs font-medium text-slate-700 dark:text-zinc-300 block">Especialidad Técnica</label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-zinc-500">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 dark:text-zinc-500">
                     <Wrench className="w-4 h-4" />
                   </div>
                   <input
@@ -214,23 +214,23 @@ export function UsuarioFormModal({ usuarioInicial, isEdit = false }: UsuarioForm
                     value={especialidad}
                     onChange={(e) => setEspecialidad(e.target.value)}
                     placeholder="Ej. Redes & Cableado, CCTV, Soporte Nivel 1"
-                    className="w-full pl-9 pr-3 py-2 bg-zinc-950 border border-zinc-800 rounded-xl text-sm text-zinc-100 focus:outline-none focus:border-cyan-500"
+                    className="w-full pl-9 pr-3 py-2 bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl text-sm text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-600 focus:outline-none focus:border-cyan-500"
                   />
                 </div>
               </div>
 
-              <div className="flex justify-end gap-3 pt-3 border-t border-zinc-800">
+              <div className="flex justify-end gap-3 pt-3 border-t border-slate-200 dark:border-zinc-800">
                 <button
                   type="button"
                   onClick={() => setIsOpen(false)}
-                  className="px-4 py-2 text-sm text-zinc-400 hover:text-white transition-colors"
+                  className="px-4 py-2 text-sm text-slate-500 hover:text-slate-900 dark:text-zinc-400 dark:hover:text-white transition-colors"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
                   disabled={loading}
-                  className="px-5 py-2 text-sm font-medium text-white bg-cyan-600 hover:bg-cyan-500 rounded-xl shadow-lg transition-all flex items-center gap-2 disabled:opacity-50"
+                  className="px-5 py-2 text-sm font-medium text-white bg-cyan-600 hover:bg-cyan-500 rounded-xl shadow-lg shadow-cyan-950/20 dark:shadow-cyan-950/40 transition-all flex items-center gap-2 disabled:opacity-50"
                 >
                   {loading && <Loader2 className="w-4 h-4 animate-spin" />}
                   {isEdit ? "Guardar Cambios" : "Crear Usuario"}

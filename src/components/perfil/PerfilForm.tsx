@@ -105,39 +105,39 @@ export function PerfilForm({ usuario }: PerfilFormProps) {
   return (
     <div className="space-y-8 max-w-4xl">
       {/* Tarjeta de Identidad Superior (Hero Banner) */}
-      <div className="relative overflow-hidden rounded-3xl border border-zinc-800 bg-gradient-to-b from-zinc-900/90 to-zinc-950/80 p-6 sm:p-8 backdrop-blur-xl shadow-2xl">
+      <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-zinc-800 bg-gradient-to-b from-slate-50 to-white dark:from-zinc-900/90 dark:to-zinc-950/80 p-6 sm:p-8 backdrop-blur-xl shadow-sm dark:shadow-2xl">
         <div className="absolute top-0 right-0 w-80 h-80 bg-cyan-500/10 rounded-full blur-[100px] pointer-events-none" />
 
         <div className="relative flex flex-col sm:flex-row items-start sm:items-center gap-6">
-          <div className="h-20 w-20 sm:h-24 sm:w-24 rounded-2xl bg-gradient-to-tr from-cyan-600 via-blue-600 to-indigo-600 p-[2px] shadow-xl shadow-cyan-950/40">
-            <div className="w-full h-full rounded-2xl bg-zinc-950 flex items-center justify-center text-2xl sm:text-3xl font-extrabold text-white tracking-wider">
+          <div className="h-20 w-20 sm:h-24 sm:w-24 rounded-2xl bg-gradient-to-tr from-cyan-600 via-blue-600 to-indigo-600 p-[2px] shadow-xl shadow-cyan-950/20 dark:shadow-cyan-950/40">
+            <div className="w-full h-full rounded-2xl bg-slate-100 dark:bg-zinc-950 flex items-center justify-center text-2xl sm:text-3xl font-extrabold text-slate-800 dark:text-white tracking-wider">
               {initials}
             </div>
           </div>
 
           <div className="flex-1 space-y-1.5">
             <div className="flex items-center gap-3 flex-wrap">
-              <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+              <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
                 {usuario.nombre}
               </h2>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-cyan-500/10 border border-cyan-500/30 text-cyan-400">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-cyan-500/10 border border-cyan-500/30 text-cyan-600 dark:text-cyan-400">
                 <Shield className="w-3.5 h-3.5" />
                 {usuario.rol}
               </span>
             </div>
 
-            <p className="text-sm text-zinc-400 flex items-center gap-2">
-              <Mail className="w-4 h-4 text-zinc-500" />
+            <p className="text-sm text-slate-600 dark:text-zinc-400 flex items-center gap-2">
+              <Mail className="w-4 h-4 text-slate-400 dark:text-zinc-500" />
               {usuario.email}
             </p>
 
-            <div className="flex items-center gap-4 text-xs text-zinc-500 pt-2 flex-wrap">
+            <div className="flex items-center gap-4 text-xs text-slate-500 dark:text-zinc-500 pt-2 flex-wrap">
               <span className="flex items-center gap-1.5">
-                <Calendar className="w-3.5 h-3.5 text-zinc-600" />
+                <Calendar className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-600" />
                 Alta: {usuario.created_at ? new Date(usuario.created_at).toLocaleDateString("es-AR") : "N/A"}
               </span>
               <span className="flex items-center gap-1.5">
-                <Clock className="w-3.5 h-3.5 text-zinc-600" />
+                <Clock className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-600" />
                 Último acceso: {usuario.last_login_at ? new Date(usuario.last_login_at).toLocaleString("es-AR") : "Reciente"}
               </span>
             </div>
@@ -146,53 +146,53 @@ export function PerfilForm({ usuario }: PerfilFormProps) {
       </div>
 
       {/* Navegación por Pestañas */}
-      <div className="flex border-b border-zinc-800 space-x-2">
+      <div className="flex border-b border-slate-200 dark:border-zinc-800 space-x-2">
         <button
           onClick={() => setTab("personal")}
           className={`pb-3 px-4 text-sm font-medium transition-all relative flex items-center gap-2 ${
-            tab === "personal" ? "text-cyan-400" : "text-zinc-400 hover:text-zinc-200"
+            tab === "personal" ? "text-cyan-600 dark:text-cyan-400" : "text-slate-500 hover:text-slate-800 dark:text-zinc-400 dark:hover:text-zinc-200"
           }`}
         >
           <User className="w-4 h-4" />
           Datos Personales
           {tab === "personal" && (
-            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-cyan-400 shadow-[0_0_8px_#22d3ee]" />
+            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-cyan-500 dark:bg-cyan-400 shadow-[0_0_8px_#22d3ee]" />
           )}
         </button>
 
         <button
           onClick={() => setTab("email")}
           className={`pb-3 px-4 text-sm font-medium transition-all relative flex items-center gap-2 ${
-            tab === "email" ? "text-cyan-400" : "text-zinc-400 hover:text-zinc-200"
+            tab === "email" ? "text-cyan-600 dark:text-cyan-400" : "text-slate-500 hover:text-slate-800 dark:text-zinc-400 dark:hover:text-zinc-200"
           }`}
         >
           <Mail className="w-4 h-4" />
           Correo Electrónico
           {tab === "email" && (
-            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-cyan-400 shadow-[0_0_8px_#22d3ee]" />
+            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-cyan-500 dark:bg-cyan-400 shadow-[0_0_8px_#22d3ee]" />
           )}
         </button>
 
         <button
           onClick={() => setTab("password")}
           className={`pb-3 px-4 text-sm font-medium transition-all relative flex items-center gap-2 ${
-            tab === "password" ? "text-cyan-400" : "text-zinc-400 hover:text-zinc-200"
+            tab === "password" ? "text-cyan-600 dark:text-cyan-400" : "text-slate-500 hover:text-slate-800 dark:text-zinc-400 dark:hover:text-zinc-200"
           }`}
         >
           <KeyRound className="w-4 h-4" />
           Seguridad & Contraseña
           {tab === "password" && (
-            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-cyan-400 shadow-[0_0_8px_#22d3ee]" />
+            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-cyan-500 dark:bg-cyan-400 shadow-[0_0_8px_#22d3ee]" />
           )}
         </button>
       </div>
 
       {/* Contenido Pestaña 1: Datos Personales */}
       {tab === "personal" && (
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-6 sm:p-8 backdrop-blur-md space-y-6">
+        <div className="rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-6 sm:p-8 backdrop-blur-md space-y-6 shadow-sm">
           <div>
-            <h3 className="text-lg font-semibold text-white">Información del Perfil</h3>
-            <p className="text-xs text-zinc-400 mt-0.5">
+            <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Información del Perfil</h3>
+            <p className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">
               Actualice su nombre público, teléfono de contacto y área de especialización en UPGRADE.
             </p>
           </div>
@@ -201,8 +201,8 @@ export function PerfilForm({ usuario }: PerfilFormProps) {
             <div
               className={`p-3.5 rounded-xl text-xs font-medium flex items-center gap-2.5 ${
                 msgPersonal.type === "success"
-                  ? "bg-emerald-500/10 border border-emerald-500/20 text-emerald-400"
-                  : "bg-rose-500/10 border border-rose-500/20 text-rose-400"
+                  ? "bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400"
+                  : "bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400"
               }`}
             >
               {msgPersonal.type === "success" ? <CheckCircle2 className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
@@ -213,9 +213,9 @@ export function PerfilForm({ usuario }: PerfilFormProps) {
           <form onSubmit={handleUpdatePersonal} className="space-y-5">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-zinc-300 block">Nombre Completo</label>
+                <label className="text-xs font-medium text-slate-700 dark:text-zinc-300 block">Nombre Completo</label>
                 <div className="relative group">
-                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500 group-focus-within:text-cyan-400">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 dark:text-zinc-500 group-focus-within:text-cyan-600 dark:group-focus-within:text-cyan-400">
                     <User className="w-4 h-4" />
                   </div>
                   <input
@@ -223,15 +223,15 @@ export function PerfilForm({ usuario }: PerfilFormProps) {
                     value={nombre}
                     onChange={(e) => setNombre(e.target.value)}
                     required
-                    className="w-full pl-10 pr-4 py-2.5 bg-zinc-950/80 border border-zinc-800 rounded-xl text-sm text-zinc-100 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500"
+                    className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-zinc-950/80 border border-slate-200 dark:border-zinc-800 rounded-xl text-sm text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500"
                   />
                 </div>
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-zinc-300 block">Teléfono / WhatsApp</label>
+                <label className="text-xs font-medium text-slate-700 dark:text-zinc-300 block">Teléfono / WhatsApp</label>
                 <div className="relative group">
-                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500 group-focus-within:text-cyan-400">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 dark:text-zinc-500 group-focus-within:text-cyan-600 dark:group-focus-within:text-cyan-400">
                     <Phone className="w-4 h-4" />
                   </div>
                   <input
@@ -239,16 +239,16 @@ export function PerfilForm({ usuario }: PerfilFormProps) {
                     value={telefono}
                     onChange={(e) => setTelefono(e.target.value)}
                     placeholder="+54 9 11 1234-5678"
-                    className="w-full pl-10 pr-4 py-2.5 bg-zinc-950/80 border border-zinc-800 rounded-xl text-sm text-zinc-100 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500"
+                    className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-zinc-950/80 border border-slate-200 dark:border-zinc-800 rounded-xl text-sm text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500"
                   />
                 </div>
               </div>
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-zinc-300 block">Especialidad / Área Técnica</label>
+              <label className="text-xs font-medium text-slate-700 dark:text-zinc-300 block">Especialidad / Área Técnica</label>
               <div className="relative group">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500 group-focus-within:text-cyan-400">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 dark:text-zinc-500 group-focus-within:text-cyan-600 dark:group-focus-within:text-cyan-400">
                   <Wrench className="w-4 h-4" />
                 </div>
                 <input
@@ -256,7 +256,7 @@ export function PerfilForm({ usuario }: PerfilFormProps) {
                   value={especialidad}
                   onChange={(e) => setEspecialidad(e.target.value)}
                   placeholder="Ej: Redes & Cableado Estructurado, CCTV, Soporte Nivel 2"
-                  className="w-full pl-10 pr-4 py-2.5 bg-zinc-950/80 border border-zinc-800 rounded-xl text-sm text-zinc-100 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500"
+                  className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-zinc-950/80 border border-slate-200 dark:border-zinc-800 rounded-xl text-sm text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500"
                 />
               </div>
             </div>
@@ -277,10 +277,10 @@ export function PerfilForm({ usuario }: PerfilFormProps) {
 
       {/* Contenido Pestaña 2: Correo Electrónico */}
       {tab === "email" && (
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-6 sm:p-8 backdrop-blur-md space-y-6">
+        <div className="rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-6 sm:p-8 backdrop-blur-md space-y-6 shadow-sm">
           <div>
-            <h3 className="text-lg font-semibold text-white">Cambiar Correo Electrónico</h3>
-            <p className="text-xs text-zinc-400 mt-0.5">
+            <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Cambiar Correo Electrónico</h3>
+            <p className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">
               Este correo es utilizado para iniciar sesión en el ERP. Requiere confirmar su contraseña actual por seguridad.
             </p>
           </div>
@@ -289,8 +289,8 @@ export function PerfilForm({ usuario }: PerfilFormProps) {
             <div
               className={`p-3.5 rounded-xl text-xs font-medium flex items-center gap-2.5 ${
                 msgEmail.type === "success"
-                  ? "bg-emerald-500/10 border border-emerald-500/20 text-emerald-400"
-                  : "bg-rose-500/10 border border-rose-500/20 text-rose-400"
+                  ? "bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400"
+                  : "bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400"
               }`}
             >
               {msgEmail.type === "success" ? <CheckCircle2 className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
@@ -300,9 +300,9 @@ export function PerfilForm({ usuario }: PerfilFormProps) {
 
           <form onSubmit={handleUpdateEmail} className="space-y-5 max-w-lg">
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-zinc-300 block">Nuevo Correo Electrónico</label>
+              <label className="text-xs font-medium text-slate-700 dark:text-zinc-300 block">Nuevo Correo Electrónico</label>
               <div className="relative group">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500 group-focus-within:text-cyan-400">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 dark:text-zinc-500 group-focus-within:text-cyan-600 dark:group-focus-within:text-cyan-400">
                   <Mail className="w-4 h-4" />
                 </div>
                 <input
@@ -310,15 +310,15 @@ export function PerfilForm({ usuario }: PerfilFormProps) {
                   value={nuevoEmail}
                   onChange={(e) => setNuevoEmail(e.target.value)}
                   required
-                  className="w-full pl-10 pr-4 py-2.5 bg-zinc-950/80 border border-zinc-800 rounded-xl text-sm text-zinc-100 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500"
+                  className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-zinc-950/80 border border-slate-200 dark:border-zinc-800 rounded-xl text-sm text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500"
                 />
               </div>
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-zinc-300 block">Contraseña Actual (para confirmar)</label>
+              <label className="text-xs font-medium text-slate-700 dark:text-zinc-300 block">Contraseña Actual (para confirmar)</label>
               <div className="relative group">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500 group-focus-within:text-cyan-400">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 dark:text-zinc-500 group-focus-within:text-cyan-600 dark:group-focus-within:text-cyan-400">
                   <Lock className="w-4 h-4" />
                 </div>
                 <input
@@ -327,7 +327,7 @@ export function PerfilForm({ usuario }: PerfilFormProps) {
                   onChange={(e) => setPasswordParaEmail(e.target.value)}
                   placeholder="••••••••••••"
                   required
-                  className="w-full pl-10 pr-4 py-2.5 bg-zinc-950/80 border border-zinc-800 rounded-xl text-sm text-zinc-100 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500"
+                  className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-zinc-950/80 border border-slate-200 dark:border-zinc-800 rounded-xl text-sm text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500"
                 />
               </div>
             </div>
@@ -348,10 +348,10 @@ export function PerfilForm({ usuario }: PerfilFormProps) {
 
       {/* Contenido Pestaña 3: Contraseña */}
       {tab === "password" && (
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-6 sm:p-8 backdrop-blur-md space-y-6">
+        <div className="rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-6 sm:p-8 backdrop-blur-md space-y-6 shadow-sm">
           <div>
-            <h3 className="text-lg font-semibold text-white">Cambiar Contraseña</h3>
-            <p className="text-xs text-zinc-400 mt-0.5">
+            <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Cambiar Contraseña</h3>
+            <p className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">
               Asegúrese de usar una contraseña segura con al menos 6 caracteres.
             </p>
           </div>
@@ -360,8 +360,8 @@ export function PerfilForm({ usuario }: PerfilFormProps) {
             <div
               className={`p-3.5 rounded-xl text-xs font-medium flex items-center gap-2.5 ${
                 msgPassword.type === "success"
-                  ? "bg-emerald-500/10 border border-emerald-500/20 text-emerald-400"
-                  : "bg-rose-500/10 border border-rose-500/20 text-rose-400"
+                  ? "bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400"
+                  : "bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400"
               }`}
             >
               {msgPassword.type === "success" ? <CheckCircle2 className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
@@ -371,9 +371,9 @@ export function PerfilForm({ usuario }: PerfilFormProps) {
 
           <form onSubmit={handleUpdatePassword} className="space-y-5 max-w-lg">
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-zinc-300 block">Contraseña Actual</label>
+              <label className="text-xs font-medium text-slate-700 dark:text-zinc-300 block">Contraseña Actual</label>
               <div className="relative group">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500 group-focus-within:text-cyan-400">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 dark:text-zinc-500 group-focus-within:text-cyan-600 dark:group-focus-within:text-cyan-400">
                   <Lock className="w-4 h-4" />
                 </div>
                 <input
@@ -382,15 +382,15 @@ export function PerfilForm({ usuario }: PerfilFormProps) {
                   onChange={(e) => setPasswordActual(e.target.value)}
                   placeholder="••••••••••••"
                   required
-                  className="w-full pl-10 pr-4 py-2.5 bg-zinc-950/80 border border-zinc-800 rounded-xl text-sm text-zinc-100 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500"
+                  className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-zinc-950/80 border border-slate-200 dark:border-zinc-800 rounded-xl text-sm text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500"
                 />
               </div>
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-zinc-300 block">Nueva Contraseña</label>
+              <label className="text-xs font-medium text-slate-700 dark:text-zinc-300 block">Nueva Contraseña</label>
               <div className="relative group">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500 group-focus-within:text-cyan-400">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 dark:text-zinc-500 group-focus-within:text-cyan-600 dark:group-focus-within:text-cyan-400">
                   <KeyRound className="w-4 h-4" />
                 </div>
                 <input
@@ -399,15 +399,15 @@ export function PerfilForm({ usuario }: PerfilFormProps) {
                   onChange={(e) => setPasswordNueva(e.target.value)}
                   placeholder="Mínimo 6 caracteres"
                   required
-                  className="w-full pl-10 pr-4 py-2.5 bg-zinc-950/80 border border-zinc-800 rounded-xl text-sm text-zinc-100 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500"
+                  className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-zinc-950/80 border border-slate-200 dark:border-zinc-800 rounded-xl text-sm text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500"
                 />
               </div>
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-zinc-300 block">Confirmar Nueva Contraseña</label>
+              <label className="text-xs font-medium text-slate-700 dark:text-zinc-300 block">Confirmar Nueva Contraseña</label>
               <div className="relative group">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500 group-focus-within:text-cyan-400">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 dark:text-zinc-500 group-focus-within:text-cyan-600 dark:group-focus-within:text-cyan-400">
                   <KeyRound className="w-4 h-4" />
                 </div>
                 <input
@@ -416,7 +416,7 @@ export function PerfilForm({ usuario }: PerfilFormProps) {
                   onChange={(e) => setPasswordConfirmar(e.target.value)}
                   placeholder="Repita la nueva contraseña"
                   required
-                  className="w-full pl-10 pr-4 py-2.5 bg-zinc-950/80 border border-zinc-800 rounded-xl text-sm text-zinc-100 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500"
+                  className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-zinc-950/80 border border-slate-200 dark:border-zinc-800 rounded-xl text-sm text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500"
                 />
               </div>
             </div>

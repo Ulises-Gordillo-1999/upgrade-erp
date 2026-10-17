@@ -49,11 +49,11 @@ export function LoginForm() {
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Input Email */}
         <div className="space-y-1.5">
-          <label className="text-xs font-medium text-zinc-300 block">
+          <label className="text-xs font-medium text-slate-700 dark:text-zinc-300 block">
             Correo Electrónico
           </label>
           <div className="relative group">
-            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500 group-focus-within:text-cyan-400 transition-colors">
+            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 dark:text-zinc-500 group-focus-within:text-cyan-600 dark:group-focus-within:text-cyan-400 transition-colors">
               <Mail className="w-4 h-4" />
             </div>
             <input
@@ -62,7 +62,7 @@ export function LoginForm() {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="nombre@upgrade.com"
               required
-              className="w-full pl-10 pr-4 py-2.5 bg-zinc-950/70 border border-zinc-800 rounded-xl text-sm text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-cyan-500/80 focus:ring-1 focus:ring-cyan-500/80 transition-all duration-200"
+              className="w-full pl-10 pr-4 py-2.5 bg-slate-50/70 dark:bg-zinc-950/70 border border-slate-200 dark:border-zinc-800 rounded-xl text-sm text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-600 focus:outline-none focus:border-cyan-500/80 focus:ring-1 focus:ring-cyan-500/80 transition-all duration-200"
             />
           </div>
         </div>
@@ -70,15 +70,15 @@ export function LoginForm() {
         {/* Input Password */}
         <div className="space-y-1.5">
           <div className="flex items-center justify-between">
-            <label className="text-xs font-medium text-zinc-300 block">
+            <label className="text-xs font-medium text-slate-700 dark:text-zinc-300 block">
               Contraseña
             </label>
-            <span className="text-[11px] text-zinc-500 hover:text-zinc-400 cursor-pointer transition-colors">
+            <span className="text-[11px] text-slate-400 hover:text-slate-600 dark:text-zinc-500 dark:hover:text-zinc-400 cursor-pointer transition-colors">
               ¿Olvidó su clave?
             </span>
           </div>
           <div className="relative group">
-            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500 group-focus-within:text-cyan-400 transition-colors">
+            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 dark:text-zinc-500 group-focus-within:text-cyan-600 dark:group-focus-within:text-cyan-400 transition-colors">
               <Lock className="w-4 h-4" />
             </div>
             <input
@@ -87,12 +87,12 @@ export function LoginForm() {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••••••"
               required
-              className="w-full pl-10 pr-10 py-2.5 bg-zinc-950/70 border border-zinc-800 rounded-xl text-sm text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-cyan-500/80 focus:ring-1 focus:ring-cyan-500/80 transition-all duration-200"
+              className="w-full pl-10 pr-10 py-2.5 bg-slate-50/70 dark:bg-zinc-950/70 border border-slate-200 dark:border-zinc-800 rounded-xl text-sm text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-600 focus:outline-none focus:border-cyan-500/80 focus:ring-1 focus:ring-cyan-500/80 transition-all duration-200"
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-zinc-500 hover:text-zinc-300 transition-colors"
+              className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 dark:text-zinc-500 dark:hover:text-zinc-300 transition-colors"
               tabIndex={-1}
             >
               {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -104,7 +104,7 @@ export function LoginForm() {
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full mt-2 py-3 px-4 rounded-xl font-medium text-sm text-white bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 active:scale-[0.99] transition-all duration-200 flex items-center justify-center gap-2 shadow-lg shadow-cyan-950/50 disabled:opacity-50 disabled:pointer-events-none"
+          className="w-full mt-2 py-3 px-4 rounded-xl font-medium text-sm text-white bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 active:scale-[0.99] transition-all duration-200 flex items-center justify-center gap-2 shadow-lg shadow-cyan-950/20 dark:shadow-cyan-950/50 disabled:opacity-50 disabled:pointer-events-none"
         >
           {isLoading ? (
             <>
@@ -120,8 +120,8 @@ export function LoginForm() {
         </button>
       </form>
 
-      <div className="flex items-center justify-center gap-1.5 text-[11px] text-zinc-600 pt-2 border-t border-zinc-800/80">
-        <ShieldCheck className="w-3.5 h-3.5 text-emerald-500/70" />
+      <div className="flex items-center justify-center gap-1.5 text-[11px] text-slate-500 dark:text-zinc-600 pt-2 border-t border-slate-200 dark:border-zinc-800/80">
+        <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-500/70" />
         <span>Sesión encriptada con JWT & RBAC activo</span>
       </div>
     </div>
