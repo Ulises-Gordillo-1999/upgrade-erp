@@ -82,7 +82,7 @@ export function FinancialCardsARS({ data }: Props) {
       {/* Grid de las 3 tarjetas principales */}
       <div className="grid gap-4 sm:grid-cols-3">
         {/* Card 1: Ingresos ARS */}
-        <div className="relative overflow-hidden rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-gradient-to-b dark:from-zinc-900/80 dark:to-zinc-950/80 p-5 shadow-sm hover:border-emerald-500/40 transition-all duration-300 group">
+        <div className="relative overflow-hidden rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-transparent dark:bg-gradient-to-b dark:from-zinc-900/80 dark:to-zinc-950/80 p-5 shadow-sm hover:border-emerald-500/40 transition-all duration-300 group">
           <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-2xl pointer-events-none group-hover:bg-emerald-500/10 transition-colors" />
           
           <div className="flex items-center justify-between mb-3">
@@ -115,7 +115,7 @@ export function FinancialCardsARS({ data }: Props) {
         </div>
 
         {/* Card 2: Egresos ARS */}
-        <div className="relative overflow-hidden rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-gradient-to-b dark:from-zinc-900/80 dark:to-zinc-950/80 p-5 shadow-sm hover:border-rose-500/40 transition-all duration-300 group">
+        <div className="relative overflow-hidden rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-transparent dark:bg-gradient-to-b dark:from-zinc-900/80 dark:to-zinc-950/80 p-5 shadow-sm hover:border-rose-500/40 transition-all duration-300 group">
           <div className="absolute top-0 right-0 w-32 h-32 bg-rose-500/5 rounded-full blur-2xl pointer-events-none group-hover:bg-rose-500/10 transition-colors" />
 
           <div className="flex items-center justify-between mb-3">
@@ -150,8 +150,8 @@ export function FinancialCardsARS({ data }: Props) {
         {/* Card 3: Balance Neto ARS */}
         <div className={`relative overflow-hidden rounded-xl border p-5 shadow-sm transition-all duration-300 group ${
           isNetoPositivo
-            ? "border-slate-200 dark:border-zinc-800 bg-white dark:bg-gradient-to-b dark:from-zinc-900/90 dark:to-zinc-950 hover:border-emerald-500/40"
-            : "border-rose-200 dark:border-rose-900/40 bg-white dark:bg-gradient-to-b dark:from-rose-950/20 dark:to-zinc-950 hover:border-rose-500/40"
+            ? "border-slate-200 dark:border-zinc-800 bg-white dark:bg-transparent dark:bg-gradient-to-b dark:from-zinc-900/90 dark:to-zinc-950 hover:border-emerald-500/40"
+            : "border-rose-200 dark:border-rose-900/40 bg-white dark:bg-transparent dark:bg-gradient-to-b dark:from-rose-950/20 dark:to-zinc-950 hover:border-rose-500/40"
         }`}>
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">

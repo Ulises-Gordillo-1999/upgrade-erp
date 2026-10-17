@@ -21,7 +21,7 @@ export function CriticalStockAlert({ stockCritico }: Props) {
 
   if (!hasAlerts) {
     return (
-      <div className="rounded-xl border border-emerald-500/20 bg-emerald-50/70 dark:bg-gradient-to-r dark:from-emerald-950/20 dark:via-zinc-900/60 dark:to-zinc-950 p-5 backdrop-blur-sm shadow-sm transition-colors">
+      <div className="rounded-xl border border-emerald-500/20 bg-emerald-50/70 dark:bg-transparent dark:bg-gradient-to-r dark:from-emerald-950/20 dark:via-zinc-900/60 dark:to-zinc-950 p-5 backdrop-blur-sm shadow-sm transition-colors">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3.5">
             <div className="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 shrink-0">
@@ -55,7 +55,7 @@ export function CriticalStockAlert({ stockCritico }: Props) {
   }
 
   return (
-    <div className="rounded-xl border border-rose-500/30 bg-rose-50/60 dark:bg-gradient-to-b dark:from-rose-950/20 dark:via-zinc-900/90 dark:to-zinc-950 p-5 shadow-lg shadow-rose-950/10 backdrop-blur-sm space-y-4 transition-colors">
+    <div className="rounded-xl border border-rose-500/30 bg-rose-50/60 dark:bg-transparent dark:bg-gradient-to-b dark:from-rose-950/20 dark:via-zinc-900/90 dark:to-zinc-950 p-5 shadow-lg shadow-rose-950/10 backdrop-blur-sm space-y-4 transition-colors">
       {/* Header con alerta activa */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-rose-500/20">
         <div className="flex items-center gap-3">

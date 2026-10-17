@@ -59,7 +59,7 @@ export function ProjectCounter({ counts }: Props) {
         {/* 1. Borrador Bot */}
         <Link
           href="/proyectos"
-          className="relative overflow-hidden rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-gradient-to-b dark:from-zinc-900/80 dark:to-zinc-950/80 p-5 shadow-sm hover:border-violet-500/40 hover:shadow-md transition-all duration-300 group block"
+          className="relative overflow-hidden rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-transparent dark:bg-gradient-to-b dark:from-zinc-900/80 dark:to-zinc-950/80 p-5 shadow-sm hover:border-violet-500/40 hover:shadow-md transition-all duration-300 group block"
         >
           <div className="absolute top-0 right-0 w-28 h-28 bg-violet-500/5 rounded-full blur-2xl pointer-events-none group-hover:bg-violet-500/10 transition-colors" />
 
@@ -94,7 +94,7 @@ export function ProjectCounter({ counts }: Props) {
         {/* 2. En Ejecución */}
         <Link
           href="/proyectos"
-          className="relative overflow-hidden rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-gradient-to-b dark:from-zinc-900/80 dark:to-zinc-950/80 p-5 shadow-sm hover:border-cyan-500/40 hover:shadow-md transition-all duration-300 group block"
+          className="relative overflow-hidden rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-transparent dark:bg-gradient-to-b dark:from-zinc-900/80 dark:to-zinc-950/80 p-5 shadow-sm hover:border-cyan-500/40 hover:shadow-md transition-all duration-300 group block"
         >
           <div className="absolute top-0 right-0 w-28 h-28 bg-cyan-500/5 rounded-full blur-2xl pointer-events-none group-hover:bg-cyan-500/10 transition-colors" />
 
@@ -129,7 +129,7 @@ export function ProjectCounter({ counts }: Props) {
         {/* 3. Finalizados */}
         <Link
           href="/proyectos"
-          className="relative overflow-hidden rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-gradient-to-b dark:from-zinc-900/80 dark:to-zinc-950/80 p-5 shadow-sm hover:border-emerald-500/40 hover:shadow-md transition-all duration-300 group block"
+          className="relative overflow-hidden rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-transparent dark:bg-gradient-to-b dark:from-zinc-900/80 dark:to-zinc-950/80 p-5 shadow-sm hover:border-emerald-500/40 hover:shadow-md transition-all duration-300 group block"
         >
           <div className="absolute top-0 right-0 w-28 h-28 bg-emerald-500/5 rounded-full blur-2xl pointer-events-none group-hover:bg-emerald-500/10 transition-colors" />
 
