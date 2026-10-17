@@ -35,7 +35,7 @@ export function Sidebar({ user }: { user?: SessionUser | null }) {
   const isSuperAdmin = user?.rol === "SuperAdmin";
 
   return (
-    <div className="flex h-full w-64 flex-col border-r border-zinc-800 bg-zinc-950/50 backdrop-blur-md">
+    <div className="flex h-full w-64 flex-col border-r border-zinc-800 bg-zinc-950">
       <div className="flex h-16 items-center px-6 border-b border-zinc-800">
         <Link href="/" className="flex items-center gap-2 group">
           <h1 className="text-xl font-bold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500 group-hover:opacity-90 transition-opacity">

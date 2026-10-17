@@ -19,12 +19,12 @@ export default async function RootLayout({
   const session = await getSession();
 
   return (
-    <html lang="es" className="dark">
-      <body className={`${inter.variable} font-sans antialiased bg-background text-foreground h-screen flex overflow-hidden`}>
+    <html lang="es" className="dark" style={{ colorScheme: "dark" }}>
+      <body className={`${inter.variable} font-sans antialiased bg-zinc-950 text-zinc-100 h-screen flex overflow-hidden`}>
         {session ? (
           <>
             <Sidebar user={session} />
-            <main className="flex-1 overflow-y-auto bg-zinc-950/30">
+            <main className="flex-1 overflow-y-auto bg-zinc-950">
               <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 h-full">
                 {children}
               </div>
