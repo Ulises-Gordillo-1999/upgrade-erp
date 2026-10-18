@@ -99,8 +99,8 @@ export function InventarioTable({ inventario }: Props) {
   return (
     <div className="space-y-4">
       {/* Barra de Búsqueda y Filtros */}
-      <div className="p-3.5 rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 shadow-sm backdrop-blur-md space-y-3">
-        <div className="flex flex-col sm:row items-stretch sm:items-center justify-between gap-3">
+      <div className="p-3.5 rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 shadow-sm backdrop-blur-md space-y-3 transition-colors">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
           {/* Input de Búsqueda */}
           <div className="relative flex-1">
             <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-zinc-400 pointer-events-none" />
