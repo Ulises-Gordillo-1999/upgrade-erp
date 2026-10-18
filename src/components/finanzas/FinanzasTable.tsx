@@ -226,8 +226,111 @@ export function FinanzasTable({ transacciones }: Props) {
         </div>
       </div>
 
-      {/* Tabla de Resultados */}
-      <div className="rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 backdrop-blur-sm overflow-hidden shadow-sm transition-colors">
+      {/* 1. Vista Móvil: Tarjetas Financieras (< md) */}
+      <div className="md:hidden space-y-3">
+        {filteredTransacciones.length === 0 ? (
+          <div className="rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-8 text-center text-slate-400 dark:text-zinc-500">
+            <FilterX className="w-8 h-8 mx-auto mb-2 text-slate-300 dark:text-zinc-600 stroke-1" />
+            <p className="text-sm font-medium text-slate-600 dark:text-zinc-400">
+              {hasActiveFilters
+                ? "No se encontraron movimientos con los filtros aplicados."
+                : "No hay transacciones registradas."}
+            </p>
+            {hasActiveFilters && (
+              <button
+                type="button"
+                onClick={resetFilters}
+                className="mt-2 text-xs text-cyan-600 dark:text-cyan-400 hover:underline font-medium"
+              >
+                Limpiar filtros
+              </button>
+            )}
+          </div>
+        ) : (
+          filteredTransacciones.map((t) => (
+            <div
+              key={t.id}
+              className="rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-4 shadow-sm space-y-3 transition-colors"
+            >
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2 flex-wrap mb-1">
+                    <span className="bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 text-[10px] px-2 py-0.5 rounded-lg border border-slate-200 dark:border-zinc-700 font-medium">
+                      {t.categoria}
+                    </span>
+                    <span
+                      className={`text-[10px] px-2 py-0.5 rounded-full border font-semibold ${
+                        t.estado === "Pagado"
+                          ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-700 dark:text-emerald-400"
+                          : "bg-amber-500/10 border-amber-500/30 text-amber-700 dark:text-amber-400"
+                      }`}
+                    >
+                      {t.estado}
+                    </span>
+                  </div>
+
+                  <h4 className="text-sm font-semibold text-slate-900 dark:text-zinc-100 flex items-center">
+                    {t.tipo === "Ingreso" ? (
+                      <ArrowUpRight className="w-4 h-4 mr-1 text-emerald-500 shrink-0" />
+                    ) : (
+                      <ArrowDownRight className="w-4 h-4 mr-1 text-rose-500 shrink-0" />
+                    )}
+                    <span className="truncate">
+                      {t.descripcion || `Movimiento de ${t.tipo}`}
+                    </span>
+                  </h4>
+
+                  {t.proyecto_id && (
+                    <p className="text-xs text-cyan-600 dark:text-cyan-400 flex items-center mt-0.5 font-medium truncate">
+                      <FolderGit2 className="w-3 h-3 mr-1 shrink-0" />
+                      {t.proyectos?.clientes?.nombre_razon_social || "Proyecto"}
+                    </p>
+                  )}
+                </div>
+
+                <div className="flex items-center gap-1 shrink-0">
+                  <TransaccionFormModal transaccionInicial={t as any} isEdit={true} />
+                  <DeleteTransaccionButton
+                    id={t.id}
+                    descripcion={t.descripcion || `Movimiento de ${t.tipo}`}
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between pt-2.5 border-t border-slate-100 dark:border-zinc-800/80 text-xs">
+                <div className="text-slate-500 dark:text-zinc-400 text-[11px]">
+                  <p>
+                    {new Date(t.fecha_transaccion!).toLocaleDateString("es-AR")}
+                  </p>
+                  <p className="flex items-center gap-1 text-[10px] text-slate-400 dark:text-zinc-500 mt-0.5">
+                    <CreditCard className="w-3 h-3" />
+                    {t.metodo_pago}
+                  </p>
+                </div>
+
+                <div className="text-right">
+                  <span
+                    className={`font-bold font-mono text-sm ${
+                      t.tipo === "Ingreso"
+                        ? "text-emerald-600 dark:text-emerald-400"
+                        : "text-rose-600 dark:text-rose-400"
+                    }`}
+                  >
+                    {t.tipo === "Ingreso" ? "+" : "-"}
+                    {new Intl.NumberFormat("es-AR", {
+                      style: "currency",
+                      currency: t.moneda,
+                    }).format(t.monto)}
+                  </span>
+                </div>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+
+      {/* 2. Vista Desktop & Tablet: Tabla Completa (>= md) */}
+      <div className="hidden md:block rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 backdrop-blur-sm overflow-hidden shadow-sm transition-colors">
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left">
             <thead className="text-xs text-slate-500 dark:text-zinc-400 uppercase bg-slate-50/90 dark:bg-zinc-900/80 border-b border-slate-200 dark:border-zinc-800">

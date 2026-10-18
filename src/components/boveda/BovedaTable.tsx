@@ -193,8 +193,71 @@ export function BovedaTable({ bovedaItems }: Props) {
         </div>
       </div>
 
-      {/* Tabla de Bóveda */}
-      <div className="rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 backdrop-blur-sm overflow-hidden shadow-sm dark:shadow-xl">
+      {/* 1. Vista Móvil: Tarjetas de Bóveda (< md) */}
+      <div className="md:hidden space-y-3">
+        {filteredItems.length === 0 ? (
+          <div className="rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-8 text-center text-slate-400 dark:text-zinc-500">
+            <FilterX className="w-8 h-8 mx-auto mb-2 text-slate-400 dark:text-zinc-600 stroke-1" />
+            <p className="text-sm font-medium text-slate-600 dark:text-zinc-400">
+              {hasActiveFilters
+                ? "No se encontraron registros con los filtros aplicados."
+                : "No hay registros en la bóveda de seguridad."}
+            </p>
+            {hasActiveFilters && (
+              <button
+                type="button"
+                onClick={resetFilters}
+                className="mt-2 text-xs text-cyan-600 dark:text-cyan-400 hover:underline"
+              >
+                Limpiar filtros
+              </button>
+            )}
+          </div>
+        ) : (
+          filteredItems.map((item) => (
+            <div
+              key={item.id}
+              className="rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-4 shadow-sm space-y-3 transition-colors"
+            >
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                    <span className="inline-flex items-center gap-1.5 bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 text-[10px] px-2 py-0.5 rounded-lg border border-slate-200 dark:border-zinc-700 font-medium">
+                      {getTipoDatoIcon(item.tipo_dato as TipoDatoBoveda)}
+                      {item.tipo_dato.replace(/_/g, " ")}
+                    </span>
+                    <span className="text-[11px] text-slate-400 dark:text-zinc-500 font-mono">
+                      {new Date(item.created_at!).toLocaleDateString("es-AR")}
+                    </span>
+                  </div>
+
+                  <h4 className="text-sm font-semibold text-slate-900 dark:text-zinc-100">
+                    {item.proyectos?.clientes?.nombre_razon_social || "Desconocido"}
+                  </h4>
+                  <p className="text-xs text-slate-600 dark:text-zinc-400 mt-0.5">
+                    {item.descripcion}
+                  </p>
+                </div>
+              </div>
+
+              <div className="pt-2.5 border-t border-slate-100 dark:border-zinc-800/80 space-y-2">
+                <span className="text-[10px] text-slate-400 dark:text-zinc-500 uppercase font-medium block">
+                  Credencial / Clave Resguardada
+                </span>
+                <MaskedValue value={item.valor_desencriptado || ""} />
+                {item.archivo_url && (
+                  <div className="pt-1">
+                    <BovedaImageModal path={item.archivo_url} />
+                  </div>
+                )}
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+
+      {/* 2. Vista Desktop & Tablet: Tabla Completa (>= md) */}
+      <div className="hidden md:block rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 backdrop-blur-sm overflow-hidden shadow-sm dark:shadow-xl">
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left">
             <thead className="text-xs text-slate-500 dark:text-zinc-400 uppercase bg-slate-50 dark:bg-zinc-900/80 border-b border-slate-200 dark:border-zinc-800">
@@ -272,7 +335,7 @@ export function BovedaTable({ bovedaItems }: Props) {
                     </td>
                     <td className="px-6 py-4 text-slate-500 dark:text-zinc-500 text-xs text-right">
                       <div className="flex items-center justify-end">
-                        <Calendar className="w-3 h-3 mr-1.5 opacity-70" />
+                        <Calendar className="w-3.5 h-3.5 mr-1.5 opacity-70" />
                         {new Date(item.created_at!).toLocaleDateString("es-AR")}
                       </div>
                     </td>

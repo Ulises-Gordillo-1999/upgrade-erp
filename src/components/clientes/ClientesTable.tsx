@@ -149,8 +149,90 @@ export function ClientesTable({ clientes }: Props) {
         </div>
       </div>
 
-      {/* Tabla de Clientes */}
-      <div className="rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 backdrop-blur-sm overflow-hidden shadow-sm transition-colors">
+      {/* 1. Vista Móvil: Tarjetas de Clientes (< md) */}
+      <div className="md:hidden space-y-3">
+        {filteredClientes.length === 0 ? (
+          <div className="rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-8 text-center text-slate-400 dark:text-zinc-500">
+            <FilterX className="w-8 h-8 mx-auto mb-2 text-slate-300 dark:text-zinc-600 stroke-1" />
+            <p className="text-sm font-medium text-slate-600 dark:text-zinc-400">
+              {hasActiveFilters
+                ? "No se encontraron clientes con los filtros aplicados."
+                : "No hay clientes registrados."}
+            </p>
+            {hasActiveFilters && (
+              <button
+                type="button"
+                onClick={resetFilters}
+                className="mt-2 text-xs text-cyan-600 dark:text-cyan-400 hover:underline font-medium"
+              >
+                Limpiar filtros
+              </button>
+            )}
+          </div>
+        ) : (
+          filteredClientes.map((cliente) => (
+            <div
+              key={cliente.id}
+              className="rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-4 shadow-sm space-y-3 transition-colors"
+            >
+              <div className="flex items-start justify-between gap-2">
+                <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                  <div className="h-9 w-9 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-600 dark:text-cyan-400 shrink-0">
+                    <Building2 className="w-4 h-4" />
+                  </div>
+                  <div className="min-w-0">
+                    <h4 className="text-sm font-semibold text-slate-900 dark:text-zinc-100 truncate">
+                      {cliente.nombre_razon_social}
+                    </h4>
+                    {cliente.cuit_cuil && (
+                      <p className="text-xs font-mono text-slate-500 dark:text-zinc-400">
+                        CUIT: {cliente.cuit_cuil}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-1 shrink-0">
+                  <ClienteFormModal clienteInicial={cliente as any} isEdit={true} />
+                  <DeleteClienteButton
+                    id={cliente.id}
+                    nombreCliente={cliente.nombre_razon_social}
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2.5 border-t border-slate-100 dark:border-zinc-800/80 text-xs">
+                {cliente.telefono && (
+                  <div className="flex items-center text-slate-600 dark:text-zinc-300">
+                    <Phone className="w-3.5 h-3.5 mr-2 text-slate-400 dark:text-zinc-500 shrink-0" />
+                    <a
+                      href={`tel:${cliente.telefono}`}
+                      className="hover:text-cyan-600 dark:hover:text-cyan-400 font-mono transition-colors"
+                    >
+                      {cliente.telefono}
+                    </a>
+                  </div>
+                )}
+
+                <div className="flex items-center text-slate-600 dark:text-zinc-300">
+                  <ReceiptText className="w-3.5 h-3.5 mr-2 text-slate-400 dark:text-zinc-500 shrink-0" />
+                  <span>{cliente.condicion_iva || "Sin condición IVA"}</span>
+                </div>
+
+                {cliente.direccion && (
+                  <div className="flex items-start sm:col-span-2 text-slate-500 dark:text-zinc-400">
+                    <MapPin className="w-3.5 h-3.5 mr-2 mt-0.5 text-slate-400 dark:text-zinc-500 shrink-0" />
+                    <span className="truncate">{cliente.direccion}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+
+      {/* 2. Vista Desktop & Tablet: Tabla Completa (>= md) */}
+      <div className="hidden md:block rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 backdrop-blur-sm overflow-hidden shadow-sm transition-colors">
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left">
             <thead className="text-xs text-slate-500 dark:text-zinc-400 uppercase bg-slate-50/90 dark:bg-zinc-900/80 border-b border-slate-200 dark:border-zinc-800">

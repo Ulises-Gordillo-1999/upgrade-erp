@@ -76,7 +76,7 @@ export default async function ProyectoDetallePage({
           <ArrowLeft className="w-4 h-4 mr-2" />
           Volver a Proyectos
         </Link>
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2 flex-wrap">
           <ExportarPDFButton proyecto={proyecto} items={items} />
           <CerrarObraModal
             proyectoId={id}
@@ -103,15 +103,15 @@ export default async function ProyectoDetallePage({
       </div>
 
       {/* Header Project Info */}
-      <div className="rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white/70 dark:bg-zinc-900/50 backdrop-blur-md p-6 shadow-sm">
+      <div className="rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white/70 dark:bg-zinc-900/50 backdrop-blur-md p-5 sm:p-6 shadow-sm">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="flex items-center">
-            <div className="h-12 w-12 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center mr-4 text-cyan-600 dark:text-cyan-400">
+          <div className="flex items-start sm:items-center">
+            <div className="h-12 w-12 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center mr-3.5 sm:mr-4 text-cyan-600 dark:text-cyan-400 shrink-0">
               <FolderGit2 className="h-6 w-6" />
             </div>
             <div>
-              <div className="flex items-center gap-2.5">
-                <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
+                <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2 flex-wrap">
                   {proyecto.clientes?.nombre_razon_social}
                   <EditarProyectoModal
                     proyecto={proyecto as any}
@@ -125,7 +125,7 @@ export default async function ProyectoDetallePage({
                   </span>
                 )}
               </div>
-              <div className="flex items-center text-xs text-slate-500 dark:text-zinc-400 mt-1 space-x-4">
+              <div className="flex items-center text-xs text-slate-500 dark:text-zinc-400 mt-1 space-x-3 sm:space-x-4 flex-wrap gap-y-1">
                 <span className="flex items-center">
                   <Calendar className="w-3.5 h-3.5 mr-1.5 opacity-70" />
                   {new Date(proyecto.created_at!).toLocaleDateString("es-AR")}
@@ -140,7 +140,7 @@ export default async function ProyectoDetallePage({
 
           <form
             action={handleUpdateEstado}
-            className="flex items-center space-x-2 bg-slate-100 dark:bg-zinc-950 p-2 rounded-xl border border-slate-200 dark:border-zinc-800"
+            className="flex items-center space-x-2 bg-slate-100 dark:bg-zinc-950 p-2 rounded-xl border border-slate-200 dark:border-zinc-800 self-start sm:self-auto"
           >
             <label className="text-xs font-medium text-slate-600 dark:text-zinc-400 pl-2 flex items-center gap-1">
               <Clock className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-500" />
@@ -412,10 +412,10 @@ export default async function ProyectoDetallePage({
 
       {/* Credenciales y Accesos (Bóveda Segura) */}
       <div className="space-y-4 pt-6 mt-6 border-t border-slate-200 dark:border-zinc-800/60">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center">
-              <ShieldAlert className="w-5 h-5 mr-2 text-rose-500" />
+              <ShieldAlert className="w-5 h-5 mr-2 text-rose-500 shrink-0" />
               Credenciales y Accesos (Bóveda Segura)
             </h3>
             <p className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">

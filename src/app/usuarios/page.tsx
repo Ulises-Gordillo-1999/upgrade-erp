@@ -32,10 +32,10 @@ export default async function UsuariosPage() {
       {/* Header y Botón Nuevo */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-3">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-3">
             Equipo & Usuarios
           </h1>
-          <p className="text-slate-500 dark:text-zinc-400 mt-2 text-sm">
+          <p className="text-slate-500 dark:text-zinc-400 mt-1 text-xs sm:text-sm">
             Control de roles (RBAC), altas de técnicos y administración de credenciales de acceso.
           </p>
         </div>

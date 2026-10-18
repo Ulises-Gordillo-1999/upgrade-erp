@@ -55,7 +55,7 @@ export function ProjectCounter({ counts }: Props) {
       </div>
 
       {/* Grid de los 3 contadores clave solicitados */}
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid gap-3.5 sm:gap-4 grid-cols-1 md:grid-cols-3">
         {/* 1. Borrador Bot */}
         <Link
           href="/proyectos"
@@ -163,7 +163,7 @@ export function ProjectCounter({ counts }: Props) {
       </div>
 
       {/* Fila secundaria informativa */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3 text-xs">
         <div className="rounded-xl border border-slate-200 dark:border-zinc-800/70 bg-white dark:bg-zinc-900/40 p-2.5 flex items-center justify-between shadow-sm transition-colors">
           <span className="text-slate-600 dark:text-zinc-400">Pendientes Aprobación:</span>
           <span className="font-mono font-semibold text-amber-700 dark:text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">

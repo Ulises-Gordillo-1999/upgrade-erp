@@ -58,6 +58,7 @@ export function ItemCantidadRealInput({
       <div className="flex items-center gap-1.5">
         <input
           type="number"
+          inputMode="decimal"
           step="0.1"
           min="0"
           value={val}

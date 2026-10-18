@@ -79,8 +79,8 @@ export function AddItemModal({ proyectoId, inventarioDisponible }: Props) {
       </button>
 
       {isOpen && mounted && createPortal(
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 dark:bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
-          <div className="relative w-full max-w-xl rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/95 p-6 sm:p-7 shadow-2xl backdrop-blur-xl space-y-6 animate-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 dark:bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
+          <div className="relative w-full max-w-xl rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/95 p-5 sm:p-7 shadow-2xl backdrop-blur-xl space-y-6 animate-in zoom-in-95 duration-200 max-h-[90dvh] overflow-y-auto">
             {/* Header */}
             <div className="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-zinc-800">
               <div className="flex items-center gap-3">
@@ -148,6 +148,7 @@ export function AddItemModal({ proyectoId, inventarioDisponible }: Props) {
                 </label>
                 <input
                   type="number"
+                  inputMode="decimal"
                   name="cantidad_estimada"
                   required
                   min="0.1"
@@ -169,7 +170,7 @@ export function AddItemModal({ proyectoId, inventarioDisponible }: Props) {
               )}
 
               {/* Botones */}
-              <div className="pt-3 flex justify-end gap-3 border-t border-slate-200 dark:border-zinc-800">
+              <div className="pt-3 flex flex-col-reverse sm:flex-row sm:justify-end gap-3 border-t border-slate-200 dark:border-zinc-800">
                 <button
                   type="button"
                   onClick={closeModal}

@@ -80,7 +80,7 @@ export function FinancialCardsARS({ data }: Props) {
       </div>
 
       {/* Grid de las 3 tarjetas principales */}
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid gap-3.5 sm:gap-4 grid-cols-1 md:grid-cols-3">
         {/* Card 1: Ingresos ARS */}
         <div className="relative overflow-hidden rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-transparent dark:bg-gradient-to-b dark:from-zinc-900/80 dark:to-zinc-950/80 p-5 shadow-sm hover:border-emerald-500/40 transition-all duration-300 group">
           <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-2xl pointer-events-none group-hover:bg-emerald-500/10 transition-colors" />

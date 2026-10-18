@@ -183,8 +183,110 @@ export function InventarioTable({ inventario }: Props) {
         </div>
       </div>
 
-      {/* Tabla de Inventario */}
-      <div className="rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 backdrop-blur-sm overflow-hidden shadow-sm dark:shadow-xl">
+      {/* 1. Vista Móvil: Tarjetas Táctiles (< md) */}
+      <div className="md:hidden space-y-3">
+        {filteredInventario.length === 0 ? (
+          <div className="rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-8 text-center text-slate-400 dark:text-zinc-500">
+            <FilterX className="w-8 h-8 mx-auto mb-2 text-slate-400 dark:text-zinc-600 stroke-1" />
+            <p className="text-sm font-medium text-slate-600 dark:text-zinc-400">
+              {hasActiveFilters
+                ? "No se encontraron ítems con los filtros aplicados."
+                : "El inventario está vacío."}
+            </p>
+            {hasActiveFilters && (
+              <button
+                type="button"
+                onClick={resetFilters}
+                className="mt-2 text-xs text-cyan-600 dark:text-cyan-400 hover:underline"
+              >
+                Limpiar filtros
+              </button>
+            )}
+          </div>
+        ) : (
+          filteredInventario.map((item) => {
+            const isLowStock =
+              item.tipo !== "Servicio" &&
+              (item.stock_actual ?? 0) <= (item.stock_minimo ?? 0);
+
+            return (
+              <div
+                key={item.id}
+                className="rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-4 shadow-sm space-y-3 transition-colors"
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0 flex-1">
+                    <h4 className="text-sm font-semibold text-slate-900 dark:text-zinc-100 leading-snug">
+                      {item.nombre}
+                    </h4>
+                    <div className="flex items-center gap-2 mt-1 flex-wrap">
+                      <span
+                        className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold border uppercase tracking-wider ${getBadgeStyles(
+                          item.tipo
+                        )}`}
+                      >
+                        {item.tipo}
+                      </span>
+                      {item.sku && (
+                        <span className="text-[11px] font-mono text-slate-500 dark:text-zinc-400">
+                          #{item.sku}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-1 shrink-0">
+                    <InventarioFormModal itemInicial={item as any} isEdit={true} />
+                    <DeleteInventarioButton id={item.id} nombreItem={item.nombre} />
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between pt-2.5 border-t border-slate-100 dark:border-zinc-800/80 text-xs">
+                  <div>
+                    <span className="text-[10px] text-slate-400 dark:text-zinc-500 uppercase font-medium block">
+                      Precio Unitario
+                    </span>
+                    <span className="font-semibold text-slate-800 dark:text-zinc-200">
+                      {new Intl.NumberFormat("es-AR", {
+                        style: "currency",
+                        currency: "ARS",
+                      }).format(item.precio_unitario)}
+                    </span>
+                  </div>
+
+                  <div className="text-right">
+                    <span className="text-[10px] text-slate-400 dark:text-zinc-500 uppercase font-medium block">
+                      Stock
+                    </span>
+                    {item.tipo === "Servicio" ? (
+                      <span className="text-slate-400 dark:text-zinc-500">N/A</span>
+                    ) : (
+                      <span
+                        className={`font-semibold inline-flex items-center gap-1 ${
+                          isLowStock
+                            ? "text-amber-600 dark:text-amber-400"
+                            : "text-slate-800 dark:text-zinc-200"
+                        }`}
+                      >
+                        {isLowStock && <AlertTriangle className="w-3.5 h-3.5 text-amber-500" />}
+                        {item.stock_actual || 0} u.
+                        {item.stock_minimo ? (
+                          <span className="text-[10px] text-slate-400 dark:text-zinc-500 font-normal">
+                            (mín: {item.stock_minimo})
+                          </span>
+                        ) : null}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            );
+          })
+        )}
+      </div>
+
+      {/* 2. Vista Desktop & Tablet: Tabla Completa (>= md) */}
+      <div className="hidden md:block rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 backdrop-blur-sm overflow-hidden shadow-sm dark:shadow-xl">
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left">
             <thead className="text-xs text-slate-500 dark:text-zinc-400 uppercase bg-slate-50 dark:bg-zinc-900/80 border-b border-slate-200 dark:border-zinc-800">
