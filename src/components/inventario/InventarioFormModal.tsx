@@ -52,6 +52,7 @@ export function InventarioFormModal({
   const [showNewCatInput, setShowNewCatInput] = useState(false);
   const [newCatName, setNewCatName] = useState("");
   const [creatingCat, setCreatingCat] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -68,6 +69,7 @@ export function InventarioFormModal({
     setSelectedCategoria(itemInicial?.categoria || "");
     setShowNewCatInput(false);
     setNewCatName("");
+    setErrorMsg(null);
     setIsOpen(true);
   };
   const closeModal = () => setIsOpen(false);
@@ -83,6 +85,7 @@ export function InventarioFormModal({
   async function handleCreateNewCategory() {
     if (!newCatName.trim()) return;
     setCreatingCat(true);
+    setErrorMsg(null);
     try {
       const tipoAsociado = tipoItem === "Servicio" ? "Servicio" : "Producto";
       const created = await createCategoria({
@@ -94,7 +97,7 @@ export function InventarioFormModal({
       setNewCatName("");
       setShowNewCatInput(false);
     } catch (err: any) {
-      alert(err.message || "Error al crear la categoría");
+      setErrorMsg(err.message || "Error al crear la categoría");
     } finally {
       setCreatingCat(false);
     }
@@ -103,6 +106,7 @@ export function InventarioFormModal({
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
+    setErrorMsg(null);
 
     const formData = new FormData(e.currentTarget);
 
@@ -135,9 +139,9 @@ export function InventarioFormModal({
 
       closeModal();
       router.refresh();
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      alert("Ocurrió un error al guardar el ítem.");
+      setErrorMsg(error.message || "Ocurrió un error al guardar el ítem.");
     } finally {
       setLoading(false);
     }
@@ -190,6 +194,13 @@ export function InventarioFormModal({
                 <X className="w-5 h-5" />
               </button>
             </div>
+
+            {errorMsg && (
+              <div className="p-3 bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 text-xs rounded-xl flex items-center gap-2">
+                <ShieldAlert className="w-4 h-4 shrink-0" />
+                <span>{errorMsg}</span>
+              </div>
+            )}
 
             {/* Form */}
             <form onSubmit={handleSubmit} className="space-y-4">
