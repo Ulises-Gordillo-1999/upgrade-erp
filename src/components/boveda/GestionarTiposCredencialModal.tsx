@@ -131,20 +131,21 @@ export function GestionarTiposCredencialModal({
     });
   };
 
-  const handleDelete = async (t: TipoCredencialBoveda) => {
-    const confirmDelete = window.confirm(
-      `¿Estás seguro de que deseas eliminar el tipo de credencial "${t.nombre}"?\n\nLas credenciales existentes que tengan este tipo se reclasificarán automáticamente como "Otro dato sensible".`
-    );
-    if (!confirmDelete) return;
+  // Estado eliminación con confirmación moderna
+  const [itemToDelete, setItemToDelete] = useState<TipoCredencialBoveda | null>(null);
 
+  const handleConfirmDelete = async () => {
+    if (!itemToDelete) return;
     setError(null);
     startTransition(async () => {
       try {
-        await deleteTipoCredencial(t.id);
-        if (editingId === t.id) setEditingId(null);
+        await deleteTipoCredencial(itemToDelete.id);
+        if (editingId === itemToDelete.id) setEditingId(null);
+        setItemToDelete(null);
         router.refresh();
       } catch (err: any) {
         setError(err.message || "Error al eliminar tipo de credencial");
+        setItemToDelete(null);
       }
     });
   };
@@ -317,7 +318,7 @@ export function GestionarTiposCredencialModal({
                               </button>
                               <button
                                 type="button"
-                                onClick={() => handleDelete(t)}
+                                onClick={() => setItemToDelete(t)}
                                 disabled={isPending}
                                 className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors"
                                 title="Eliminar tipo"
@@ -342,6 +343,64 @@ export function GestionarTiposCredencialModal({
                   className="px-3.5 py-1.5 rounded-xl border border-slate-200 dark:border-zinc-700 font-medium hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors text-slate-700 dark:text-zinc-200"
                 >
                   Cerrar
+                </button>
+              </div>
+            </div>
+          </div>,
+          document.body
+        )}
+
+      {/* Modal de Confirmación Moderno */}
+      {itemToDelete &&
+        typeof document !== "undefined" &&
+        createPortal(
+          <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/75 backdrop-blur-md animate-in fade-in duration-150">
+            <div
+              className="relative w-full max-w-md bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl p-5 sm:p-6 shadow-2xl animate-in zoom-in-95 duration-150 space-y-4"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-start gap-3.5">
+                <div className="p-3 rounded-2xl bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20 shrink-0">
+                  <Trash2 className="w-6 h-6" />
+                </div>
+                <div className="space-y-1">
+                  <h4 className="text-base font-bold text-slate-900 dark:text-white">
+                    ¿Eliminar tipo de credencial?
+                  </h4>
+                  <p className="text-xs text-slate-500 dark:text-zinc-400 leading-relaxed">
+                    Estás a punto de eliminar el tipo{" "}
+                    <span className="font-semibold text-slate-800 dark:text-zinc-200">
+                      &quot;{itemToDelete.nombre}&quot;
+                    </span>
+                    .
+                  </p>
+                  <p className="text-[11px] text-amber-700 dark:text-amber-400 bg-amber-500/10 border border-amber-500/20 p-2.5 rounded-xl mt-2 leading-relaxed">
+                    ⚠️ Las credenciales existentes que tengan este tipo se reclasificarán automáticamente como <strong>&quot;Otro dato sensible&quot;</strong> sin pérdida de información.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-end gap-2.5 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setItemToDelete(null)}
+                  disabled={isPending}
+                  className="px-4 py-2 rounded-xl border border-slate-200 dark:border-zinc-700 text-xs sm:text-sm font-semibold hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-700 dark:text-zinc-300 transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="button"
+                  onClick={handleConfirmDelete}
+                  disabled={isPending}
+                  className="px-4 py-2 rounded-xl bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white text-xs sm:text-sm font-semibold shadow-lg shadow-rose-950/30 transition-all flex items-center gap-1.5 disabled:opacity-50"
+                >
+                  {isPending ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Trash2 className="w-4 h-4" />
+                  )}
+                  <span>Eliminar definitivamente</span>
                 </button>
               </div>
             </div>
