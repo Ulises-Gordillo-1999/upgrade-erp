@@ -1,6 +1,6 @@
 "use server";
 
-import { db } from "@/db";
+import { db, conn, ensureDatabaseSchema } from "@/db";
 import { inventario, categoriasInventario } from "@/db/schema";
 import { desc, asc, eq } from "drizzle-orm";
 import { Inventario, CategoriaInventario } from "@/types/database";
@@ -29,6 +29,7 @@ const DEFAULT_CATEGORIAS: Array<{ nombre: string; tipo_asociado: "Producto" | "S
 
 export async function getCategorias(): Promise<CategoriaInventario[]> {
   try {
+    await ensureDatabaseSchema();
     let rows = await db
       .select()
       .from(categoriasInventario)
@@ -50,7 +51,7 @@ export async function getCategorias(): Promise<CategoriaInventario[]> {
       created_at: cat.created_at ? cat.created_at.toISOString() : undefined,
     }));
   } catch (error: any) {
-    console.error("Error al obtener categorías:", error);
+    console.warn("Aviso al obtener categorías (fallback activo):", error);
     return [];
   }
 }
@@ -60,6 +61,7 @@ export async function createCategoria(data: {
   tipo_asociado?: "Producto" | "Servicio" | "Ambos";
 }) {
   try {
+    await ensureDatabaseSchema();
     const nombreLimpio = data.nombre.trim();
     if (!nombreLimpio) throw new Error("El nombre de la categoría no puede estar vacío");
 
@@ -88,6 +90,7 @@ export async function createCategoria(data: {
 
 export async function deleteCategoria(id: string) {
   try {
+    await ensureDatabaseSchema();
     await db.delete(categoriasInventario).where(eq(categoriasInventario.id, id));
     revalidatePath("/inventario");
     revalidatePath("/proyectos");
@@ -98,8 +101,9 @@ export async function deleteCategoria(id: string) {
   }
 }
 
-export async function getInventario() {
+export async function getInventario(): Promise<Inventario[]> {
   try {
+    await ensureDatabaseSchema();
     const data = await db
       .select()
       .from(inventario)
@@ -112,8 +116,30 @@ export async function getInventario() {
       created_at: item.created_at ? item.created_at.toISOString() : undefined,
     })) as Inventario[];
   } catch (error: any) {
-    console.error("Error al obtener inventario:", error);
-    throw new Error(error.message || "Error al obtener inventario");
+    console.warn("Aviso al obtener inventario con esquema completo, aplicando fallback:", error);
+    try {
+      // Fallback seguro en caso de que la columna 'categoria' aún no exista en PostgreSQL
+      const fallbackData = await conn`
+        SELECT id, sku, nombre, tipo, precio_unitario, stock_actual, stock_minimo, created_at
+        FROM inventario
+        ORDER BY created_at DESC
+      `;
+
+      return fallbackData.map((item: any) => ({
+        id: item.id,
+        sku: item.sku,
+        nombre: item.nombre,
+        tipo: item.tipo,
+        categoria: null,
+        precio_unitario: Number(item.precio_unitario),
+        stock_actual: item.stock_actual,
+        stock_minimo: item.stock_minimo,
+        created_at: item.created_at ? new Date(item.created_at).toISOString() : undefined,
+      })) as Inventario[];
+    } catch (fallbackError) {
+      console.error("Error crítico en fallback de inventario:", fallbackError);
+      return [];
+    }
   }
 }
 

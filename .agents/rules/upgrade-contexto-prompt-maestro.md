@@ -102,12 +102,21 @@ CREATE TABLE clientes (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- Tabla de Categorías de Inventario
+CREATE TABLE categorias_inventario (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    nombre TEXT NOT NULL UNIQUE,
+    tipo_asociado TEXT NOT NULL DEFAULT 'Producto',
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
 -- Tabla de Inventario / Catálogo IT
 CREATE TABLE inventario (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     sku TEXT UNIQUE,
     nombre TEXT NOT NULL,
     tipo tipo_item_enum NOT NULL,
+    categoria TEXT,
     precio_unitario NUMERIC(10,2) NOT NULL DEFAULT 0.00,
     stock_actual INT DEFAULT 0,
     stock_minimo INT DEFAULT 0,
