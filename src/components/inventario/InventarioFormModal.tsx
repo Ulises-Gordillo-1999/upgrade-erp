@@ -16,12 +16,14 @@ import {
   Info,
   FolderTree,
   Check,
+  Settings,
 } from "lucide-react";
 import {
   createItemInventario,
   updateItemInventario,
   createCategoria,
 } from "@/app/actions/inventario";
+import { GestionarCategoriasModal } from "./GestionarCategoriasModal";
 import { TipoItem, Inventario, CategoriaInventario } from "@/types/database";
 import { useRouter } from "next/navigation";
 
@@ -250,14 +252,25 @@ export function InventarioFormModal({
                       : "Subcategoría de Producto"}
                   </label>
                   {!showNewCatInput && (
-                    <button
-                      type="button"
-                      onClick={() => setShowNewCatInput(true)}
-                      className="text-xs text-cyan-600 dark:text-cyan-400 hover:underline flex items-center gap-1 font-medium"
-                    >
-                      <Plus className="w-3 h-3" />
-                      Nueva Categoría
-                    </button>
+                    <div className="flex items-center gap-3">
+                      <GestionarCategoriasModal
+                        categorias={categorias}
+                        triggerButton={
+                          <span className="text-xs text-slate-500 hover:text-slate-800 dark:text-zinc-400 dark:hover:text-zinc-200 flex items-center gap-1 font-medium cursor-pointer">
+                            <Settings className="w-3 h-3 text-slate-400" />
+                            Gestionar
+                          </span>
+                        }
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowNewCatInput(true)}
+                        className="text-xs text-cyan-600 dark:text-cyan-400 hover:underline flex items-center gap-1 font-medium"
+                      >
+                        <Plus className="w-3 h-3" />
+                        Nueva
+                      </button>
+                    </div>
                   )}
                 </div>
 

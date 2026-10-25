@@ -25,13 +25,23 @@ export async function ensureDatabaseSchema() {
 
   try {
     await conn.unsafe(`
+      CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
       CREATE TABLE IF NOT EXISTS categorias_inventario (
-        id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         nombre TEXT NOT NULL UNIQUE,
         tipo_asociado TEXT NOT NULL DEFAULT 'Producto',
         created_at TIMESTAMPTZ DEFAULT NOW()
       );
       ALTER TABLE inventario ADD COLUMN IF NOT EXISTS categoria TEXT;
+
+      ALTER TABLE boveda_seguridad ALTER COLUMN tipo_dato TYPE TEXT;
+
+      CREATE TABLE IF NOT EXISTS tipos_credencial_boveda (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        nombre TEXT NOT NULL UNIQUE,
+        created_at TIMESTAMPTZ DEFAULT NOW()
+      );
     `);
     globalForDb.schemaChecked = true;
   } catch (err) {

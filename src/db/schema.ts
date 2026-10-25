@@ -131,10 +131,16 @@ export const itemsProyecto = pgTable("items_proyecto", {
   created_at: timestamp("created_at", { withTimezone: true }).defaultNow(),
 });
 
+export const tiposCredencialBoveda = pgTable("tipos_credencial_boveda", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  nombre: text("nombre").notNull().unique(),
+  created_at: timestamp("created_at", { withTimezone: true }).defaultNow(),
+});
+
 export const bovedaSeguridad = pgTable("boveda_seguridad", {
   id: uuid("id").primaryKey().defaultRandom(),
   proyecto_id: uuid("proyecto_id").references(() => proyectos.id, { onDelete: "cascade" }).notNull(),
-  tipo_dato: tipoDatoBovedaEnum("tipo_dato").notNull(),
+  tipo_dato: text("tipo_dato").notNull(),
   descripcion: text("descripcion").notNull(),
   valor_encriptado: text("valor_encriptado"),
   archivo_url: text("archivo_url"),

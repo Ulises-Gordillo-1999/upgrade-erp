@@ -146,11 +146,18 @@ CREATE TABLE items_proyecto (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- Tabla de Tipos de Credencial de Bóveda
+CREATE TABLE tipos_credencial_boveda (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    nombre TEXT NOT NULL UNIQUE,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
 -- Tabla de Bóveda de Seguridad
 CREATE TABLE boveda_seguridad (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     proyecto_id UUID NOT NULL REFERENCES proyectos(id) ON DELETE CASCADE,
-    tipo_dato tipo_dato_boveda_enum NOT NULL,
+    tipo_dato TEXT NOT NULL,
     descripcion TEXT NOT NULL,
     valor_encriptado TEXT,
     archivo_url TEXT,

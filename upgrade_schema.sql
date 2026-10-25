@@ -86,11 +86,18 @@ CREATE TABLE IF NOT EXISTS items_proyecto (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 8. Tabla de Bóveda de Seguridad (Cifrado AES-256)
+-- 8. Tabla de Tipos de Credencial de Bóveda
+CREATE TABLE IF NOT EXISTS tipos_credencial_boveda (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    nombre TEXT NOT NULL UNIQUE,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- 9. Tabla de Bóveda de Seguridad (Cifrado AES-256)
 CREATE TABLE IF NOT EXISTS boveda_seguridad (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     proyecto_id UUID NOT NULL REFERENCES proyectos(id) ON DELETE CASCADE,
-    tipo_dato tipo_dato_boveda_enum NOT NULL,
+    tipo_dato TEXT NOT NULL,
     descripcion TEXT NOT NULL,
     valor_encriptado TEXT,
     archivo_url TEXT,

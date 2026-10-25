@@ -25,12 +25,12 @@ import {
   Table as TableIcon,
   ShieldCheck,
 } from "lucide-react";
-import { TipoDatoBoveda } from "@/types/database";
+import { TipoDatoBoveda, TipoCredencialBoveda } from "@/types/database";
 
 interface BovedaItem {
   id: string;
   proyecto_id?: string | null;
-  tipo_dato: TipoDatoBoveda;
+  tipo_dato: string;
   descripcion: string;
   valor_encriptado?: string | null;
   valor_desencriptado?: string | null;
@@ -60,21 +60,24 @@ interface BovedaItem {
 
 interface Props {
   bovedaItems: BovedaItem[];
+  tiposCredencial?: TipoCredencialBoveda[];
 }
 
-const getTipoDatoIcon = (tipo: TipoDatoBoveda) => {
-  switch (tipo) {
-    case "Password":
-      return <Key className="w-4 h-4 text-amber-500 dark:text-amber-400" />;
-    case "IP_Publica":
-      return <Network className="w-4 h-4 text-blue-500 dark:text-blue-400" />;
-    case "AnyDesk_ID":
-      return <MonitorSmartphone className="w-4 h-4 text-emerald-500 dark:text-emerald-400" />;
-    case "Config_Router":
-      return <Router className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />;
-    default:
-      return <ShieldAlert className="w-4 h-4 text-slate-400 dark:text-zinc-400" />;
+const getTipoDatoIcon = (tipo: string) => {
+  const t = (tipo || "").toLowerCase();
+  if (t.includes("pass") || t.includes("clave") || t.includes("token") || t.includes("contraseña")) {
+    return <Key className="w-4 h-4 text-amber-500 dark:text-amber-400" />;
   }
+  if (t.includes("ip") || t.includes("subred") || t.includes("red") || t.includes("vlan") || t.includes("vpn")) {
+    return <Network className="w-4 h-4 text-blue-500 dark:text-blue-400" />;
+  }
+  if (t.includes("anydesk") || t.includes("rustdesk") || t.includes("teamviewer") || t.includes("remoto") || t.includes("vnc")) {
+    return <MonitorSmartphone className="w-4 h-4 text-emerald-500 dark:text-emerald-400" />;
+  }
+  if (t.includes("router") || t.includes("switch") || t.includes("mikrotik") || t.includes("firewall") || t.includes("ap")) {
+    return <Router className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />;
+  }
+  return <ShieldAlert className="w-4 h-4 text-slate-400 dark:text-zinc-400" />;
 };
 
 const getEstadoBadge = (estado?: string | null) => {
@@ -107,7 +110,7 @@ const getEstadoBadge = (estado?: string | null) => {
   }
 };
 
-export function BovedaTable({ bovedaItems }: Props) {
+export function BovedaTable({ bovedaItems, tiposCredencial }: Props) {
   const [searchTerm, setSearchTerm] = useState("");
   const [tipoDatoFiltro, setTipoDatoFiltro] = useState<string>("todos");
   const [adjuntoFiltro, setAdjuntoFiltro] = useState<string>("todos");
@@ -182,8 +185,19 @@ export function BovedaTable({ bovedaItems }: Props) {
       }
 
       // 3. Filtro Tipo de Dato
-      if (tipoDatoFiltro !== "todos" && item.tipo_dato !== tipoDatoFiltro) {
-        return false;
+      if (tipoDatoFiltro !== "todos") {
+        const itemTipo = item.tipo_dato;
+        const legacyMatch: Record<string, string> = {
+          Password: "Contraseña / Token",
+          IP_Publica: "IP Pública / Subred",
+          AnyDesk_ID: "ID AnyDesk / RustDesk / TeamViewer",
+          Config_Router: "Configuración de Router / Switch",
+          Otro: "Otro dato sensible",
+        };
+        const normalized = legacyMatch[itemTipo] || itemTipo;
+        if (itemTipo !== tipoDatoFiltro && normalized !== tipoDatoFiltro) {
+          return false;
+        }
       }
 
       // 4. Filtro Adjunto
@@ -317,11 +331,21 @@ export function BovedaTable({ bovedaItems }: Props) {
               className="bg-slate-50 dark:bg-zinc-950/80 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-xs text-slate-700 dark:text-zinc-300 focus:outline-none focus:border-cyan-500 transition-colors cursor-pointer"
             >
               <option value="todos">Todos los Tipos</option>
-              <option value="Password">Contraseña / Password</option>
-              <option value="IP_Publica">IP Pública</option>
-              <option value="AnyDesk_ID">AnyDesk ID</option>
-              <option value="Config_Router">Configuración Router</option>
-              <option value="Otro">Otro</option>
+              {tiposCredencial && tiposCredencial.length > 0 ? (
+                tiposCredencial.map((t) => (
+                  <option key={t.id} value={t.nombre}>
+                    {t.nombre}
+                  </option>
+                ))
+              ) : (
+                <>
+                  <option value="Contraseña / Token">Contraseña / Token</option>
+                  <option value="IP Pública / Subred">IP Pública / Subred</option>
+                  <option value="ID AnyDesk / RustDesk / TeamViewer">ID AnyDesk / Remoto</option>
+                  <option value="Configuración de Router / Switch">Configuración Router</option>
+                  <option value="Otro dato sensible">Otro dato sensible</option>
+                </>
+              )}
             </select>
 
             {/* Adjunto */}

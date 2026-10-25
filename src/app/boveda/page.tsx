@@ -1,9 +1,13 @@
-import { getBovedaData } from "@/app/actions/boveda";
+import { getBovedaData, getTiposCredencial } from "@/app/actions/boveda";
 import { BovedaTable } from "@/components/boveda/BovedaTable";
+import { GestionarTiposCredencialModal } from "@/components/boveda/GestionarTiposCredencialModal";
 import { ShieldAlert } from "lucide-react";
 
 export default async function BovedaGlobalPage() {
-  const bovedaItems = await getBovedaData();
+  const [bovedaItems, tiposCredencial] = await Promise.all([
+    getBovedaData(),
+    getTiposCredencial(),
+  ]);
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-10">
@@ -17,9 +21,12 @@ export default async function BovedaGlobalPage() {
             Acceso centralizado a contraseñas y configuraciones sensibles (Encriptación AES).
           </p>
         </div>
+        <div className="flex items-center gap-2.5">
+          <GestionarTiposCredencialModal tiposCredencial={tiposCredencial} />
+        </div>
       </div>
 
-      <BovedaTable bovedaItems={bovedaItems as any} />
+      <BovedaTable bovedaItems={bovedaItems as any} tiposCredencial={tiposCredencial} />
     </div>
   );
 }

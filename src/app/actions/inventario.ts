@@ -88,9 +88,81 @@ export async function createCategoria(data: {
   }
 }
 
+export async function updateCategoria(
+  id: string,
+  data: {
+    nombre: string;
+    tipo_asociado?: "Producto" | "Servicio" | "Ambos";
+  }
+) {
+  try {
+    await ensureDatabaseSchema();
+    const nombreLimpio = data.nombre.trim();
+    if (!nombreLimpio) throw new Error("El nombre de la categoría no puede estar vacío");
+
+    const existing = await db
+      .select()
+      .from(categoriasInventario)
+      .where(eq(categoriasInventario.id, id))
+      .limit(1);
+
+    if (existing.length === 0) {
+      throw new Error("Categoría no encontrada");
+    }
+
+    const oldNombre = existing[0].nombre;
+
+    const [updated] = await db
+      .update(categoriasInventario)
+      .set({
+        nombre: nombreLimpio,
+        tipo_asociado: data.tipo_asociado || existing[0].tipo_asociado,
+      } as any)
+      .where(eq(categoriasInventario.id, id))
+      .returning();
+
+    // Si el nombre cambió, migrar ítems de inventario que tenían el nombre anterior
+    if (oldNombre !== nombreLimpio) {
+      await db
+        .update(inventario)
+        .set({ categoria: nombreLimpio })
+        .where(eq(inventario.categoria, oldNombre));
+    }
+
+    revalidatePath("/inventario");
+    revalidatePath("/proyectos");
+
+    return {
+      id: updated.id,
+      nombre: updated.nombre,
+      tipo_asociado: updated.tipo_asociado as "Producto" | "Servicio" | "Ambos",
+      created_at: updated.created_at ? updated.created_at.toISOString() : undefined,
+    } as CategoriaInventario;
+  } catch (error: any) {
+    console.error("Error al actualizar categoría:", error);
+    throw new Error(error.message || "Error al actualizar categoría");
+  }
+}
+
 export async function deleteCategoria(id: string) {
   try {
     await ensureDatabaseSchema();
+
+    const existing = await db
+      .select()
+      .from(categoriasInventario)
+      .where(eq(categoriasInventario.id, id))
+      .limit(1);
+
+    if (existing.length > 0) {
+      const catNombre = existing[0].nombre;
+      // Desvincular de los ítems existentes para que no queden huérfanos
+      await db
+        .update(inventario)
+        .set({ categoria: null })
+        .where(eq(inventario.categoria, catNombre));
+    }
+
     await db.delete(categoriasInventario).where(eq(categoriasInventario.id, id));
     revalidatePath("/inventario");
     revalidatePath("/proyectos");

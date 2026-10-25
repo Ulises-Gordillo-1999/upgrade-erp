@@ -1,9 +1,10 @@
 "use server";
 
-import { db } from "@/db";
-import { bovedaSeguridad } from "@/db/schema";
-import { desc, eq } from "drizzle-orm";
-import { BovedaSeguridad, TipoDatoBoveda } from "@/types/database";
+import { db, ensureDatabaseSchema } from "@/db";
+import { bovedaSeguridad, tiposCredencialBoveda } from "@/db/schema";
+import { desc, asc, eq } from "drizzle-orm";
+import { BovedaSeguridad, TipoDatoBoveda, TipoCredencialBoveda } from "@/types/database";
+import { revalidatePath } from "next/cache";
 import CryptoJS from "crypto-js";
 import { saveVaultFile } from "@/utils/vaultStorage";
 
@@ -182,5 +183,149 @@ export async function deleteBovedaRecord(id: string) {
   } catch (error: any) {
     console.error("Error al eliminar credencial:", error);
     throw new Error(error.message || "Error al eliminar credencial");
+  }
+}
+
+// -----------------------------------------------------------------------------
+// GESTIÓN DE TIPOS DE CREDENCIALES DINÁMICAS
+// -----------------------------------------------------------------------------
+
+const DEFAULT_TIPOS_CREDENCIAL = [
+  "Contraseña / Token",
+  "IP Pública / Subred",
+  "ID AnyDesk / RustDesk / TeamViewer",
+  "Configuración de Router / Switch",
+  "Otro dato sensible",
+];
+
+export async function getTiposCredencial(): Promise<TipoCredencialBoveda[]> {
+  try {
+    await ensureDatabaseSchema();
+    let rows = await db
+      .select()
+      .from(tiposCredencialBoveda)
+      .orderBy(asc(tiposCredencialBoveda.nombre));
+
+    if (rows.length === 0) {
+      await db
+        .insert(tiposCredencialBoveda)
+        .values(DEFAULT_TIPOS_CREDENCIAL.map((nombre) => ({ nombre })) as any);
+
+      rows = await db
+        .select()
+        .from(tiposCredencialBoveda)
+        .orderBy(asc(tiposCredencialBoveda.nombre));
+    }
+
+    return rows.map((r) => ({
+      id: r.id,
+      nombre: r.nombre,
+      created_at: r.created_at ? r.created_at.toISOString() : undefined,
+    }));
+  } catch (error: any) {
+    console.warn("Aviso al obtener tipos de credencial (fallback):", error);
+    return DEFAULT_TIPOS_CREDENCIAL.map((nombre, i) => ({
+      id: `default-${i}`,
+      nombre,
+    }));
+  }
+}
+
+export async function createTipoCredencial(data: { nombre: string }) {
+  try {
+    await ensureDatabaseSchema();
+    const nombreLimpio = data.nombre.trim();
+    if (!nombreLimpio) throw new Error("El nombre no puede estar vacío");
+
+    const [created] = await db
+      .insert(tiposCredencialBoveda)
+      .values({ nombre: nombreLimpio })
+      .returning();
+
+    revalidatePath("/boveda");
+    revalidatePath("/proyectos");
+
+    return {
+      id: created.id,
+      nombre: created.nombre,
+      created_at: created.created_at ? created.created_at.toISOString() : undefined,
+    } as TipoCredencialBoveda;
+  } catch (error: any) {
+    console.error("Error al crear tipo de credencial:", error);
+    throw new Error(error.message || "Error al crear tipo de credencial");
+  }
+}
+
+export async function updateTipoCredencial(id: string, data: { nombre: string }) {
+  try {
+    await ensureDatabaseSchema();
+    const nombreLimpio = data.nombre.trim();
+    if (!nombreLimpio) throw new Error("El nombre no puede estar vacío");
+
+    const existing = await db
+      .select()
+      .from(tiposCredencialBoveda)
+      .where(eq(tiposCredencialBoveda.id, id))
+      .limit(1);
+
+    if (existing.length === 0) {
+      throw new Error("Tipo de credencial no encontrado");
+    }
+
+    const oldNombre = existing[0].nombre;
+
+    const [updated] = await db
+      .update(tiposCredencialBoveda)
+      .set({ nombre: nombreLimpio })
+      .where(eq(tiposCredencialBoveda.id, id))
+      .returning();
+
+    // Actualizar credenciales que usaban el nombre anterior
+    if (oldNombre !== nombreLimpio) {
+      await db
+        .update(bovedaSeguridad)
+        .set({ tipo_dato: nombreLimpio })
+        .where(eq(bovedaSeguridad.tipo_dato, oldNombre));
+    }
+
+    revalidatePath("/boveda");
+    revalidatePath("/proyectos");
+
+    return {
+      id: updated.id,
+      nombre: updated.nombre,
+      created_at: updated.created_at ? updated.created_at.toISOString() : undefined,
+    } as TipoCredencialBoveda;
+  } catch (error: any) {
+    console.error("Error al actualizar tipo de credencial:", error);
+    throw new Error(error.message || "Error al actualizar tipo de credencial");
+  }
+}
+
+export async function deleteTipoCredencial(id: string) {
+  try {
+    await ensureDatabaseSchema();
+
+    const existing = await db
+      .select()
+      .from(tiposCredencialBoveda)
+      .where(eq(tiposCredencialBoveda.id, id))
+      .limit(1);
+
+    if (existing.length > 0) {
+      const oldNombre = existing[0].nombre;
+      await db
+        .update(bovedaSeguridad)
+        .set({ tipo_dato: "Otro dato sensible" })
+        .where(eq(bovedaSeguridad.tipo_dato, oldNombre));
+    }
+
+    await db.delete(tiposCredencialBoveda).where(eq(tiposCredencialBoveda.id, id));
+    revalidatePath("/boveda");
+    revalidatePath("/proyectos");
+    return true;
+  } catch (error: any) {
+    console.error("Error al eliminar tipo de credencial:", error);
+    throw new Error(error.message || "Error al eliminar tipo de credencial");
   }
 }

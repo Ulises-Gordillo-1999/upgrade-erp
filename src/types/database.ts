@@ -1,8 +1,14 @@
 export type CondicionIva = 'Responsable Inscripto' | 'Monotributo' | 'Consumidor Final' | 'Exento';
 export type TipoItem = 'Fijo' | 'Consumible' | 'Servicio';
 export type EstadoProyecto = 'Borrador_Bot' | 'Pendiente_Aprobacion_Cliente' | 'Aprobado' | 'En_Ejecucion' | 'Finalizado' | 'Cancelado';
-export type TipoDatoBoveda = 'Password' | 'IP_Publica' | 'AnyDesk_ID' | 'Config_Router' | 'Otro';
+export type TipoDatoBoveda = string;
 export type TipoTransaccion = 'Ingreso' | 'Egreso';
+
+export interface TipoCredencialBoveda {
+  id: string; // UUID
+  nombre: string;
+  created_at?: string;
+}
 
 export interface Cliente {
   id: string; // UUID

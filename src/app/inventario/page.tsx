@@ -1,5 +1,6 @@
 import { getInventario, getCategorias } from "@/app/actions/inventario";
 import { InventarioFormModal } from "@/components/inventario/InventarioFormModal";
+import { GestionarCategoriasModal } from "@/components/inventario/GestionarCategoriasModal";
 import { InventarioTable } from "@/components/inventario/InventarioTable";
 
 export default async function InventarioPage() {
@@ -19,7 +20,10 @@ export default async function InventarioPage() {
             Control de stock, equipos y servicios ofrecidos.
           </p>
         </div>
-        <InventarioFormModal categorias={categorias} />
+        <div className="flex items-center gap-2.5 flex-wrap">
+          <GestionarCategoriasModal categorias={categorias} />
+          <InventarioFormModal categorias={categorias} />
+        </div>
       </div>
 
       <InventarioTable inventario={inventario as any} categorias={categorias} />

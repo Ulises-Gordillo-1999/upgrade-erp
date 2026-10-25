@@ -12,24 +12,29 @@ import {
   FileText,
   Lock,
   Image as ImageIcon,
+  Settings,
 } from "lucide-react";
 import {
   createBovedaRecord,
   uploadBovedaFile,
   updateBovedaRecord,
+  getTiposCredencial,
 } from "@/app/actions/boveda";
-import { TipoDatoBoveda, BovedaSeguridad } from "@/types/database";
+import { TipoDatoBoveda, BovedaSeguridad, TipoCredencialBoveda } from "@/types/database";
+import { GestionarTiposCredencialModal } from "./GestionarTiposCredencialModal";
 import { useRouter } from "next/navigation";
 
 interface Props {
   proyectoId?: string;
   credencialInicial?: BovedaSeguridad & { valor_desencriptado?: string | null };
+  tiposCredencial?: TipoCredencialBoveda[];
   isEdit?: boolean;
 }
 
 export function BovedaFormModal({
   proyectoId,
   credencialInicial,
+  tiposCredencial,
   isEdit = false,
 }: Props) {
   const router = useRouter();
@@ -38,10 +43,21 @@ export function BovedaFormModal({
   const [loading, setLoading] = useState(false);
   const [fileName, setFileName] = useState<string>("");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [tiposList, setTiposList] = useState<TipoCredencialBoveda[]>(tiposCredencial || []);
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  useEffect(() => {
+    if (tiposCredencial && tiposCredencial.length > 0) {
+      setTiposList(tiposCredencial);
+    } else if (isOpen) {
+      getTiposCredencial().then((list) => {
+        if (list && list.length > 0) setTiposList(list);
+      });
+    }
+  }, [isOpen, tiposCredencial]);
 
   const openModal = () => {
     setErrorMsg(null);
@@ -164,24 +180,62 @@ export function BovedaFormModal({
             {/* Form */}
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-slate-700 dark:text-zinc-300 block flex items-center gap-1.5">
-                  <Lock className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-500" />
-                  Tipo de Credencial / Configuración *
-                </label>
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-medium text-slate-700 dark:text-zinc-300 flex items-center gap-1.5">
+                    <Lock className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-500" />
+                    Tipo de Credencial / Configuración *
+                  </label>
+                  <GestionarTiposCredencialModal
+                    tiposCredencial={tiposList}
+                    triggerButton={
+                      <span className="text-xs text-rose-600 dark:text-rose-400 hover:underline flex items-center gap-1 font-medium cursor-pointer">
+                        <Settings className="w-3 h-3 text-rose-500" />
+                        Gestionar tipos
+                      </span>
+                    }
+                  />
+                </div>
                 <select
                   name="tipo_dato"
-                  defaultValue={credencialInicial?.tipo_dato || ""}
+                  defaultValue={
+                    credencialInicial?.tipo_dato
+                      ? {
+                          Password: "Contraseña / Token",
+                          IP_Publica: "IP Pública / Subred",
+                          AnyDesk_ID: "ID AnyDesk / RustDesk / TeamViewer",
+                          Config_Router: "Configuración de Router / Switch",
+                          Otro: "Otro dato sensible",
+                        }[credencialInicial.tipo_dato] || credencialInicial.tipo_dato
+                      : ""
+                  }
                   required
-                  className="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-rose-500 focus:ring-1 focus:ring-rose-500 transition-all"
+                  className="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-rose-500 focus:ring-1 focus:ring-rose-500 transition-all cursor-pointer"
                 >
                   <option value="" disabled>
                     Seleccionar tipo...
                   </option>
-                  <option value="Password">Contraseña / Token</option>
-                  <option value="IP_Publica">IP Pública / Subred</option>
-                  <option value="AnyDesk_ID">ID AnyDesk / RustDesk / TeamViewer</option>
-                  <option value="Config_Router">Configuración de Router / Switch</option>
-                  <option value="Otro">Otro dato sensible</option>
+                  {tiposList.map((t) => (
+                    <option key={t.id} value={t.nombre}>
+                      {t.nombre}
+                    </option>
+                  ))}
+                  {credencialInicial?.tipo_dato &&
+                    !tiposList.some(
+                      (t) =>
+                        t.nombre === credencialInicial.tipo_dato ||
+                        t.nombre ===
+                          ({
+                            Password: "Contraseña / Token",
+                            IP_Publica: "IP Pública / Subred",
+                            AnyDesk_ID: "ID AnyDesk / RustDesk / TeamViewer",
+                            Config_Router: "Configuración de Router / Switch",
+                            Otro: "Otro dato sensible",
+                          }[credencialInicial.tipo_dato] || "")
+                    ) && (
+                      <option value={credencialInicial.tipo_dato}>
+                        {credencialInicial.tipo_dato}
+                      </option>
+                    )}
                 </select>
               </div>
 

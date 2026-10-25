@@ -1,6 +1,6 @@
 import { getProyectoById, updateEstadoProyecto } from "@/app/actions/proyectos";
 import { getInventario } from "@/app/actions/inventario";
-import { getBovedaData } from "@/app/actions/boveda";
+import { getBovedaData, getTiposCredencial } from "@/app/actions/boveda";
 import { getClientes } from "@/app/actions/clientes";
 import { AddItemModal } from "@/components/proyectos/AddItemModal";
 import { EditarProyectoModal } from "@/components/proyectos/EditarProyectoModal";
@@ -34,13 +34,14 @@ export default async function ProyectoDetallePage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const [{ proyecto, items }, inventario, credenciales, clientes, session] =
+  const [{ proyecto, items }, inventario, credenciales, clientes, session, tiposCredencial] =
     await Promise.all([
       getProyectoById(id),
       getInventario(),
       getBovedaData(id),
       getClientes(),
       getSession(),
+      getTiposCredencial(),
     ]);
 
   const isSuperAdmin = session?.rol === "SuperAdmin";
@@ -422,7 +423,7 @@ export default async function ProyectoDetallePage({
               Información sensible cifrada con AES-256 en reposo.
             </p>
           </div>
-          <BovedaFormModal proyectoId={id} />
+          <BovedaFormModal proyectoId={id} tiposCredencial={tiposCredencial} />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -449,6 +450,7 @@ export default async function ProyectoDetallePage({
                       <div className="flex items-center gap-1 border-l border-slate-200 dark:border-zinc-800 pl-2 ml-1">
                         <BovedaFormModal
                           credencialInicial={cred as any}
+                          tiposCredencial={tiposCredencial}
                           isEdit={true}
                         />
                         <DeleteBovedaButton id={cred.id} />
