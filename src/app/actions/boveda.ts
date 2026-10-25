@@ -57,6 +57,7 @@ export async function getBovedaData(proyecto_id?: string) {
     });
 
     const decryptedData = list.map((record) => {
+      const clienteData = record.proyecto?.cliente;
       return {
         id: record.id,
         proyecto_id: record.proyecto_id,
@@ -65,10 +66,33 @@ export async function getBovedaData(proyecto_id?: string) {
         valor_encriptado: record.valor_encriptado || undefined,
         archivo_url: record.archivo_url || undefined,
         created_at: record.created_at ? record.created_at.toISOString() : undefined,
+        proyecto: record.proyecto
+          ? {
+              id: record.proyecto.id,
+              notas_tecnicas: record.proyecto.notas_tecnicas,
+              estado: record.proyecto.estado,
+              created_at: record.proyecto.created_at
+                ? record.proyecto.created_at.toISOString()
+                : undefined,
+              cliente: clienteData
+                ? {
+                    id: clienteData.id,
+                    nombre_razon_social: clienteData.nombre_razon_social,
+                    telefono: clienteData.telefono,
+                    cuit_cuil: clienteData.cuit_cuil,
+                  }
+                : null,
+            }
+          : null,
         proyectos: record.proyecto
           ? {
-              clientes: record.proyecto.cliente
-                ? { nombre_razon_social: record.proyecto.cliente.nombre_razon_social }
+              id: record.proyecto.id,
+              notas_tecnicas: record.proyecto.notas_tecnicas,
+              clientes: clienteData
+                ? {
+                    id: clienteData.id,
+                    nombre_razon_social: clienteData.nombre_razon_social,
+                  }
                 : null,
             }
           : null,

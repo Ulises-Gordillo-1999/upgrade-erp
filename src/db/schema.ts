@@ -91,11 +91,19 @@ export const clientes = pgTable("clientes", {
   created_at: timestamp("created_at", { withTimezone: true }).defaultNow(),
 });
 
+export const categoriasInventario = pgTable("categorias_inventario", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  nombre: text("nombre").notNull().unique(),
+  tipo_asociado: text("tipo_asociado").notNull().default("Producto"), // "Producto" | "Servicio" | "Ambos"
+  created_at: timestamp("created_at", { withTimezone: true }).defaultNow(),
+});
+
 export const inventario = pgTable("inventario", {
   id: uuid("id").primaryKey().defaultRandom(),
   sku: text("sku").unique(),
   nombre: text("nombre").notNull(),
   tipo: tipoItemEnum("tipo").notNull(),
+  categoria: text("categoria"),
   precio_unitario: numeric("precio_unitario", { precision: 10, scale: 2 }).notNull().default("0.00"),
   stock_actual: integer("stock_actual").default(0),
   stock_minimo: integer("stock_minimo").default(0),

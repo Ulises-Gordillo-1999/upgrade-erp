@@ -1,9 +1,12 @@
-import { getInventario } from "@/app/actions/inventario";
+import { getInventario, getCategorias } from "@/app/actions/inventario";
 import { InventarioFormModal } from "@/components/inventario/InventarioFormModal";
 import { InventarioTable } from "@/components/inventario/InventarioTable";
 
 export default async function InventarioPage() {
-  const inventario = await getInventario();
+  const [inventario, categorias] = await Promise.all([
+    getInventario(),
+    getCategorias(),
+  ]);
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-10">
@@ -16,10 +19,10 @@ export default async function InventarioPage() {
             Control de stock, equipos y servicios ofrecidos.
           </p>
         </div>
-        <InventarioFormModal />
+        <InventarioFormModal categorias={categorias} />
       </div>
 
-      <InventarioTable inventario={inventario as any} />
+      <InventarioTable inventario={inventario as any} categorias={categorias} />
     </div>
   );
 }

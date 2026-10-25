@@ -12,14 +12,16 @@ import {
   AlertTriangle,
   FilterX,
   SlidersHorizontal,
+  FolderTree,
 } from "lucide-react";
-import { TipoItem } from "@/types/database";
+import { TipoItem, CategoriaInventario } from "@/types/database";
 
 interface InventarioItem {
   id: string;
   sku?: string | null;
   nombre: string;
   tipo: TipoItem;
+  categoria?: string | null;
   precio_unitario: number;
   stock_actual?: number | null;
   stock_minimo?: number | null;
@@ -28,6 +30,7 @@ interface InventarioItem {
 
 interface Props {
   inventario: InventarioItem[];
+  categorias?: CategoriaInventario[];
 }
 
 const getBadgeStyles = (tipo: TipoItem) => {
@@ -43,17 +46,32 @@ const getBadgeStyles = (tipo: TipoItem) => {
   }
 };
 
-export function InventarioTable({ inventario }: Props) {
+export function InventarioTable({ inventario, categorias = [] }: Props) {
   const [searchTerm, setSearchTerm] = useState("");
   const [tipoFiltro, setTipoFiltro] = useState<string>("todos");
+  const [categoriaFiltro, setCategoriaFiltro] = useState<string>("todos");
   const [stockFiltro, setStockFiltro] = useState<string>("todos");
 
+  // Lista de categorías únicas para el dropdown
+  const categoriasDisponibles = useMemo(() => {
+    const setCats = new Set<string>();
+    categorias.forEach((c) => setCats.add(c.nombre));
+    inventario.forEach((i) => {
+      if (i.categoria) setCats.add(i.categoria);
+    });
+    return Array.from(setCats).sort();
+  }, [categorias, inventario]);
+
   const hasActiveFilters =
-    searchTerm !== "" || tipoFiltro !== "todos" || stockFiltro !== "todos";
+    searchTerm !== "" ||
+    tipoFiltro !== "todos" ||
+    categoriaFiltro !== "todos" ||
+    stockFiltro !== "todos";
 
   const resetFilters = () => {
     setSearchTerm("");
     setTipoFiltro("todos");
+    setCategoriaFiltro("todos");
     setStockFiltro("todos");
   };
 
@@ -64,8 +82,10 @@ export function InventarioTable({ inventario }: Props) {
         const query = searchTerm.toLowerCase().trim();
         const nombre = (item.nombre || "").toLowerCase();
         const sku = (item.sku || "").toLowerCase();
+        const categoria = (item.categoria || "").toLowerCase();
 
-        const matches = nombre.includes(query) || sku.includes(query);
+        const matches =
+          nombre.includes(query) || sku.includes(query) || categoria.includes(query);
         if (!matches) return false;
       }
 
@@ -74,7 +94,16 @@ export function InventarioTable({ inventario }: Props) {
         return false;
       }
 
-      // 3. Filtro Stock
+      // 3. Filtro Categoría
+      if (categoriaFiltro !== "todos") {
+        if (categoriaFiltro === "sin_categoria") {
+          if (item.categoria && item.categoria.trim() !== "") return false;
+        } else if (item.categoria !== categoriaFiltro) {
+          return false;
+        }
+      }
+
+      // 4. Filtro Stock
       if (stockFiltro !== "todos") {
         const isService = item.tipo === "Servicio";
         const actual = item.stock_actual ?? 0;
@@ -94,7 +123,7 @@ export function InventarioTable({ inventario }: Props) {
 
       return true;
     });
-  }, [inventario, searchTerm, tipoFiltro, stockFiltro]);
+  }, [inventario, searchTerm, tipoFiltro, categoriaFiltro, stockFiltro]);
 
   return (
     <div className="space-y-4">
@@ -135,6 +164,21 @@ export function InventarioTable({ inventario }: Props) {
               <option value="Fijo">Fijo (Equipos)</option>
               <option value="Consumible">Consumible (Insumos)</option>
               <option value="Servicio">Servicio (Mano de obra)</option>
+            </select>
+
+            {/* Subcategoría / Categoría */}
+            <select
+              value={categoriaFiltro}
+              onChange={(e) => setCategoriaFiltro(e.target.value)}
+              className="bg-slate-50 dark:bg-zinc-950/80 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-xs text-slate-700 dark:text-zinc-300 focus:outline-none focus:border-cyan-500 transition-colors cursor-pointer max-w-[200px] truncate"
+            >
+              <option value="todos">Todas las Categorías</option>
+              {categoriasDisponibles.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
+              ))}
+              <option value="sin_categoria">Sin categoría</option>
             </select>
 
             {/* Estado de Stock */}
@@ -219,7 +263,7 @@ export function InventarioTable({ inventario }: Props) {
                     <h4 className="text-sm font-semibold text-slate-900 dark:text-zinc-100 leading-snug">
                       {item.nombre}
                     </h4>
-                    <div className="flex items-center gap-2 mt-1 flex-wrap">
+                    <div className="flex items-center gap-2 mt-1.5 flex-wrap">
                       <span
                         className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold border uppercase tracking-wider ${getBadgeStyles(
                           item.tipo
@@ -227,6 +271,12 @@ export function InventarioTable({ inventario }: Props) {
                       >
                         {item.tipo}
                       </span>
+                      {item.categoria && (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-medium bg-cyan-500/10 text-cyan-700 dark:text-cyan-400 border border-cyan-500/20">
+                          <FolderTree className="w-2.5 h-2.5" />
+                          {item.categoria}
+                        </span>
+                      )}
                       {item.sku && (
                         <span className="text-[11px] font-mono text-slate-500 dark:text-zinc-400">
                           #{item.sku}
@@ -236,7 +286,11 @@ export function InventarioTable({ inventario }: Props) {
                   </div>
 
                   <div className="flex items-center gap-1 shrink-0">
-                    <InventarioFormModal itemInicial={item as any} isEdit={true} />
+                    <InventarioFormModal
+                      itemInicial={item as any}
+                      isEdit={true}
+                      categorias={categorias}
+                    />
                     <DeleteInventarioButton id={item.id} nombreItem={item.nombre} />
                   </div>
                 </div>
@@ -292,6 +346,7 @@ export function InventarioTable({ inventario }: Props) {
             <thead className="text-xs text-slate-500 dark:text-zinc-400 uppercase bg-slate-50 dark:bg-zinc-900/80 border-b border-slate-200 dark:border-zinc-800">
               <tr>
                 <th className="px-6 py-4 font-medium">Ítem</th>
+                <th className="px-6 py-4 font-medium">Categoría</th>
                 <th className="px-6 py-4 font-medium">SKU</th>
                 <th className="px-6 py-4 font-medium">Precio Unitario</th>
                 <th className="px-6 py-4 font-medium">Stock</th>
@@ -301,7 +356,7 @@ export function InventarioTable({ inventario }: Props) {
             <tbody className="divide-y divide-slate-200 dark:divide-zinc-800">
               {filteredInventario.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-14 text-center text-slate-400 dark:text-zinc-500">
+                  <td colSpan={6} className="px-6 py-14 text-center text-slate-400 dark:text-zinc-500">
                     <div className="flex flex-col items-center justify-center space-y-2">
                       <FilterX className="w-8 h-8 text-slate-400 dark:text-zinc-600 stroke-1" />
                       <p className="text-sm font-medium text-slate-600 dark:text-zinc-400">
@@ -348,6 +403,18 @@ export function InventarioTable({ inventario }: Props) {
                           </div>
                         </div>
                       </td>
+                      <td className="px-6 py-4">
+                        {item.categoria ? (
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 border border-slate-200 dark:border-zinc-700/70">
+                            <FolderTree className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400 shrink-0" />
+                            {item.categoria}
+                          </span>
+                        ) : (
+                          <span className="text-xs text-slate-400 dark:text-zinc-600 italic">
+                            Sin categoría
+                          </span>
+                        )}
+                      </td>
                       <td className="px-6 py-4 text-slate-500 dark:text-zinc-400">
                         <div className="flex items-center">
                           <Hash className="w-3.5 h-3.5 mr-1.5 opacity-70" />
@@ -393,6 +460,7 @@ export function InventarioTable({ inventario }: Props) {
                           <InventarioFormModal
                             itemInicial={item as any}
                             isEdit={true}
+                            categorias={categorias}
                           />
                           <DeleteInventarioButton
                             id={item.id}

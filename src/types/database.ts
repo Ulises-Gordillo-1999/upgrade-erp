@@ -14,11 +14,19 @@ export interface Cliente {
   created_at?: string;
 }
 
+export interface CategoriaInventario {
+  id: string; // UUID
+  nombre: string;
+  tipo_asociado: 'Producto' | 'Servicio' | 'Ambos';
+  created_at?: string;
+}
+
 export interface Inventario {
   id: string; // UUID
   sku?: string;
   nombre: string;
   tipo: TipoItem;
+  categoria?: string | null;
   precio_unitario: number;
   stock_actual?: number;
   stock_minimo?: number;
