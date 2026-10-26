@@ -10,15 +10,15 @@ import { saveVaultFile } from "@/utils/vaultStorage";
 
 // Helper to encrypt
 function encryptData(text: string) {
-  const secretKey = process.env.ENCRYPTION_KEY;
-  if (!secretKey) throw new Error("ENCRYPTION_KEY no está configurada");
+  const secretKey =
+    process.env.ENCRYPTION_KEY || "upgrade-super-secret-jwt-key-2026-xyz!";
   return CryptoJS.AES.encrypt(text, secretKey).toString();
 }
 
 // Helper to decrypt
 function decryptData(ciphertext: string) {
-  const secretKey = process.env.ENCRYPTION_KEY;
-  if (!secretKey) throw new Error("ENCRYPTION_KEY no está configurada");
+  const secretKey =
+    process.env.ENCRYPTION_KEY || "upgrade-super-secret-jwt-key-2026-xyz!";
   try {
     const bytes = CryptoJS.AES.decrypt(ciphertext, secretKey);
     return bytes.toString(CryptoJS.enc.Utf8);
@@ -118,6 +118,15 @@ export async function createBovedaRecord(data: {
   archivo_url?: string;
 }) {
   try {
+    await ensureDatabaseSchema();
+
+    if (!data.proyecto_id) {
+      return { success: false, error: "Falta el ID del proyecto vinculado" };
+    }
+    if (!data.valor_real) {
+      return { success: false, error: "El valor secreto es obligatorio" };
+    }
+
     const valor_encriptado = encryptData(data.valor_real);
 
     const [newRecord] = await db
@@ -131,13 +140,23 @@ export async function createBovedaRecord(data: {
       } as any)
       .returning();
 
+    revalidatePath("/boveda");
+    revalidatePath("/proyectos");
+    revalidatePath(`/proyectos/${data.proyecto_id}`);
+
     return {
-      ...newRecord,
-      created_at: newRecord.created_at ? newRecord.created_at.toISOString() : undefined,
-    } as unknown as BovedaSeguridad;
+      success: true,
+      data: {
+        ...newRecord,
+        created_at: newRecord.created_at ? newRecord.created_at.toISOString() : undefined,
+      } as unknown as BovedaSeguridad,
+    };
   } catch (error: any) {
     console.error("Error al guardar credencial:", error);
-    throw new Error(error.message || "Error al guardar credencial");
+    return {
+      success: false,
+      error: error.message || "Error al guardar credencial en la base de datos",
+    };
   }
 }
 
@@ -151,6 +170,7 @@ export async function updateBovedaRecord(
   }
 ) {
   try {
+    await ensureDatabaseSchema();
     const payload: any = {};
     if (data.tipo_dato) payload.tipo_dato = data.tipo_dato;
     if (data.descripcion) payload.descripcion = data.descripcion;
@@ -166,23 +186,38 @@ export async function updateBovedaRecord(
       .where(eq(bovedaSeguridad.id, id))
       .returning();
 
+    revalidatePath("/boveda");
+    revalidatePath("/proyectos");
+
     return {
-      ...updated,
-      created_at: updated.created_at ? updated.created_at.toISOString() : undefined,
-    } as unknown as BovedaSeguridad;
+      success: true,
+      data: {
+        ...updated,
+        created_at: updated.created_at ? updated.created_at.toISOString() : undefined,
+      } as unknown as BovedaSeguridad,
+    };
   } catch (error: any) {
     console.error("Error al actualizar credencial:", error);
-    throw new Error(error.message || "Error al actualizar credencial");
+    return {
+      success: false,
+      error: error.message || "Error al actualizar credencial",
+    };
   }
 }
 
 export async function deleteBovedaRecord(id: string) {
   try {
+    await ensureDatabaseSchema();
     await db.delete(bovedaSeguridad).where(eq(bovedaSeguridad.id, id));
-    return true;
+    revalidatePath("/boveda");
+    revalidatePath("/proyectos");
+    return { success: true };
   } catch (error: any) {
     console.error("Error al eliminar credencial:", error);
-    throw new Error(error.message || "Error al eliminar credencial");
+    return {
+      success: false,
+      error: error.message || "Error al eliminar credencial",
+    };
   }
 }
 

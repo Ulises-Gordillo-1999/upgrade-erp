@@ -13,6 +13,8 @@ import {
   Lock,
   Image as ImageIcon,
   Settings,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 import {
   createBovedaRecord,
@@ -44,6 +46,7 @@ export function BovedaFormModal({
   const [fileName, setFileName] = useState<string>("");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [tiposList, setTiposList] = useState<TipoCredencialBoveda[]>(tiposCredencial || []);
+  const [showSecret, setShowSecret] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -61,12 +64,14 @@ export function BovedaFormModal({
 
   const openModal = () => {
     setErrorMsg(null);
+    setShowSecret(false);
     setIsOpen(true);
   };
 
   const closeModal = () => {
     setFileName("");
     setErrorMsg(null);
+    setShowSecret(false);
     setIsOpen(false);
   };
 
@@ -99,12 +104,18 @@ export function BovedaFormModal({
         payload.archivo_url = archivo_url;
       }
 
+      let res: any;
       if (isEdit && credencialInicial) {
-        await updateBovedaRecord(credencialInicial.id, payload);
+        res = await updateBovedaRecord(credencialInicial.id, payload);
       } else {
         if (!proyectoId) throw new Error("Falta el ID del proyecto");
         payload.proyecto_id = proyectoId;
-        await createBovedaRecord(payload);
+        res = await createBovedaRecord(payload);
+      }
+
+      if (res && res.success === false) {
+        setErrorMsg(res.error || "Ocurrió un error al guardar la credencial.");
+        return;
       }
 
       closeModal();
@@ -259,13 +270,27 @@ export function BovedaFormModal({
                   <KeyRound className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-500" />
                   Valor Secreto {isEdit ? "(Dejar en blanco para conservar)" : "*"}
                 </label>
-                <input
-                  type="password"
-                  name="valor_real"
-                  required={!isEdit}
-                  placeholder={isEdit ? "•••••••• (Sin cambios)" : "••••••••"}
-                  className="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-600 focus:outline-none focus:border-rose-500 focus:ring-1 focus:ring-rose-500 font-mono transition-all"
-                />
+                <div className="relative">
+                  <input
+                    type={showSecret ? "text" : "password"}
+                    name="valor_real"
+                    required={!isEdit}
+                    placeholder={isEdit ? "•••••••• (Sin cambios)" : "••••••••"}
+                    className="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl pl-3.5 pr-10 py-2.5 text-sm text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-600 focus:outline-none focus:border-rose-500 focus:ring-1 focus:ring-rose-500 font-mono transition-all"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowSecret(!showSecret)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:text-zinc-400 dark:hover:text-zinc-200 transition-colors p-1"
+                    title={showSecret ? "Ocultar secreto" : "Mostrar secreto para verificar"}
+                  >
+                    {showSecret ? (
+                      <EyeOff className="w-4 h-4" />
+                    ) : (
+                      <Eye className="w-4 h-4" />
+                    )}
+                  </button>
+                </div>
               </div>
 
               <div className="space-y-1.5">

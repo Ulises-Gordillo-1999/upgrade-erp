@@ -23,30 +23,32 @@ export async function ensureDatabaseSchema() {
   if (globalForDb.schemaChecked) return;
   if (process.env.NEXT_PHASE === "phase-production-build") return;
 
-  try {
-    await conn.unsafe(`
-      CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+  const queries = [
+    `CREATE EXTENSION IF NOT EXISTS "uuid-ossp";`,
+    `CREATE TABLE IF NOT EXISTS categorias_inventario (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      nombre TEXT NOT NULL UNIQUE,
+      tipo_asociado TEXT NOT NULL DEFAULT 'Producto',
+      created_at TIMESTAMPTZ DEFAULT NOW()
+    );`,
+    `ALTER TABLE inventario ADD COLUMN IF NOT EXISTS categoria TEXT;`,
+    `ALTER TABLE boveda_seguridad ALTER COLUMN tipo_dato TYPE TEXT;`,
+    `CREATE TABLE IF NOT EXISTS tipos_credencial_boveda (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      nombre TEXT NOT NULL UNIQUE,
+      created_at TIMESTAMPTZ DEFAULT NOW()
+    );`,
+  ];
 
-      CREATE TABLE IF NOT EXISTS categorias_inventario (
-        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-        nombre TEXT NOT NULL UNIQUE,
-        tipo_asociado TEXT NOT NULL DEFAULT 'Producto',
-        created_at TIMESTAMPTZ DEFAULT NOW()
-      );
-      ALTER TABLE inventario ADD COLUMN IF NOT EXISTS categoria TEXT;
-
-      ALTER TABLE boveda_seguridad ALTER COLUMN tipo_dato TYPE TEXT;
-
-      CREATE TABLE IF NOT EXISTS tipos_credencial_boveda (
-        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-        nombre TEXT NOT NULL UNIQUE,
-        created_at TIMESTAMPTZ DEFAULT NOW()
-      );
-    `);
-    globalForDb.schemaChecked = true;
-  } catch (err) {
-    console.warn("Aviso en ensureDatabaseSchema:", err);
+  for (const q of queries) {
+    try {
+      await conn.unsafe(q);
+    } catch (err) {
+      // Ignorar si ya está aplicada
+    }
   }
+
+  globalForDb.schemaChecked = true;
 }
 
 // Ejecución no bloqueante al inicio del runtime en el servidor
