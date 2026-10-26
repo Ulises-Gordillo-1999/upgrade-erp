@@ -33,12 +33,8 @@ export function exportToExcelCsv<T>({
     columns.map((col) => escapeCell(col.accessor(item))).join(";")
   );
 
-  // \uFEFF es el Byte Order Mark (BOM) UTF-8 que previene caracteres rotos en Excel
-  const csvContent =
-    "sep=;\r\n" +
-    headerLine +
-    "\r\n" +
-    dataLines.join("\r\n");
+  // \uFEFF es el Byte Order Mark (BOM) UTF-8 que asegura caracteres en español y tildes
+  const csvContent = headerLine + "\r\n" + dataLines.join("\r\n");
 
   const blob = new Blob(["\uFEFF" + csvContent], {
     type: "text/csv;charset=utf-8;",

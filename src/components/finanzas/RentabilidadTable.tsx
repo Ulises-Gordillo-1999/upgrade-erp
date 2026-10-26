@@ -17,7 +17,9 @@ import {
   AlertTriangle,
   FolderGit2,
   SlidersHorizontal,
+  FileText,
 } from "lucide-react";
+import { exportarRentabilidadPDF } from "@/utils/finanzasPdfExport";
 
 interface Props {
   proyectos: RentabilidadProyecto[];
@@ -125,6 +127,13 @@ export function RentabilidadTable({ proyectos }: Props) {
         },
       ],
       data: filteredProyectos,
+    });
+  };
+
+  const handleExportPdf = () => {
+    exportarRentabilidadPDF({
+      proyectos: filteredProyectos,
+      totales,
     });
   };
 
@@ -281,7 +290,7 @@ export function RentabilidadTable({ proyectos }: Props) {
             <select
               value={estadoFiltro}
               onChange={(e) => setEstadoFiltro(e.target.value)}
-              className="bg-slate-50 dark:bg-zinc-950/80 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-xs text-slate-700 dark:text-zinc-300 focus:outline-none focus:border-cyan-500 transition-colors cursor-pointer"
+              className="bg-slate-50 dark:bg-zinc-950/80 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-xs text-slate-700 dark:text-zinc-300 focus:outline-none focus:border-cyan-500 transition-colors cursor-pointer [&>option]:bg-white [&>option]:text-slate-900 dark:[&>option]:bg-zinc-900 dark:[&>option]:text-zinc-100 [color-scheme:light] dark:[color-scheme:dark]"
             >
               <option value="todos">Todos los Estados</option>
               <option value="En_Ejecucion">En Ejecución</option>
@@ -296,7 +305,7 @@ export function RentabilidadTable({ proyectos }: Props) {
             <select
               value={margenFiltro}
               onChange={(e) => setMargenFiltro(e.target.value)}
-              className="bg-slate-50 dark:bg-zinc-950/80 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-xs text-slate-700 dark:text-zinc-300 focus:outline-none focus:border-cyan-500 transition-colors cursor-pointer"
+              className="bg-slate-50 dark:bg-zinc-950/80 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-xs text-slate-700 dark:text-zinc-300 focus:outline-none focus:border-cyan-500 transition-colors cursor-pointer [&>option]:bg-white [&>option]:text-slate-900 dark:[&>option]:bg-zinc-900 dark:[&>option]:text-zinc-100 [color-scheme:light] dark:[color-scheme:dark]"
             >
               <option value="todos">Todos los Márgenes</option>
               <option value="positivo">Ganancia Neta (+)</option>
@@ -317,15 +326,26 @@ export function RentabilidadTable({ proyectos }: Props) {
               </button>
             )}
 
+            {/* Botón Exportar PDF Oficial */}
+            <button
+              type="button"
+              onClick={handleExportPdf}
+              className="flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-white bg-gradient-to-r from-cyan-600 to-cyan-500 hover:from-cyan-500 hover:to-cyan-400 rounded-xl transition-all shadow-sm shadow-cyan-950/20 active:scale-95 border border-cyan-400/20"
+              title="Generar y descargar Reporte Oficial en PDF (Diseño Corporativo)"
+            >
+              <FileText className="w-4 h-4" />
+              <span>Exportar PDF</span>
+            </button>
+
             {/* Botón Exportar a Excel */}
             <button
               type="button"
               onClick={handleExportCsv}
               className="flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-emerald-700 dark:text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 rounded-xl transition-all shadow-sm"
-              title="Descargar reporte en formato Excel (CSV con BOM UTF-8)"
+              title="Descargar reporte en formato Excel (CSV)"
             >
               <FileSpreadsheet className="w-4 h-4 text-emerald-500" />
-              <span>Exportar Excel (CSV)</span>
+              <span>Excel (CSV)</span>
             </button>
           </div>
         </div>
