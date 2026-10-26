@@ -70,10 +70,17 @@ export interface BovedaSeguridad {
   created_at?: string;
 }
 
-export type CategoriaTransaccion = 'Hardware' | 'Cloud' | 'Movilidad' | 'Honorarios' | 'Abono' | 'Otros';
+export type CategoriaTransaccion = string;
 export type Moneda = 'ARS' | 'USDT';
 export type MetodoPago = 'Efectivo' | 'Transferencia' | 'Tarjeta Virtual/Crypto';
 export type EstadoPago = 'Pagado' | 'Pendiente';
+
+export interface CategoriaFinanzas {
+  id: string;
+  nombre: string;
+  tipo_asociado: 'Ingreso' | 'Egreso' | 'Ambos';
+  created_at?: string;
+}
 
 export interface Transaccion {
   id: string; // UUID

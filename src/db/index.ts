@@ -21,7 +21,6 @@ export const db = drizzle(conn, { schema });
  */
 export async function ensureDatabaseSchema() {
   if (globalForDb.schemaChecked) return;
-  if (process.env.NEXT_PHASE === "phase-production-build") return;
 
   const queries = [
     `CREATE EXTENSION IF NOT EXISTS "uuid-ossp";`,
@@ -38,6 +37,17 @@ export async function ensureDatabaseSchema() {
       nombre TEXT NOT NULL UNIQUE,
       created_at TIMESTAMPTZ DEFAULT NOW()
     );`,
+    `ALTER TABLE transacciones ALTER COLUMN categoria TYPE TEXT;`,
+    `CREATE TABLE IF NOT EXISTS categorias_finanzas (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      nombre TEXT NOT NULL UNIQUE,
+      tipo_asociado TEXT NOT NULL DEFAULT 'Ambos',
+      created_at TIMESTAMPTZ DEFAULT NOW()
+    );`,
+    `UPDATE transacciones SET categoria = 'Hardware / Materiales' WHERE categoria = 'Hardware';`,
+    `UPDATE transacciones SET categoria = 'Servicios Cloud' WHERE categoria = 'Cloud';`,
+    `UPDATE transacciones SET categoria = 'Movilidad / Viáticos' WHERE categoria = 'Movilidad';`,
+    `UPDATE transacciones SET categoria = 'Abono Mensual' WHERE categoria = 'Abono';`,
   ];
 
   for (const q of queries) {

@@ -23,6 +23,8 @@ import {
   CalendarDays,
 } from "lucide-react";
 
+import { CategoriaFinanzas } from "@/types/database";
+
 interface TransaccionItem {
   id: string;
   tipo: "Ingreso" | "Egreso";
@@ -44,14 +46,24 @@ interface TransaccionItem {
 
 interface Props {
   transacciones: TransaccionItem[];
+  categorias?: CategoriaFinanzas[];
 }
 
-export function FinanzasTable({ transacciones }: Props) {
+export function FinanzasTable({ transacciones, categorias = [] }: Props) {
   const [searchTerm, setSearchTerm] = useState("");
   const [tipoFiltro, setTipoFiltro] = useState<string>("todos");
   const [categoriaFiltro, setCategoriaFiltro] = useState<string>("todas");
   const [estadoFiltro, setEstadoFiltro] = useState<string>("todos");
   const [monedaFiltro, setMonedaFiltro] = useState<string>("todas");
+
+  const availableCategorias = useMemo(() => {
+    const set = new Set<string>();
+    categorias.forEach((c) => set.add(c.nombre));
+    transacciones.forEach((t) => {
+      if (t.categoria) set.add(t.categoria);
+    });
+    return Array.from(set).sort((a, b) => a.localeCompare(b));
+  }, [categorias, transacciones]);
 
   // Filtros de fecha / período
   const [periodoFiltro, setPeriodoFiltro] = useState<string>("este_mes");
@@ -425,12 +437,11 @@ export function FinanzasTable({ transacciones }: Props) {
               className="bg-slate-50 dark:bg-zinc-950/80 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-xs text-slate-700 dark:text-zinc-300 focus:outline-none focus:border-cyan-500 transition-colors cursor-pointer"
             >
               <option value="todas">Todas las Categorías</option>
-              <option value="Hardware">Hardware</option>
-              <option value="Cloud">Cloud</option>
-              <option value="Movilidad">Movilidad</option>
-              <option value="Honorarios">Honorarios</option>
-              <option value="Abono">Abono</option>
-              <option value="Otros">Otros</option>
+              {availableCategorias.map((catName) => (
+                <option key={catName} value={catName}>
+                  {catName}
+                </option>
+              ))}
             </select>
 
             {/* Estado */}
@@ -635,7 +646,11 @@ export function FinanzasTable({ transacciones }: Props) {
                 </div>
 
                 <div className="flex items-center gap-1">
-                  <TransaccionFormModal transaccionInicial={t as any} isEdit={true} />
+                  <TransaccionFormModal
+                    transaccionInicial={t as any}
+                    isEdit={true}
+                    categorias={categorias}
+                  />
                   <DeleteTransaccionButton
                     id={t.id}
                     descripcion={t.descripcion || `Movimiento de ${t.tipo}`}
@@ -766,6 +781,7 @@ export function FinanzasTable({ transacciones }: Props) {
                         <TransaccionFormModal
                           transaccionInicial={t as any}
                           isEdit={true}
+                          categorias={categorias}
                         />
                         <DeleteTransaccionButton
                           id={t.id}

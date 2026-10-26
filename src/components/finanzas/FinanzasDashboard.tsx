@@ -4,15 +4,21 @@ import { useState } from "react";
 import { FinanzasTable } from "./FinanzasTable";
 import { RentabilidadTable } from "./RentabilidadTable";
 import { TransaccionFormModal } from "./TransaccionFormModal";
-import { RentabilidadProyecto } from "@/types/database";
+import { GestionarCategoriasFinanzasModal } from "./GestionarCategoriasFinanzasModal";
+import { RentabilidadProyecto, CategoriaFinanzas } from "@/types/database";
 import { DollarSign, Briefcase, Receipt, PieChart } from "lucide-react";
 
 interface Props {
   transacciones: any[];
   rentabilidad: RentabilidadProyecto[];
+  categorias?: CategoriaFinanzas[];
 }
 
-export function FinanzasDashboard({ transacciones, rentabilidad }: Props) {
+export function FinanzasDashboard({
+  transacciones,
+  rentabilidad,
+  categorias = [],
+}: Props) {
   const [activeTab, setActiveTab] = useState<"movimientos" | "rentabilidad">("movimientos");
 
   return (
@@ -30,7 +36,8 @@ export function FinanzasDashboard({ transacciones, rentabilidad }: Props) {
         </div>
 
         <div className="flex items-center gap-2">
-          <TransaccionFormModal />
+          <GestionarCategoriasFinanzasModal categorias={categorias} />
+          <TransaccionFormModal categorias={categorias} />
         </div>
       </div>
 
@@ -83,7 +90,7 @@ export function FinanzasDashboard({ transacciones, rentabilidad }: Props) {
 
       {/* Contenido de la Pestaña Activa */}
       {activeTab === "movimientos" ? (
-        <FinanzasTable transacciones={transacciones} />
+        <FinanzasTable transacciones={transacciones} categorias={categorias} />
       ) : (
         <RentabilidadTable proyectos={rentabilidad} />
       )}

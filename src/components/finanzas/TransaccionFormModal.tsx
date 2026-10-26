@@ -15,41 +15,80 @@ import {
   FileText,
   Calendar,
   Layers,
+  Settings,
+  AlertCircle,
 } from "lucide-react";
-import { createTransaccion, updateTransaccion } from "@/app/actions/finanzas";
+import {
+  createTransaccion,
+  updateTransaccion,
+  getCategoriasFinanzas,
+} from "@/app/actions/finanzas";
 import { getProyectos } from "@/app/actions/proyectos";
 import {
   Transaccion,
   TipoTransaccion,
   CategoriaTransaccion,
+  CategoriaFinanzas,
   Moneda,
   MetodoPago,
   EstadoPago,
 } from "@/types/database";
 import { useRouter } from "next/navigation";
+import { GestionarCategoriasFinanzasModal } from "./GestionarCategoriasFinanzasModal";
 
 interface Props {
   transaccionInicial?: Transaccion;
   isEdit?: boolean;
+  categorias?: CategoriaFinanzas[];
 }
 
-export function TransaccionFormModal({ transaccionInicial, isEdit = false }: Props) {
+export function TransaccionFormModal({
+  transaccionInicial,
+  isEdit = false,
+  categorias = [],
+}: Props) {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [proyectos, setProyectos] = useState<any[]>([]);
   const [monto, setMonto] = useState<string>(transaccionInicial?.monto?.toString() || "");
   const [proyectoId, setProyectoId] = useState<string>(transaccionInicial?.proyecto_id || "");
+  const [tipoMovimiento, setTipoMovimiento] = useState<TipoTransaccion>(
+    transaccionInicial?.tipo || "Ingreso"
+  );
+  const [categoriasList, setCategoriasList] = useState<CategoriaFinanzas[]>(categorias);
+  const [categoriaSeleccionada, setCategoriaSeleccionada] = useState<string>(
+    transaccionInicial?.categoria || ""
+  );
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
   useEffect(() => {
+    if (categorias && categorias.length > 0) {
+      setCategoriasList(categorias);
+    }
+  }, [categorias]);
+
+  useEffect(() => {
     if (isOpen) {
+      setErrorMsg(null);
       getProyectos()
         .then((data) => setProyectos(data))
+        .catch(console.error);
+
+      getCategoriasFinanzas()
+        .then((cats) => {
+          if (cats && cats.length > 0) {
+            setCategoriasList(cats);
+            if (!transaccionInicial && !categoriaSeleccionada) {
+              setCategoriaSeleccionada(cats[0].nombre);
+            }
+          }
+        })
         .catch(console.error);
     }
   }, [isOpen]);
@@ -57,13 +96,14 @@ export function TransaccionFormModal({ transaccionInicial, isEdit = false }: Pro
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
+    setErrorMsg(null);
 
     const formData = new FormData(e.currentTarget);
 
     try {
       const payload = {
-        tipo: formData.get("tipo") as TipoTransaccion,
-        categoria: formData.get("categoria") as CategoriaTransaccion,
+        tipo: (formData.get("tipo") as TipoTransaccion) || tipoMovimiento,
+        categoria: (formData.get("categoria") as CategoriaTransaccion) || categoriaSeleccionada || "Otros",
         monto: parseFloat(monto),
         moneda: formData.get("moneda") as Moneda,
         metodo_pago: formData.get("metodo_pago") as MetodoPago,
@@ -81,9 +121,9 @@ export function TransaccionFormModal({ transaccionInicial, isEdit = false }: Pro
 
       setIsOpen(false);
       router.refresh();
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      alert("Error al registrar transacción.");
+      setErrorMsg(error.message || "Error al registrar la transacción.");
     } finally {
       setLoading(false);
     }
@@ -141,6 +181,14 @@ export function TransaccionFormModal({ transaccionInicial, isEdit = false }: Pro
               </button>
             </div>
 
+            {/* Error Alert */}
+            {errorMsg && (
+              <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 text-xs flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 shrink-0" />
+                <span>{errorMsg}</span>
+              </div>
+            )}
+
             {/* Formulario */}
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -151,9 +199,22 @@ export function TransaccionFormModal({ transaccionInicial, isEdit = false }: Pro
                   </label>
                   <select
                     name="tipo"
-                    defaultValue={transaccionInicial?.tipo || "Ingreso"}
+                    value={tipoMovimiento}
+                    onChange={(e) => {
+                      const newTipo = e.target.value as TipoTransaccion;
+                      setTipoMovimiento(newTipo);
+                      // Si la categoría actual no es compatible con el nuevo tipo, auto-seleccionar la primera válida
+                      const validas = categoriasList.filter((c) =>
+                        newTipo === "Ingreso"
+                          ? c.tipo_asociado === "Ingreso" || c.tipo_asociado === "Ambos"
+                          : c.tipo_asociado === "Egreso" || c.tipo_asociado === "Ambos"
+                      );
+                      if (validas.length > 0 && !validas.some((c) => c.nombre === categoriaSeleccionada)) {
+                        setCategoriaSeleccionada(validas[0].nombre);
+                      }
+                    }}
                     required
-                    className="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+                    className="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 cursor-pointer"
                   >
                     <option value="Ingreso">Ingreso (+)</option>
                     <option value="Egreso">Egreso (-)</option>
@@ -161,22 +222,45 @@ export function TransaccionFormModal({ transaccionInicial, isEdit = false }: Pro
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-slate-700 dark:text-zinc-300 block flex items-center gap-1.5">
-                    <Tag className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-500" />
-                    Categoría *
-                  </label>
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-medium text-slate-700 dark:text-zinc-300 flex items-center gap-1.5">
+                      <Tag className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-500" />
+                      Categoría *
+                    </label>
+                    <GestionarCategoriasFinanzasModal
+                      categorias={categoriasList}
+                      triggerButton={
+                        <span className="text-xs text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1 font-medium cursor-pointer">
+                          <Settings className="w-3 h-3 text-slate-400" />
+                          Gestionar
+                        </span>
+                      }
+                    />
+                  </div>
                   <select
                     name="categoria"
-                    defaultValue={transaccionInicial?.categoria || "Hardware"}
+                    value={categoriaSeleccionada}
+                    onChange={(e) => setCategoriaSeleccionada(e.target.value)}
                     required
-                    className="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+                    className="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 cursor-pointer"
                   >
-                    <option value="Hardware">Hardware / Materiales</option>
-                    <option value="Cloud">Servicios Cloud</option>
-                    <option value="Movilidad">Movilidad / Viáticos</option>
-                    <option value="Honorarios">Honorarios</option>
-                    <option value="Abono">Abono Mensual</option>
-                    <option value="Otros">Otros</option>
+                    {categoriasList
+                      .filter((c) =>
+                        tipoMovimiento === "Ingreso"
+                          ? c.tipo_asociado === "Ingreso" || c.tipo_asociado === "Ambos"
+                          : c.tipo_asociado === "Egreso" || c.tipo_asociado === "Ambos"
+                      )
+                      .map((c) => (
+                        <option key={c.id} value={c.nombre}>
+                          {c.nombre}
+                        </option>
+                      ))}
+                    {categoriaSeleccionada &&
+                      !categoriasList.some((c) => c.nombre === categoriaSeleccionada) && (
+                        <option value={categoriaSeleccionada}>
+                          {categoriaSeleccionada}
+                        </option>
+                      )}
                   </select>
                 </div>
               </div>

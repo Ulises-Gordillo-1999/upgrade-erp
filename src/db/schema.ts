@@ -147,11 +147,18 @@ export const bovedaSeguridad = pgTable("boveda_seguridad", {
   created_at: timestamp("created_at", { withTimezone: true }).defaultNow(),
 });
 
+export const categoriasFinanzas = pgTable("categorias_finanzas", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  nombre: text("nombre").notNull().unique(),
+  tipo_asociado: text("tipo_asociado").notNull().default("Ambos"),
+  created_at: timestamp("created_at", { withTimezone: true }).defaultNow(),
+});
+
 export const transacciones = pgTable("transacciones", {
   id: uuid("id").primaryKey().defaultRandom(),
   proyecto_id: uuid("proyecto_id").references(() => proyectos.id, { onDelete: "set null" }),
   tipo: tipoTransaccionEnum("tipo").notNull(),
-  categoria: categoriaTransaccionEnum("categoria").notNull(),
+  categoria: text("categoria").notNull(),
   monto: numeric("monto", { precision: 12, scale: 2 }).notNull(),
   moneda: monedaEnum("moneda").notNull().default("ARS"),
   metodo_pago: metodoPagoEnum("metodo_pago").notNull().default("Transferencia"),
