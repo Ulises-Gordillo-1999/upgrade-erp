@@ -462,7 +462,12 @@ export default async function ProyectoDetallePage({
                   </h4>
                 </div>
                 <div>
-                  <MaskedValue value={cred.valor_desencriptado || ""} />
+                  <MaskedValue
+                    value={cred.valor_desencriptado || ""}
+                    recordId={cred.id}
+                    descripcion={cred.descripcion}
+                    tipoDato={cred.tipo_dato}
+                  />
                   {cred.archivo_url && (
                     <BovedaImageModal path={cred.archivo_url} />
                   )}

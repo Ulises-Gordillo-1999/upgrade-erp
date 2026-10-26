@@ -2,9 +2,30 @@
 
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
+import { registrarRevelacionBoveda } from "@/app/actions/boveda";
 
-export function MaskedValue({ value }: { value: string }) {
+interface MaskedValueProps {
+  value: string;
+  recordId?: string;
+  descripcion?: string;
+  tipoDato?: string;
+}
+
+export function MaskedValue({ value, recordId, descripcion, tipoDato }: MaskedValueProps) {
   const [isVisible, setIsVisible] = useState(false);
+
+  const handleToggle = () => {
+    const nextState = !isVisible;
+    setIsVisible(nextState);
+
+    if (nextState && recordId) {
+      registrarRevelacionBoveda(
+        recordId,
+        descripcion || "Credencial",
+        tipoDato || "Dato Sensible"
+      ).catch(() => {});
+    }
+  };
 
   return (
     <div className="flex items-center space-x-2">
@@ -12,7 +33,7 @@ export function MaskedValue({ value }: { value: string }) {
         {isVisible ? value : "••••••••••••••••"}
       </div>
       <button
-        onClick={() => setIsVisible(!isVisible)}
+        onClick={handleToggle}
         className="p-1.5 text-slate-500 hover:text-slate-900 dark:text-zinc-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-md transition-colors"
         title={isVisible ? "Ocultar" : "Mostrar"}
       >

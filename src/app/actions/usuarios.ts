@@ -6,6 +6,7 @@ import { eq, desc, and, ne } from "drizzle-orm";
 import { getSession, hashPassword } from "@/utils/auth";
 import { revalidatePath } from "next/cache";
 import { Rol, Usuario } from "@/types/database";
+import { registrarAuditoria } from "./auditoria";
 
 // Helper para verificar rol de SuperAdmin
 async function requireSuperAdmin() {
@@ -84,8 +85,14 @@ export async function createUsuario(data: {
     })
     .returning();
 
-  revalidatePath("/usuarios");
-  return nuevo;
+    await registrarAuditoria({
+      modulo: "Usuarios",
+      accion: "Crear Usuario",
+      detalle: `Creó nuevo usuario '${data.nombre.trim()}' (${emailLimpio}) con rol '${data.rol}'`,
+    });
+
+    revalidatePath("/usuarios");
+    return nuevo;
 }
 
 export async function updateUsuario(
@@ -123,6 +130,12 @@ export async function updateUsuario(
     .where(eq(usuarios.id, id))
     .returning();
 
+  await registrarAuditoria({
+    modulo: "Usuarios",
+    accion: "Modificar Usuario",
+    detalle: `Actualizó datos del usuario '${data.nombre.trim()}' (${emailLimpio}) con rol '${data.rol}'`,
+  });
+
   revalidatePath("/usuarios");
   return updated;
 }
@@ -138,6 +151,12 @@ export async function toggleEstadoUsuario(id: string, nuevoEstado: boolean) {
     .update(usuarios)
     .set({ activo: nuevoEstado })
     .where(eq(usuarios.id, id));
+
+  await registrarAuditoria({
+    modulo: "Usuarios",
+    accion: "Estado de Usuario",
+    detalle: `${nuevoEstado ? "Habilitó" : "Deshabilitó"} acceso al sistema para usuario ID ${id}`,
+  });
 
   revalidatePath("/usuarios");
   return true;
@@ -157,6 +176,12 @@ export async function resetPasswordUsuario(id: string, passwordNueva: string) {
     .set({ password_hash: hash })
     .where(eq(usuarios.id, id));
 
+  await registrarAuditoria({
+    modulo: "Usuarios",
+    accion: "Reset de Contraseña",
+    detalle: `Restableció administrativamente la contraseña para el usuario ID ${id}`,
+  });
+
   revalidatePath("/usuarios");
   return true;
 }
@@ -169,6 +194,12 @@ export async function deleteUsuario(id: string) {
   }
 
   await db.delete(usuarios).where(eq(usuarios.id, id));
+
+  await registrarAuditoria({
+    modulo: "Usuarios",
+    accion: "Eliminar Usuario",
+    detalle: `Eliminó de forma permanente la cuenta de usuario ID ${id}`,
+  });
 
   revalidatePath("/usuarios");
   return true;

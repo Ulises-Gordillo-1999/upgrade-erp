@@ -92,6 +92,7 @@ export interface Transaccion {
   metodo_pago: MetodoPago;
   estado: EstadoPago;
   descripcion?: string;
+  comprobante_url?: string | null;
   fecha_transaccion?: string;
   created_at?: string;
 }
@@ -127,5 +128,18 @@ export interface RentabilidadProyecto {
   netoUSDT: number;
   totalMovimientos: number;
 }
+
+export interface LogAuditoria {
+  id: string;
+  usuario_id?: string | null;
+  usuario_nombre: string;
+  usuario_rol: string;
+  accion: string;
+  modulo: "Finanzas" | "Boveda" | "Proyectos" | "Inventario" | "Usuarios" | "Seguridad" | "General";
+  detalle: string;
+  ip_address?: string | null;
+  created_at?: string;
+}
+
 
 

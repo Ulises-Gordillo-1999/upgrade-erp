@@ -38,6 +38,7 @@ export async function ensureDatabaseSchema() {
       created_at TIMESTAMPTZ DEFAULT NOW()
     );`,
     `ALTER TABLE transacciones ALTER COLUMN categoria TYPE TEXT;`,
+    `ALTER TABLE transacciones ADD COLUMN IF NOT EXISTS comprobante_url TEXT;`,
     `CREATE TABLE IF NOT EXISTS categorias_finanzas (
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
       nombre TEXT NOT NULL UNIQUE,
@@ -48,6 +49,17 @@ export async function ensureDatabaseSchema() {
     `UPDATE transacciones SET categoria = 'Servicios Cloud' WHERE categoria = 'Cloud';`,
     `UPDATE transacciones SET categoria = 'Movilidad / Viáticos' WHERE categoria = 'Movilidad';`,
     `UPDATE transacciones SET categoria = 'Abono Mensual' WHERE categoria = 'Abono';`,
+    `CREATE TABLE IF NOT EXISTS auditoria (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      usuario_id UUID REFERENCES usuarios(id) ON DELETE SET NULL,
+      usuario_nombre TEXT NOT NULL,
+      usuario_rol TEXT NOT NULL,
+      accion TEXT NOT NULL,
+      modulo TEXT NOT NULL,
+      detalle TEXT NOT NULL,
+      ip_address TEXT,
+      created_at TIMESTAMPTZ DEFAULT NOW()
+    );`,
   ];
 
   for (const q of queries) {

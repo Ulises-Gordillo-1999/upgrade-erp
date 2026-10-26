@@ -13,6 +13,7 @@ import {
 } from "@/types/database";
 import { revalidatePath } from "next/cache";
 import { getSession } from "@/utils/auth";
+import { registrarAuditoria } from "./auditoria";
 
 export async function getProyectos() {
   try {
@@ -155,6 +156,12 @@ export async function createProyecto(data: {
       } as any)
       .returning();
 
+    await registrarAuditoria({
+      modulo: "Proyectos",
+      accion: "Crear Proyecto",
+      detalle: `Creó proyecto para cliente ID ${data.cliente_id} en estado '${data.estado}'`,
+    });
+
     return {
       ...newProyecto,
       total_estimado: Number(newProyecto.total_estimado || 0),
@@ -270,6 +277,12 @@ export async function updateEstadoProyecto(id: string, estado: EstadoProyecto) {
     revalidatePath(`/proyectos/${id}`);
     revalidatePath(`/proyectos`);
     revalidatePath(`/inventario`);
+
+    await registrarAuditoria({
+      modulo: "Proyectos",
+      accion: "Cambio de Estado",
+      detalle: `Cambió estado de proyecto ID ${id} de '${proyectoData.estado}' a '${estado}'${estado === "Finalizado" ? " (Stock físico descontado automáticamente)" : ""}`,
+    });
 
     return {
       ...updated,
@@ -450,6 +463,12 @@ export async function cerrarProyectoConLiquidacion(data: {
     revalidatePath(`/inventario`);
     revalidatePath(`/finanzas`);
 
+    await registrarAuditoria({
+      modulo: "Proyectos",
+      accion: "Cierre de Obra con Liquidación",
+      detalle: `Finalizó y liquidó obra para '${proyecto.cliente?.nombre_razon_social || "Cliente"}' (ID: ${data.proyecto_id}). Total final: $${proyectoActualizado.total_final} ARS. Stock de insumos y consumibles descontado.${data.registrar_transaccion ? " Cobro registrado en Finanzas." : ""}`,
+    });
+
     return {
       success: true,
       total_final: Number(proyectoActualizado.total_final),
@@ -600,6 +619,12 @@ export async function deleteProyecto(id: string) {
     }
 
     await db.delete(proyectos).where(eq(proyectos.id, id));
+
+    await registrarAuditoria({
+      modulo: "Proyectos",
+      accion: "Eliminar Proyecto",
+      detalle: `Eliminó proyecto ID ${id} (${proyecto.estado})`,
+    });
 
     revalidatePath("/proyectos");
     revalidatePath("/");

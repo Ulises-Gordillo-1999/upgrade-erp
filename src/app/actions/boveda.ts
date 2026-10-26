@@ -7,6 +7,7 @@ import { BovedaSeguridad, TipoDatoBoveda, TipoCredencialBoveda } from "@/types/d
 import { revalidatePath } from "next/cache";
 import CryptoJS from "crypto-js";
 import { saveVaultFile } from "@/utils/vaultStorage";
+import { registrarAuditoria } from "./auditoria";
 
 // Helper to encrypt
 function encryptData(text: string) {
@@ -41,6 +42,14 @@ export async function uploadBovedaFile(file: File, proyectoId: string) {
 export async function getFileUrl(path: string) {
   // Las URLs ahora se sirven localmente optimizadas en /api/vault/...
   return path;
+}
+
+export async function registrarRevelacionBoveda(id: string, descripcion: string, tipo_dato: string) {
+  await registrarAuditoria({
+    modulo: "Boveda",
+    accion: "Revelar Secreto",
+    detalle: `Visualizó / desocultó credencial '${tipo_dato} - ${descripcion}' (ID: ${id})`,
+  });
 }
 
 export async function getBovedaData(proyecto_id?: string) {
@@ -140,6 +149,12 @@ export async function createBovedaRecord(data: {
       } as any)
       .returning();
 
+    await registrarAuditoria({
+      modulo: "Boveda",
+      accion: "Crear Credencial",
+      detalle: `Guardó credencial '${data.tipo_dato} - ${data.descripcion}' en proyecto ${data.proyecto_id}${data.archivo_url ? " (con adjunto)" : ""}`,
+    });
+
     revalidatePath("/boveda");
     revalidatePath("/proyectos");
     revalidatePath(`/proyectos/${data.proyecto_id}`);
@@ -186,6 +201,12 @@ export async function updateBovedaRecord(
       .where(eq(bovedaSeguridad.id, id))
       .returning();
 
+    await registrarAuditoria({
+      modulo: "Boveda",
+      accion: "Modificar Credencial",
+      detalle: `Actualizó credencial ID ${id} (${payload.tipo_dato || ""} - ${payload.descripcion || ""})`,
+    });
+
     revalidatePath("/boveda");
     revalidatePath("/proyectos");
 
@@ -208,7 +229,18 @@ export async function updateBovedaRecord(
 export async function deleteBovedaRecord(id: string) {
   try {
     await ensureDatabaseSchema();
+    const existing = await db.query.bovedaSeguridad.findFirst({
+      where: eq(bovedaSeguridad.id, id),
+    });
+
     await db.delete(bovedaSeguridad).where(eq(bovedaSeguridad.id, id));
+
+    await registrarAuditoria({
+      modulo: "Boveda",
+      accion: "Eliminar Credencial",
+      detalle: `Eliminó credencial ID ${id}${existing ? ` (${existing.tipo_dato} - ${existing.descripcion})` : ""}`,
+    });
+
     revalidatePath("/boveda");
     revalidatePath("/proyectos");
     return { success: true };

@@ -4,6 +4,8 @@ import { db, ensureDatabaseSchema } from "@/db";
 import { transacciones, proyectos, categoriasFinanzas } from "@/db/schema";
 import { desc, eq, gte, and, asc, ilike } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import { saveComprobanteFile } from "@/utils/finanzasStorage";
+import { registrarAuditoria } from "./auditoria";
 import {
   Transaccion,
   TipoTransaccion,
@@ -14,6 +16,20 @@ import {
   EstadoPago,
   RentabilidadProyecto,
 } from "@/types/database";
+
+export async function uploadComprobante(formData: FormData): Promise<string> {
+  try {
+    const file = formData.get("file") as File | null;
+    if (!file || file.size === 0) {
+      throw new Error("No se ha seleccionado ningún archivo de comprobante");
+    }
+    const url = await saveComprobanteFile(file);
+    return url;
+  } catch (error: any) {
+    console.error("Error al subir comprobante:", error);
+    throw new Error(error.message || "Error al subir comprobante");
+  }
+}
 
 export async function getTransacciones() {
   try {
@@ -57,6 +73,7 @@ export async function createTransaccion(data: {
   descripcion?: string;
   proyecto_id?: string;
   fecha_transaccion?: string;
+  comprobante_url?: string | null;
 }) {
   try {
     const payload: any = {
@@ -68,6 +85,7 @@ export async function createTransaccion(data: {
       estado: data.estado,
       descripcion: data.descripcion || null,
       proyecto_id: data.proyecto_id || null,
+      comprobante_url: data.comprobante_url || null,
     };
 
     if (data.fecha_transaccion) {
@@ -78,6 +96,15 @@ export async function createTransaccion(data: {
       .insert(transacciones)
       .values(payload)
       .returning();
+
+    await registrarAuditoria({
+      modulo: "Finanzas",
+      accion: "Crear Transacción",
+      detalle: `Registró ${data.tipo} de $${data.monto} ${data.moneda} en categoría '${data.categoria}'${data.comprobante_url ? " (con comprobante adjunto)" : ""}${data.descripcion ? ` - ${data.descripcion}` : ""}`,
+    });
+
+    revalidatePath("/finanzas");
+    revalidatePath("/");
 
     return {
       ...newRecord,
@@ -152,6 +179,7 @@ export async function updateTransaccion(
     descripcion?: string;
     proyecto_id?: string | null;
     fecha_transaccion?: string;
+    comprobante_url?: string | null;
   }>
 ) {
   try {
@@ -168,6 +196,15 @@ export async function updateTransaccion(
       .set(payload)
       .where(eq(transacciones.id, id))
       .returning();
+
+    await registrarAuditoria({
+      modulo: "Finanzas",
+      accion: "Modificar Transacción",
+      detalle: `Actualizó transacción ID ${id} (${payload.tipo || ""} ${payload.monto ? `$${payload.monto}` : ""} ${payload.moneda || ""}${payload.categoria ? ` [${payload.categoria}]` : ""})`,
+    });
+
+    revalidatePath("/finanzas");
+    revalidatePath("/");
 
     return {
       ...updatedRecord,
@@ -187,7 +224,20 @@ export async function updateTransaccion(
 
 export async function deleteTransaccion(id: string) {
   try {
+    const existing = await db.query.transacciones.findFirst({
+      where: eq(transacciones.id, id),
+    });
+
     await db.delete(transacciones).where(eq(transacciones.id, id));
+
+    await registrarAuditoria({
+      modulo: "Finanzas",
+      accion: "Eliminar Transacción",
+      detalle: `Eliminó transacción ID ${id}${existing ? ` (${existing.tipo} $${existing.monto} ${existing.moneda} - ${existing.categoria})` : ""}`,
+    });
+
+    revalidatePath("/finanzas");
+    revalidatePath("/");
     return true;
   } catch (error: any) {
     console.error("Error al eliminar transacción:", error);
@@ -335,6 +385,12 @@ export async function createCategoriaFinanzas(data: {
       })
       .returning();
 
+    await registrarAuditoria({
+      modulo: "Finanzas",
+      accion: "Crear Categoría",
+      detalle: `Creó la categoría de finanzas '${nombreLimpio}' (Tipo: ${data.tipo_asociado || "Ambos"})`,
+    });
+
     revalidatePath("/finanzas");
 
     return {
@@ -438,6 +494,12 @@ export async function deleteCategoriaFinanzas(id: string) {
       .where(eq(transacciones.categoria, catNombre));
 
     await db.delete(categoriasFinanzas).where(eq(categoriasFinanzas.id, id));
+
+    await registrarAuditoria({
+      modulo: "Finanzas",
+      accion: "Eliminar Categoría",
+      detalle: `Eliminó categoría '${catNombre}'. Las transacciones asociadas fueron reclasificadas a 'Otros'.`,
+    });
 
     revalidatePath("/finanzas");
     return true;

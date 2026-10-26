@@ -3,10 +3,11 @@
 import { useState } from "react";
 import { FinanzasTable } from "./FinanzasTable";
 import { RentabilidadTable } from "./RentabilidadTable";
+import { FinanzasGraficaEvolucion } from "./FinanzasGraficaEvolucion";
 import { TransaccionFormModal } from "./TransaccionFormModal";
 import { GestionarCategoriasFinanzasModal } from "./GestionarCategoriasFinanzasModal";
 import { RentabilidadProyecto, CategoriaFinanzas } from "@/types/database";
-import { DollarSign, Briefcase, Receipt, PieChart } from "lucide-react";
+import { DollarSign, Briefcase, Receipt, PieChart, BarChart3 } from "lucide-react";
 
 interface Props {
   transacciones: any[];
@@ -19,7 +20,7 @@ export function FinanzasDashboard({
   rentabilidad,
   categorias = [],
 }: Props) {
-  const [activeTab, setActiveTab] = useState<"movimientos" | "rentabilidad">("movimientos");
+  const [activeTab, setActiveTab] = useState<"movimientos" | "evolucion" | "rentabilidad">("movimientos");
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-10">
@@ -42,7 +43,7 @@ export function FinanzasDashboard({
       </div>
 
       {/* Pestañas de Navegación de Finanzas */}
-      <div className="flex items-center gap-2 p-1.5 rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white/70 dark:bg-zinc-900/60 backdrop-blur-md shadow-sm w-fit">
+      <div className="flex items-center gap-2 p-1.5 rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white/70 dark:bg-zinc-900/60 backdrop-blur-md shadow-sm w-fit flex-wrap">
         <button
           type="button"
           onClick={() => setActiveTab("movimientos")}
@@ -63,6 +64,19 @@ export function FinanzasDashboard({
           >
             {transacciones.length}
           </span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab("evolucion")}
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
+            activeTab === "evolucion"
+              ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-950/20"
+              : "text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-800/60"
+          }`}
+        >
+          <BarChart3 className="w-4 h-4" />
+          <span>Evolución Mensual</span>
         </button>
 
         <button
@@ -91,6 +105,8 @@ export function FinanzasDashboard({
       {/* Contenido de la Pestaña Activa */}
       {activeTab === "movimientos" ? (
         <FinanzasTable transacciones={transacciones} categorias={categorias} />
+      ) : activeTab === "evolucion" ? (
+        <FinanzasGraficaEvolucion transacciones={transacciones} />
       ) : (
         <RentabilidadTable proyectos={rentabilidad} />
       )}

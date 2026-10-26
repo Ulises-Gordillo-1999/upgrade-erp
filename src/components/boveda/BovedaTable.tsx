@@ -575,7 +575,12 @@ export function BovedaTable({ bovedaItems, tiposCredencial }: Props) {
 
                                 {/* Valor Desencriptado & Adjunto */}
                                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2.5 shrink-0 pt-2 md:pt-0 border-t md:border-t-0 border-slate-100 dark:border-zinc-800/60">
-                                  <MaskedValue value={item.valor_desencriptado || ""} />
+                                  <MaskedValue
+                                    value={item.valor_desencriptado || ""}
+                                    recordId={item.id}
+                                    descripcion={item.descripcion}
+                                    tipoDato={item.tipo_dato}
+                                  />
                                   {item.archivo_url && (
                                     <BovedaImageModal path={item.archivo_url} />
                                   )}
@@ -662,7 +667,12 @@ export function BovedaTable({ bovedaItems, tiposCredencial }: Props) {
                     <span className="text-[10px] text-slate-400 dark:text-zinc-500 uppercase font-medium block">
                       Credencial / Clave Resguardada
                     </span>
-                    <MaskedValue value={item.valor_desencriptado || ""} />
+                    <MaskedValue
+                      value={item.valor_desencriptado || ""}
+                      recordId={item.id}
+                      descripcion={item.descripcion}
+                      tipoDato={item.tipo_dato}
+                    />
                     {item.archivo_url && (
                       <div className="pt-1">
                         <BovedaImageModal path={item.archivo_url} />
@@ -755,7 +765,12 @@ export function BovedaTable({ bovedaItems, tiposCredencial }: Props) {
                         </td>
                         <td className="px-6 py-4">
                           <div className="flex flex-col gap-2">
-                            <MaskedValue value={item.valor_desencriptado || ""} />
+                            <MaskedValue
+                              value={item.valor_desencriptado || ""}
+                              recordId={item.id}
+                              descripcion={item.descripcion}
+                              tipoDato={item.tipo_dato}
+                            />
                             {item.archivo_url && (
                               <BovedaImageModal path={item.archivo_url} />
                             )}

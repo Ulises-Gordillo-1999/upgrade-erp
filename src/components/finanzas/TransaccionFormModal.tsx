@@ -17,11 +17,16 @@ import {
   Layers,
   Settings,
   AlertCircle,
+  Paperclip,
+  FileCheck,
+  Eye,
+  Trash2,
 } from "lucide-react";
 import {
   createTransaccion,
   updateTransaccion,
   getCategoriasFinanzas,
+  uploadComprobante,
 } from "@/app/actions/finanzas";
 import { getProyectos } from "@/app/actions/proyectos";
 import {
@@ -62,6 +67,10 @@ export function TransaccionFormModal({
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState<string>(
     transaccionInicial?.categoria || ""
   );
+  const [comprobanteUrl, setComprobanteUrl] = useState<string | null>(
+    transaccionInicial?.comprobante_url || null
+  );
+  const [comprobanteFile, setComprobanteFile] = useState<File | null>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -76,6 +85,8 @@ export function TransaccionFormModal({
   useEffect(() => {
     if (isOpen) {
       setErrorMsg(null);
+      setComprobanteUrl(transaccionInicial?.comprobante_url || null);
+      setComprobanteFile(null);
       getProyectos()
         .then((data) => setProyectos(data))
         .catch(console.error);
@@ -101,6 +112,15 @@ export function TransaccionFormModal({
     const formData = new FormData(e.currentTarget);
 
     try {
+      let finalComprobanteUrl = comprobanteUrl;
+
+      // Si el usuario seleccionó un nuevo comprobante, subirlo primero
+      if (comprobanteFile) {
+        const uploadData = new FormData();
+        uploadData.append("file", comprobanteFile);
+        finalComprobanteUrl = await uploadComprobante(uploadData);
+      }
+
       const payload = {
         tipo: (formData.get("tipo") as TipoTransaccion) || tipoMovimiento,
         categoria: (formData.get("categoria") as CategoriaTransaccion) || categoriaSeleccionada || "Otros",
@@ -111,6 +131,7 @@ export function TransaccionFormModal({
         descripcion: (formData.get("descripcion") as string) || undefined,
         proyecto_id: proyectoId || undefined,
         fecha_transaccion: (formData.get("fecha_transaccion") as string) || undefined,
+        comprobante_url: finalComprobanteUrl || null,
       };
 
       if (isEdit && transaccionInicial) {
@@ -389,6 +410,70 @@ export function TransaccionFormModal({
                   required
                   className="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
                 />
+              </div>
+
+              {/* Comprobante de Pago / Factura (Opcional) */}
+              <div className="space-y-2 p-3.5 rounded-xl bg-slate-50 dark:bg-zinc-950/60 border border-slate-200 dark:border-zinc-800/80">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-semibold text-slate-700 dark:text-zinc-300 flex items-center gap-1.5">
+                    <Paperclip className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                    Comprobante de Pago / Factura (Opcional)
+                  </label>
+                  <span className="text-[10px] text-slate-400 dark:text-zinc-500">
+                    PDF o Imagen (Máx 15MB)
+                  </span>
+                </div>
+
+                {comprobanteUrl ? (
+                  <div className="flex items-center justify-between p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-xs">
+                    <div className="flex items-center gap-2 text-emerald-800 dark:text-emerald-300 min-w-0">
+                      <FileCheck className="w-4 h-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
+                      <span className="truncate font-medium">Comprobante adjunto cargado</span>
+                      <a
+                        href={comprobanteUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[11px] underline text-cyan-600 dark:text-cyan-400 ml-1 inline-flex items-center gap-0.5"
+                      >
+                        <Eye className="w-3 h-3" />
+                        Ver
+                      </a>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setComprobanteUrl(null);
+                        setComprobanteFile(null);
+                      }}
+                      className="text-xs text-rose-500 hover:text-rose-600 dark:text-rose-400 hover:underline flex items-center gap-1 font-medium ml-2 shrink-0"
+                    >
+                      <Trash2 className="w-3 h-3" />
+                      Remover
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="file"
+                      accept="image/*,application/pdf"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0] || null;
+                        setComprobanteFile(file);
+                      }}
+                      className="w-full text-xs text-slate-500 dark:text-zinc-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-500/10 file:text-emerald-700 dark:file:text-emerald-400 hover:file:bg-emerald-500/20 cursor-pointer"
+                    />
+                    {comprobanteFile && (
+                      <button
+                        type="button"
+                        onClick={() => setComprobanteFile(null)}
+                        className="p-1 text-slate-400 hover:text-rose-500 rounded"
+                        title="Quitar archivo"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
+                )}
               </div>
 
               {/* Botones de acción */}

@@ -9,6 +9,7 @@ import {
   Package,
   FolderGit2,
   ShieldAlert,
+  ShieldCheck,
   DollarSign,
   LogOut,
   UserCog,
@@ -29,6 +30,7 @@ const navigation = [
   { name: "Proyectos", href: "/proyectos", icon: FolderGit2, superAdminOnly: false },
   { name: "Bóveda Segura", href: "/boveda", icon: ShieldAlert, superAdminOnly: false },
   { name: "Usuarios / Equipo", href: "/usuarios", icon: UserCog, superAdminOnly: true },
+  { name: "Auditoría", href: "/auditoria", icon: ShieldCheck, superAdminOnly: true },
 ];
 
 export function Sidebar({

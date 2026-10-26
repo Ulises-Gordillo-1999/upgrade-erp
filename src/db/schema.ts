@@ -164,7 +164,20 @@ export const transacciones = pgTable("transacciones", {
   metodo_pago: metodoPagoEnum("metodo_pago").notNull().default("Transferencia"),
   estado: estadoPagoEnum("estado").notNull().default("Pagado"),
   descripcion: text("descripcion"),
+  comprobante_url: text("comprobante_url"),
   fecha_transaccion: timestamp("fecha_transaccion", { withTimezone: true }).defaultNow(),
+  created_at: timestamp("created_at", { withTimezone: true }).defaultNow(),
+});
+
+export const auditoria = pgTable("auditoria", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  usuario_id: uuid("usuario_id").references(() => usuarios.id, { onDelete: "set null" }),
+  usuario_nombre: text("usuario_nombre").notNull(),
+  usuario_rol: text("usuario_rol").notNull(),
+  accion: text("accion").notNull(),
+  modulo: text("modulo").notNull(),
+  detalle: text("detalle").notNull(),
+  ip_address: text("ip_address"),
   created_at: timestamp("created_at", { withTimezone: true }).defaultNow(),
 });
 

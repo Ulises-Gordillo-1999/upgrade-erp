@@ -21,9 +21,11 @@ import {
   DollarSign,
   Clock,
   CalendarDays,
+  Receipt,
 } from "lucide-react";
 
 import { CategoriaFinanzas } from "@/types/database";
+import { ComprobanteViewerModal } from "./ComprobanteViewerModal";
 
 interface TransaccionItem {
   id: string;
@@ -34,6 +36,7 @@ interface TransaccionItem {
   metodo_pago: string;
   estado: "Pagado" | "Pendiente";
   descripcion?: string | null;
+  comprobante_url?: string | null;
   fecha_transaccion?: string;
   created_at?: string;
   proyecto_id?: string | null;
@@ -645,7 +648,23 @@ export function FinanzasTable({ transacciones, categorias = [] }: Props) {
                   })}
                 </div>
 
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-1.5">
+                  {t.comprobante_url && (
+                    <ComprobanteViewerModal
+                      url={t.comprobante_url}
+                      descripcion={t.descripcion || `Movimiento de ${t.tipo}`}
+                      triggerButton={
+                        <button
+                          type="button"
+                          className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 px-2 py-1 rounded-lg border border-emerald-500/20 transition-colors"
+                          title="Ver comprobante adjunto"
+                        >
+                          <Receipt className="w-3.5 h-3.5" />
+                          <span>Doc</span>
+                        </button>
+                      }
+                    />
+                  )}
                   <TransaccionFormModal
                     transaccionInicial={t as any}
                     isEdit={true}
@@ -725,6 +744,20 @@ export function FinanzasTable({ transacciones, categorias = [] }: Props) {
                               "Proyecto Eliminado"}
                           </span>
                         )}
+                        {t.comprobante_url && (
+                          <div className="mt-1">
+                            <ComprobanteViewerModal
+                              url={t.comprobante_url}
+                              descripcion={t.descripcion || `Movimiento de ${t.tipo}`}
+                              triggerButton={
+                                <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 px-1.5 py-0.5 rounded-md cursor-pointer transition-colors w-fit">
+                                  <Receipt className="w-3 h-3" />
+                                  <span>Ver Comprobante</span>
+                                </span>
+                              }
+                            />
+                          </div>
+                        )}
                       </div>
                     </td>
                     <td className="px-6 py-4">
@@ -778,6 +811,21 @@ export function FinanzasTable({ transacciones, categorias = [] }: Props) {
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex justify-end items-center gap-1">
+                        {t.comprobante_url && (
+                          <ComprobanteViewerModal
+                            url={t.comprobante_url}
+                            descripcion={t.descripcion || `Movimiento de ${t.tipo}`}
+                            triggerButton={
+                              <button
+                                type="button"
+                                className="p-1.5 text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-500/10 rounded-lg transition-colors"
+                                title="Ver comprobante adjunto"
+                              >
+                                <Receipt className="w-4 h-4" />
+                              </button>
+                            }
+                          />
+                        )}
                         <TransaccionFormModal
                           transaccionInicial={t as any}
                           isEdit={true}
