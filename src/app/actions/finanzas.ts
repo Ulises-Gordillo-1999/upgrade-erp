@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/db";
-import { transacciones } from "@/db/schema";
+import { transacciones, proyectos } from "@/db/schema";
 import { desc, eq, gte, and } from "drizzle-orm";
 import {
   Transaccion,
@@ -10,6 +10,7 @@ import {
   Moneda,
   MetodoPago,
   EstadoPago,
+  RentabilidadProyecto,
 } from "@/types/database";
 
 export async function getTransacciones() {
@@ -191,3 +192,61 @@ export async function deleteTransaccion(id: string) {
     throw new Error(error.message || "Error al eliminar transacción");
   }
 }
+
+export async function getRentabilidadProyectos(): Promise<RentabilidadProyecto[]> {
+  try {
+    const list = await db.query.proyectos.findMany({
+      with: {
+        cliente: true,
+        transacciones: true,
+      },
+      orderBy: [desc(proyectos.created_at)],
+    });
+
+    return list.map((p) => {
+      let ingresosARS = 0;
+      let egresosARS = 0;
+      let ingresosUSDT = 0;
+      let egresosUSDT = 0;
+
+      if (p.transacciones && Array.isArray(p.transacciones)) {
+        p.transacciones.forEach((t) => {
+          const monto = Number(t.monto) || 0;
+          if (t.moneda === "ARS") {
+            if (t.tipo === "Ingreso") ingresosARS += monto;
+            else if (t.tipo === "Egreso") egresosARS += monto;
+          } else if (t.moneda === "USDT") {
+            if (t.tipo === "Ingreso") ingresosUSDT += monto;
+            else if (t.tipo === "Egreso") egresosUSDT += monto;
+          }
+        });
+      }
+
+      const netoARS = ingresosARS - egresosARS;
+      const margenARS = ingresosARS > 0 ? (netoARS / ingresosARS) * 100 : 0;
+      const netoUSDT = ingresosUSDT - egresosUSDT;
+
+      return {
+        id: p.id,
+        clienteNombre: p.cliente?.nombre_razon_social || "Cliente sin nombre",
+        estado: p.estado,
+        totalEstimado: Number(p.total_estimado) || 0,
+        totalFinal: Number(p.total_final) || 0,
+        stockDescontado: Boolean(p.stock_descontado),
+        fechaCreacion: p.created_at ? p.created_at.toISOString() : new Date().toISOString(),
+        ingresosARS,
+        egresosARS,
+        netoARS,
+        margenARS: Number(margenARS.toFixed(1)),
+        ingresosUSDT,
+        egresosUSDT,
+        netoUSDT,
+        totalMovimientos: p.transacciones ? p.transacciones.length : 0,
+      };
+    });
+  } catch (error: any) {
+    console.error("Error al calcular rentabilidad de proyectos:", error);
+    throw new Error(error.message || "Error al calcular rentabilidad de proyectos");
+  }
+}
+

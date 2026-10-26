@@ -103,3 +103,22 @@ export interface Usuario {
   created_at?: string;
 }
 
+export interface RentabilidadProyecto {
+  id: string;
+  clienteNombre: string;
+  estado: string;
+  totalEstimado: number;
+  totalFinal: number;
+  stockDescontado: boolean;
+  fechaCreacion: string;
+  ingresosARS: number;
+  egresosARS: number;
+  netoARS: number;
+  margenARS: number;
+  ingresosUSDT: number;
+  egresosUSDT: number;
+  netoUSDT: number;
+  totalMovimientos: number;
+}
+
+
