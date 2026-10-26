@@ -18,6 +18,8 @@ import {
 import { logoutUser } from "@/app/actions/auth";
 import { SessionUser } from "@/utils/auth";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
+import { NotificationCenter } from "@/components/notifications/NotificationCenter";
+import { ResumenNotificaciones } from "@/app/actions/notificaciones";
 
 const navigation = [
   { name: "Dashboard", href: "/", icon: LayoutDashboard, superAdminOnly: false },
@@ -29,7 +31,13 @@ const navigation = [
   { name: "Usuarios / Equipo", href: "/usuarios", icon: UserCog, superAdminOnly: true },
 ];
 
-export function Sidebar({ user }: { user?: SessionUser | null }) {
+export function Sidebar({
+  user,
+  notificaciones,
+}: {
+  user?: SessionUser | null;
+  notificaciones?: ResumenNotificaciones;
+}) {
   const pathname = usePathname();
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
@@ -156,6 +164,7 @@ export function Sidebar({ user }: { user?: SessionUser | null }) {
         </div>
 
         <div className="flex items-center gap-2">
+          <NotificationCenter initialNotificaciones={notificaciones} />
           <Link
             href="/perfil"
             className="flex items-center gap-2 p-1 rounded-full hover:ring-2 hover:ring-cyan-500/30 transition-all"

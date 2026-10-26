@@ -2,7 +2,9 @@ import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Sidebar } from "@/components/Sidebar";
+import { Header } from "@/components/Header";
 import { getSession } from "@/utils/auth";
+import { getNotificaciones } from "@/app/actions/notificaciones";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
@@ -28,6 +30,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const session = await getSession();
+  const notificaciones = session ? await getNotificaciones() : undefined;
 
   return (
     <html lang="es" suppressHydrationWarning className="dark">
@@ -59,12 +62,15 @@ export default async function RootLayout({
         <ThemeProvider>
           {session ? (
             <>
-              <Sidebar user={session} />
-              <main className="flex-1 overflow-y-auto bg-slate-50/60 dark:bg-zinc-950 text-slate-900 dark:text-zinc-100 transition-colors">
-                <div className="mx-auto max-w-7xl px-3.5 sm:px-6 lg:px-8 py-4 sm:py-8 h-full">
-                  {children}
-                </div>
-              </main>
+              <Sidebar user={session} notificaciones={notificaciones} />
+              <div className="flex-1 flex flex-col h-full min-w-0 overflow-hidden">
+                <Header user={session} notificaciones={notificaciones} />
+                <main className="flex-1 overflow-y-auto bg-slate-50/60 dark:bg-zinc-950 text-slate-900 dark:text-zinc-100 transition-colors">
+                  <div className="mx-auto max-w-7xl px-3.5 sm:px-6 lg:px-8 py-4 sm:py-8 h-full">
+                    {children}
+                  </div>
+                </main>
+              </div>
             </>
           ) : (
             <main className="flex-1 overflow-y-auto w-full h-full bg-slate-50 dark:bg-zinc-950 text-slate-900 dark:text-zinc-100 transition-colors">
