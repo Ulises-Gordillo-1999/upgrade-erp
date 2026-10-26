@@ -1,21 +1,14 @@
-import Link from "next/link";
-import { SessionUser } from "@/utils/auth";
-import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { NotificationCenter } from "@/components/notifications/NotificationCenter";
 import { getNotificaciones, ResumenNotificaciones } from "@/app/actions/notificaciones";
-import { ShieldCheck } from "lucide-react";
+import { SessionUser } from "@/utils/auth";
 
 interface Props {
   user?: SessionUser | null;
   notificaciones?: ResumenNotificaciones;
 }
 
-export async function Header({ user, notificaciones: notifProp }: Props) {
+export async function Header({ notificaciones: notifProp }: Props) {
   const notificaciones = notifProp || (await getNotificaciones());
-
-  const userInitials = user?.nombre
-    ? user.nombre.slice(0, 2).toUpperCase()
-    : "UP";
 
   const todayStr = new Intl.DateTimeFormat("es-AR", {
     weekday: "long",
@@ -38,33 +31,9 @@ export async function Header({ user, notificaciones: notifProp }: Props) {
         </span>
       </div>
 
-      {/* Lado Derecho: Alertas, Tema y Perfil */}
+      {/* Lado Derecho: Centro de Alertas y Notificaciones */}
       <div className="flex items-center gap-3">
         <NotificationCenter initialNotificaciones={notificaciones} />
-
-        <div className="h-5 w-px bg-slate-200 dark:border-zinc-800" />
-
-        <ThemeToggle />
-
-        <div className="h-5 w-px bg-slate-200 dark:border-zinc-800" />
-
-        <Link
-          href="/perfil"
-          className="flex items-center gap-2.5 p-1 rounded-xl hover:bg-slate-100 dark:hover:bg-zinc-900 transition-colors group cursor-pointer"
-          title="Mi Perfil de Usuario"
-        >
-          <div className="h-8 w-8 rounded-full bg-gradient-to-tr from-cyan-600 to-blue-600 flex items-center justify-center text-xs font-bold text-white shadow-inner ring-1 ring-white/20">
-            {userInitials}
-          </div>
-          <div className="text-left hidden xl:block min-w-0 max-w-[130px]">
-            <p className="text-xs font-semibold text-slate-800 dark:text-zinc-200 truncate group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">
-              {user?.nombre || "Usuario"}
-            </p>
-            <p className="text-[10px] text-cyan-600 dark:text-cyan-400 font-medium truncate">
-              {user?.rol || "Técnico"}
-            </p>
-          </div>
-        </Link>
       </div>
     </header>
   );
