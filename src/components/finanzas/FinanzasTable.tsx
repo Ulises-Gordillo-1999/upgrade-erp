@@ -3,7 +3,6 @@
 import { useState, useMemo } from "react";
 import { TransaccionFormModal } from "./TransaccionFormModal";
 import { DeleteTransaccionButton } from "./DeleteTransaccionButton";
-import { exportToExcelCsv } from "@/utils/exportCsv";
 import {
   Search,
   X,
@@ -15,7 +14,6 @@ import {
   FolderGit2,
   FilterX,
   SlidersHorizontal,
-  FileSpreadsheet,
   TrendingUp,
   TrendingDown,
   DollarSign,
@@ -241,43 +239,6 @@ export function FinanzasTable({ transacciones, categorias = [] }: Props) {
       style: "currency",
       currency: moneda,
     }).format(val);
-  };
-
-  const handleExportCsv = () => {
-    exportToExcelCsv({
-      filename: `flujo_caja_${periodoFiltro}_${new Date().toISOString().slice(0, 10)}`,
-      columns: [
-        {
-          header: "Fecha",
-          accessor: (t) =>
-            t.fecha_transaccion
-              ? new Date(t.fecha_transaccion).toLocaleString("es-AR", {
-                  day: "2-digit",
-                  month: "2-digit",
-                  year: "numeric",
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })
-              : "",
-        },
-        { header: "Tipo", accessor: (t) => t.tipo },
-        {
-          header: "Concepto / Descripción",
-          accessor: (t) => t.descripcion || `Movimiento de ${t.tipo}`,
-        },
-        { header: "Categoría", accessor: (t) => t.categoria },
-        {
-          header: "Cliente / Proyecto",
-          accessor: (t) =>
-            t.proyectos?.clientes?.nombre_razon_social || "Sin proyecto asociado",
-        },
-        { header: "Monto", accessor: (t) => t.monto },
-        { header: "Moneda", accessor: (t) => t.moneda },
-        { header: "Método de Pago", accessor: (t) => t.metodo_pago },
-        { header: "Estado", accessor: (t) => t.estado },
-      ],
-      data: filteredTransacciones,
-    });
   };
 
   const getPeriodoLabel = () => {
@@ -520,17 +481,6 @@ export function FinanzasTable({ transacciones, categorias = [] }: Props) {
             >
               <FileText className="w-4 h-4" />
               <span>Exportar PDF</span>
-            </button>
-
-            {/* Botón Exportar a Excel */}
-            <button
-              type="button"
-              onClick={handleExportCsv}
-              className="flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-emerald-700 dark:text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 rounded-xl transition-all shadow-sm"
-              title="Descargar movimientos filtrados a formato Excel (CSV)"
-            >
-              <FileSpreadsheet className="w-4 h-4 text-emerald-500" />
-              <span>Excel (CSV)</span>
             </button>
           </div>
         </div>

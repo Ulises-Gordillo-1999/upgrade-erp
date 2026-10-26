@@ -3,11 +3,9 @@
 import { useState, useMemo } from "react";
 import Link from "next/link";
 import { RentabilidadProyecto } from "@/types/database";
-import { exportToExcelCsv } from "@/utils/exportCsv";
 import {
   Search,
   X,
-  FileSpreadsheet,
   ExternalLink,
   RotateCcw,
   TrendingUp,
@@ -98,36 +96,6 @@ export function RentabilidadTable({ proyectos }: Props) {
     setSearchTerm("");
     setEstadoFiltro("todos");
     setMargenFiltro("todos");
-  };
-
-  const handleExportCsv = () => {
-    exportToExcelCsv({
-      filename: `rentabilidad_proyectos_${new Date().toISOString().slice(0, 10)}`,
-      columns: [
-        { header: "Cliente / Razón Social", accessor: (p) => p.clienteNombre },
-        { header: "Estado", accessor: (p) => p.estado.replace(/_/g, " ") },
-        { header: "Total Presupuestado (Final)", accessor: (p) => p.totalFinal },
-        { header: "Ingresos Recaudados (ARS)", accessor: (p) => p.ingresosARS },
-        { header: "Egresos / Costos (ARS)", accessor: (p) => p.egresosARS },
-        { header: "Ganancia Neta (ARS)", accessor: (p) => p.netoARS },
-        { header: "% Margen de Rentabilidad (ARS)", accessor: (p) => `${p.margenARS}%` },
-        { header: "Ingresos (USDT)", accessor: (p) => p.ingresosUSDT },
-        { header: "Egresos (USDT)", accessor: (p) => p.egresosUSDT },
-        { header: "Ganancia Neta (USDT)", accessor: (p) => p.netoUSDT },
-        { header: "Total Movimientos", accessor: (p) => p.totalMovimientos },
-        { header: "Stock Descontado", accessor: (p) => (p.stockDescontado ? "Sí" : "No") },
-        {
-          header: "Fecha de Creación",
-          accessor: (p) =>
-            new Date(p.fechaCreacion).toLocaleDateString("es-AR", {
-              day: "2-digit",
-              month: "2-digit",
-              year: "numeric",
-            }),
-        },
-      ],
-      data: filteredProyectos,
-    });
   };
 
   const handleExportPdf = () => {
@@ -335,17 +303,6 @@ export function RentabilidadTable({ proyectos }: Props) {
             >
               <FileText className="w-4 h-4" />
               <span>Exportar PDF</span>
-            </button>
-
-            {/* Botón Exportar a Excel */}
-            <button
-              type="button"
-              onClick={handleExportCsv}
-              className="flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-emerald-700 dark:text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 rounded-xl transition-all shadow-sm"
-              title="Descargar reporte en formato Excel (CSV)"
-            >
-              <FileSpreadsheet className="w-4 h-4 text-emerald-500" />
-              <span>Excel (CSV)</span>
             </button>
           </div>
         </div>
