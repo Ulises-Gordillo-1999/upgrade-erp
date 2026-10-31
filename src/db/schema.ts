@@ -181,7 +181,33 @@ export const auditoria = pgTable("auditoria", {
   created_at: timestamp("created_at", { withTimezone: true }).defaultNow(),
 });
 
+export const autenticadoresBiometricos = pgTable("autenticadores_biometricos", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  usuario_id: uuid("usuario_id")
+    .notNull()
+    .references(() => usuarios.id, { onDelete: "cascade" }),
+  credential_id: text("credential_id").notNull().unique(),
+  public_key: text("public_key").notNull(),
+  counter: integer("counter").notNull().default(0),
+  device_type: text("device_type").notNull().default("singleDevice"),
+  backed_up: boolean("backed_up").notNull().default(false),
+  transports: text("transports"),
+  nombre_dispositivo: text("nombre_dispositivo").notNull().default("Dispositivo Biométrico"),
+  created_at: timestamp("created_at", { withTimezone: true }).defaultNow(),
+  last_used_at: timestamp("last_used_at", { withTimezone: true }),
+});
+
 // 3. Relaciones (Drizzle Relations)
+export const usuariosRelations = relations(usuarios, ({ many }) => ({
+  autenticadores: many(autenticadoresBiometricos),
+}));
+
+export const autenticadoresBiometricosRelations = relations(autenticadoresBiometricos, ({ one }) => ({
+  usuario: one(usuarios, {
+    fields: [autenticadoresBiometricos.usuario_id],
+    references: [usuarios.id],
+  }),
+}));
 export const clientesRelations = relations(clientes, ({ many }) => ({
   proyectos: many(proyectos),
 }));

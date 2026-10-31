@@ -1,8 +1,13 @@
 "use client";
 
-import { useState } from "react";
-import { Mail, Lock, Eye, EyeOff, LogIn, Loader2, ShieldCheck } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Mail, Lock, Eye, EyeOff, LogIn, Loader2, ShieldCheck, Fingerprint } from "lucide-react";
 import { loginUser } from "@/app/actions/auth";
+import {
+  generateAuthenticationOptionsAction,
+  verifyAuthenticationAction,
+} from "@/app/actions/webauthn";
+import { browserSupportsWebAuthn, startAuthentication } from "@simplewebauthn/browser";
 import { useRouter } from "next/navigation";
 
 export function LoginForm() {
@@ -12,6 +17,12 @@ export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isBiometricLoading, setIsBiometricLoading] = useState(false);
+  const [isBiometricSupported, setIsBiometricSupported] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    setIsBiometricSupported(browserSupportsWebAuthn());
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -34,6 +45,42 @@ export function LoginForm() {
     } catch {
       setError("Ocurrió un error inesperado al iniciar sesión.");
       setIsLoading(false);
+    }
+  };
+
+  const handleBiometricLogin = async () => {
+    setError(null);
+    setIsBiometricLoading(true);
+
+    try {
+      // 1. Obtener opciones del servidor (si ingresó email, se filtra a sus credenciales; si no, passkey residente)
+      const resOptions = await generateAuthenticationOptionsAction(email || undefined);
+      if (resOptions.error || !resOptions.options) {
+        setError(resOptions.error || "No se pudieron obtener opciones de autenticación.");
+        setIsBiometricLoading(false);
+        return;
+      }
+
+      // 2. Pedir huella digital o FaceID al navegador/teléfono
+      const authResponse = await startAuthentication({ optionsJSON: resOptions.options });
+
+      // 3. Verificar criptográficamente y establecer cookie de sesión JWT
+      const verifyRes = await verifyAuthenticationAction(authResponse);
+      if (verifyRes.error) {
+        setError(verifyRes.error);
+        setIsBiometricLoading(false);
+      } else {
+        router.push("/");
+        router.refresh();
+      }
+    } catch (err: any) {
+      console.error("Error en login biométrico:", err);
+      if (err.name === "NotAllowedError") {
+        setError("Autenticación biométrica cancelada o sensor no detectado.");
+      } else {
+        setError(err.message || "Error al autenticar con huella digital.");
+      }
+      setIsBiometricLoading(false);
     }
   };
 
@@ -100,10 +147,10 @@ export function LoginForm() {
           </div>
         </div>
 
-        {/* Submit Button */}
+        {/* Submit Button Password */}
         <button
           type="submit"
-          disabled={isLoading}
+          disabled={isLoading || isBiometricLoading}
           className="w-full mt-2 py-3 px-4 rounded-xl font-medium text-sm text-white bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 active:scale-[0.99] transition-all duration-200 flex items-center justify-center gap-2 shadow-lg shadow-cyan-950/20 dark:shadow-cyan-950/50 disabled:opacity-50 disabled:pointer-events-none"
         >
           {isLoading ? (
@@ -120,10 +167,42 @@ export function LoginForm() {
         </button>
       </form>
 
+      {/* Separador Biometría */}
+      {isBiometricSupported !== false && (
+        <div className="space-y-4">
+          <div className="relative flex items-center justify-center my-2">
+            <div className="border-t border-slate-200 dark:border-zinc-800/80 w-full" />
+            <span className="bg-white dark:bg-[#0c0e14] px-3 text-[10px] uppercase tracking-wider text-slate-400 dark:text-zinc-500 font-semibold absolute">
+              O con acceso biométrico
+            </span>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleBiometricLogin}
+            disabled={isLoading || isBiometricLoading}
+            className="w-full py-3 px-4 rounded-xl font-medium text-sm text-slate-800 dark:text-zinc-100 bg-slate-100/80 dark:bg-zinc-900/80 hover:bg-slate-200 dark:hover:bg-zinc-800 border border-slate-200 dark:border-zinc-800 hover:border-cyan-500/50 active:scale-[0.99] transition-all duration-200 flex items-center justify-center gap-2.5 shadow-sm group disabled:opacity-50 disabled:pointer-events-none"
+          >
+            {isBiometricLoading ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin text-cyan-500" />
+                <span className="text-cyan-600 dark:text-cyan-400">Verificando Huella / FaceID...</span>
+              </>
+            ) : (
+              <>
+                <Fingerprint className="w-4 h-4 text-cyan-500 group-hover:scale-110 transition-transform" />
+                <span>Acceder con Huella Digital / FaceID</span>
+              </>
+            )}
+          </button>
+        </div>
+      )}
+
       <div className="flex items-center justify-center gap-1.5 text-[11px] text-slate-500 dark:text-zinc-600 pt-2 border-t border-slate-200 dark:border-zinc-800/80">
         <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-500/70" />
-        <span>Sesión encriptada con JWT & RBAC activo</span>
+        <span>Sesión encriptada con JWT, WebAuthn & RBAC</span>
       </div>
     </div>
   );
 }
+

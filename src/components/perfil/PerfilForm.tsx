@@ -14,8 +14,10 @@ import {
   Clock,
   Calendar,
   Lock,
+  Fingerprint,
 } from "lucide-react";
 import { updateMiPerfil, cambiarMiEmail, cambiarMiPassword } from "@/app/actions/perfil";
+import { BiometricEnrollment } from "./BiometricEnrollment";
 
 interface PerfilFormProps {
   usuario: {
@@ -31,8 +33,8 @@ interface PerfilFormProps {
 }
 
 export function PerfilForm({ usuario }: PerfilFormProps) {
-  // Pestaña activa: 'personal' | 'email' | 'password'
-  const [tab, setTab] = useState<"personal" | "email" | "password">("personal");
+  // Pestaña activa: 'personal' | 'email' | 'password' | 'biometria'
+  const [tab, setTab] = useState<"personal" | "email" | "password" | "biometria">("personal");
 
   // Estado pestaña personal
   const [nombre, setNombre] = useState(usuario.nombre);
@@ -182,6 +184,19 @@ export function PerfilForm({ usuario }: PerfilFormProps) {
           <KeyRound className="w-4 h-4" />
           Seguridad & Contraseña
           {tab === "password" && (
+            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-cyan-500 dark:bg-cyan-400 shadow-[0_0_8px_#22d3ee]" />
+          )}
+        </button>
+
+        <button
+          onClick={() => setTab("biometria")}
+          className={`pb-3 px-4 text-sm font-medium transition-all relative flex items-center gap-2 ${
+            tab === "biometria" ? "text-cyan-600 dark:text-cyan-400" : "text-slate-500 hover:text-slate-800 dark:text-zinc-400 dark:hover:text-zinc-200"
+          }`}
+        >
+          <Fingerprint className="w-4 h-4" />
+          Huella / Passkeys
+          {tab === "biometria" && (
             <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-cyan-500 dark:bg-cyan-400 shadow-[0_0_8px_#22d3ee]" />
           )}
         </button>
@@ -434,6 +449,9 @@ export function PerfilForm({ usuario }: PerfilFormProps) {
           </form>
         </div>
       )}
+
+      {/* Contenido Pestaña 4: Autenticación Biométrica & Passkeys */}
+      {tab === "biometria" && <BiometricEnrollment />}
     </div>
   );
 }

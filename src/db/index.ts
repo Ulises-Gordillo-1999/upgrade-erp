@@ -60,6 +60,19 @@ export async function ensureDatabaseSchema() {
       ip_address TEXT,
       created_at TIMESTAMPTZ DEFAULT NOW()
     );`,
+    `CREATE TABLE IF NOT EXISTS autenticadores_biometricos (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      usuario_id UUID NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
+      credential_id TEXT NOT NULL UNIQUE,
+      public_key TEXT NOT NULL,
+      counter INTEGER NOT NULL DEFAULT 0,
+      device_type TEXT NOT NULL DEFAULT 'singleDevice',
+      backed_up BOOLEAN NOT NULL DEFAULT false,
+      transports TEXT,
+      nombre_dispositivo TEXT NOT NULL DEFAULT 'Dispositivo Biométrico',
+      created_at TIMESTAMPTZ DEFAULT NOW(),
+      last_used_at TIMESTAMPTZ
+    );`,
   ];
 
   for (const q of queries) {
