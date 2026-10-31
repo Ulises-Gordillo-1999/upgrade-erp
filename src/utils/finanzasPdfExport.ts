@@ -1,6 +1,7 @@
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { Transaccion, RentabilidadProyecto } from "@/types/database";
+import { UPGRADE_LOGO_PNG_BASE64 } from "@/utils/logoBase64";
 
 // Paleta de Colores Corporativa UPGRADE (coherente con Presupuestos PDF)
 const navyPrimary: [number, number, number] = [15, 23, 42]; // Slate 900
@@ -33,7 +34,7 @@ const formatUSDT = (valor: number) =>
     maximumFractionDigits: 2,
   }).format(valor || 0)} USDT`;
 
-// Helper para dibujar membrete corporativo UPGRADE
+// Helper para dibujar membrete corporativo UPGRADE con logo oficial
 function drawCorporateHeader(
   doc: jsPDF,
   margin: number,
@@ -42,21 +43,28 @@ function drawCorporateHeader(
   reportCode: string,
   periodoOrSubtitle: string
 ) {
-  // Barra vertical de acento de marca (Cyan)
-  doc.setFillColor(...cyanAccent);
-  doc.roundedRect(margin, 14, 4.5, 20, 1.2, 1.2, "F");
+  let headerTextStartX = margin;
+
+  try {
+    doc.addImage(UPGRADE_LOGO_PNG_BASE64, "PNG", margin, 12, 19, 19);
+    headerTextStartX = margin + 22;
+  } catch {
+    doc.setFillColor(...cyanAccent);
+    doc.roundedRect(margin, 14, 4.5, 20, 1.2, 1.2, "F");
+    headerTextStartX = margin + 7.5;
+  }
 
   // Nombre de Empresa
   doc.setFontSize(22);
   doc.setFont("helvetica", "bold");
   doc.setTextColor(...navyPrimary);
-  doc.text("UPGRADE", margin + 7.5, 22);
+  doc.text("UPGRADE", headerTextStartX, 21);
 
   // Subtítulo tech
   doc.setFontSize(7.5);
   doc.setFont("helvetica", "bold");
   doc.setTextColor(...cyanAccent);
-  doc.text("SOLUCIONES IT & INFRAESTRUCTURA DE REDES", margin + 7.5, 27);
+  doc.text("SOLUCIONES IT & INFRAESTRUCTURA DE REDES", headerTextStartX, 26);
 
   // Datos de contacto institucional
   doc.setFontSize(7.5);
@@ -64,8 +72,8 @@ function drawCorporateHeader(
   doc.setTextColor(...grayMedium);
   doc.text(
     "Servicios IT & Infraestructura  •  Soporte y Ciberseguridad  •  Catamarca, Argentina",
-    margin + 7.5,
-    32
+    headerTextStartX,
+    31
   );
 
   // Tarjeta superior derecha: Metadatos del Documento

@@ -1,6 +1,7 @@
 import { LoginForm } from "@/components/auth/LoginForm";
-import { Server, Shield } from "lucide-react";
+import { Shield } from "lucide-react";
 import { Metadata } from "next";
+import Image from "next/image";
 
 export const metadata: Metadata = {
   title: "Acceso al Sistema | UPGRADE ERP",
@@ -30,12 +31,17 @@ export default function LoginPage() {
           {/* Header con Isotipo y Marca */}
           <div className="flex flex-col items-center text-center mb-8">
             <div className="relative mb-4">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-cyan-600 to-blue-600 p-[1px] shadow-lg shadow-cyan-500/20">
-                <div className="w-full h-full rounded-2xl bg-slate-100 dark:bg-zinc-950 flex items-center justify-center">
-                  <Server className="w-7 h-7 text-cyan-600 dark:text-cyan-400" />
-                </div>
+              <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-cyan-500/20 to-blue-600/20 p-2.5 shadow-xl shadow-cyan-500/10 border border-cyan-500/30 flex items-center justify-center backdrop-blur-xl bg-white/50 dark:bg-zinc-950/80">
+                <Image
+                  src="/icon.png"
+                  alt="UPGRADE Logo"
+                  width={48}
+                  height={48}
+                  className="w-12 h-12 object-contain drop-shadow-[0_0_12px_rgba(6,182,212,0.5)]"
+                  priority
+                />
               </div>
-              <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-emerald-500 border-2 border-white dark:border-zinc-950 flex items-center justify-center">
+              <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-emerald-500 border-2 border-white dark:border-zinc-950 flex items-center justify-center shadow-sm">
                 <Shield className="w-2.5 h-2.5 text-white dark:text-zinc-950" />
               </div>
             </div>

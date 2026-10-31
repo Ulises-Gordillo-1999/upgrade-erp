@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
@@ -155,13 +156,24 @@ export function Sidebar({
             <Menu className="w-6 h-6" />
           </button>
 
-          <Link href="/" className="flex items-center gap-2 group">
-            <h1 className="text-lg sm:text-xl font-bold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 to-blue-600 dark:from-cyan-400 dark:to-blue-500 group-hover:opacity-90 transition-opacity">
-              UPGRADE
-            </h1>
-            <span className="text-[10px] px-1.5 py-0.5 rounded bg-cyan-500/10 text-cyan-700 dark:text-cyan-400 border border-cyan-500/20 font-mono font-medium">
-              ERP
-            </span>
+          <Link href="/" className="flex items-center gap-2.5 group">
+            <div className="relative w-7 h-7 rounded-lg overflow-hidden flex items-center justify-center bg-cyan-500/10 border border-cyan-500/20 p-0.5 group-hover:border-cyan-500/40 transition-colors">
+              <Image
+                src="/icon.png"
+                alt="UPGRADE Logo"
+                width={28}
+                height={28}
+                className="w-full h-full object-contain"
+              />
+            </div>
+            <div className="flex items-center gap-1.5">
+              <h1 className="text-lg sm:text-xl font-bold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 to-blue-600 dark:from-cyan-400 dark:to-blue-500 group-hover:opacity-90 transition-opacity">
+                UPGRADE
+              </h1>
+              <span className="text-[10px] px-1.5 py-0.5 rounded bg-cyan-500/10 text-cyan-700 dark:text-cyan-400 border border-cyan-500/20 font-mono font-medium">
+                ERP
+              </span>
+            </div>
           </Link>
         </div>
 
@@ -201,14 +213,25 @@ export function Sidebar({
           <Link
             href="/"
             onClick={() => setIsMobileOpen(false)}
-            className="flex items-center gap-2 group"
+            className="flex items-center gap-2.5 group"
           >
-            <h1 className="text-xl font-bold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 to-blue-600 dark:from-cyan-400 dark:to-blue-500">
-              UPGRADE
-            </h1>
-            <span className="text-[10px] px-1.5 py-0.5 rounded bg-cyan-500/10 text-cyan-700 dark:text-cyan-400 border border-cyan-500/20 font-mono font-medium">
-              ERP
-            </span>
+            <div className="relative w-8 h-8 rounded-lg overflow-hidden flex items-center justify-center bg-cyan-500/10 border border-cyan-500/20 p-1 group-hover:border-cyan-500/40 transition-colors">
+              <Image
+                src="/icon.png"
+                alt="UPGRADE Logo"
+                width={32}
+                height={32}
+                className="w-full h-full object-contain"
+              />
+            </div>
+            <div className="flex items-center gap-1.5">
+              <h1 className="text-xl font-bold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 to-blue-600 dark:from-cyan-400 dark:to-blue-500">
+                UPGRADE
+              </h1>
+              <span className="text-[10px] px-1.5 py-0.5 rounded bg-cyan-500/10 text-cyan-700 dark:text-cyan-400 border border-cyan-500/20 font-mono font-medium">
+                ERP
+              </span>
+            </div>
           </Link>
 
           <button
@@ -230,14 +253,25 @@ export function Sidebar({
 
       {/* 4. Barra Lateral Fija para Escritorio (>= lg / 1024px) */}
       <aside className="hidden lg:flex h-full w-64 flex-col border-r border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shrink-0 transition-colors">
-        <div className="flex h-16 items-center px-6 border-b border-slate-200 dark:border-zinc-800">
-          <Link href="/" className="flex items-center gap-2 group">
-            <h1 className="text-xl font-bold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 to-blue-600 dark:from-cyan-400 dark:to-blue-500 group-hover:opacity-90 transition-opacity">
-              UPGRADE
-            </h1>
-            <span className="text-[10px] px-1.5 py-0.5 rounded bg-cyan-500/10 text-cyan-700 dark:text-cyan-400 border border-cyan-500/20 font-mono font-medium">
-              ERP
-            </span>
+        <div className="flex h-16 items-center px-5 border-b border-slate-200 dark:border-zinc-800">
+          <Link href="/" className="flex items-center gap-2.5 group">
+            <div className="relative w-8 h-8 rounded-lg overflow-hidden flex items-center justify-center bg-cyan-500/10 border border-cyan-500/20 p-1 group-hover:border-cyan-500/40 transition-colors">
+              <Image
+                src="/icon.png"
+                alt="UPGRADE Logo"
+                width={32}
+                height={32}
+                className="w-full h-full object-contain drop-shadow-[0_0_8px_rgba(6,182,212,0.4)]"
+              />
+            </div>
+            <div className="flex items-center gap-1.5">
+              <h1 className="text-xl font-bold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 to-blue-600 dark:from-cyan-400 dark:to-blue-500 group-hover:opacity-90 transition-opacity">
+                UPGRADE
+              </h1>
+              <span className="text-[10px] px-1.5 py-0.5 rounded bg-cyan-500/10 text-cyan-700 dark:text-cyan-400 border border-cyan-500/20 font-mono font-medium">
+                ERP
+              </span>
+            </div>
           </Link>
         </div>
 

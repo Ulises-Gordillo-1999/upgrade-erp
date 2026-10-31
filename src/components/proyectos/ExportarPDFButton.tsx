@@ -3,6 +3,7 @@
 import { Download, FileText } from "lucide-react";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import { UPGRADE_LOGO_PNG_BASE64 } from "@/utils/logoBase64";
 
 interface Props {
   proyecto: any;
@@ -41,23 +42,30 @@ export function ExportarPDFButton({ proyecto, items }: Props) {
       }).format(valor || 0);
 
     // ==========================================
-    // 1. ENCABEZADO / MEMBRETE CORPORATIVO
+    // 1. ENCABEZADO / MEMBRETE CORPORATIVO CON LOGO OFICIAL
     // ==========================================
-    // Barra vertical de acento de marca
-    doc.setFillColor(...cyanAccent);
-    doc.roundedRect(margin, 14, 5, 20, 1.5, 1.5, "F");
+    let headerTextStartX = margin;
+
+    try {
+      doc.addImage(UPGRADE_LOGO_PNG_BASE64, "PNG", margin, 12, 19, 19);
+      headerTextStartX = margin + 22;
+    } catch {
+      doc.setFillColor(...cyanAccent);
+      doc.roundedRect(margin, 14, 5, 20, 1.5, 1.5, "F");
+      headerTextStartX = margin + 8;
+    }
 
     // Nombre de Empresa
     doc.setFontSize(22);
     doc.setFont("helvetica", "bold");
     doc.setTextColor(...navyPrimary);
-    doc.text("UPGRADE", margin + 8, 22);
+    doc.text("UPGRADE", headerTextStartX, 21);
 
     // Subtítulo tech
     doc.setFontSize(7.5);
     doc.setFont("helvetica", "bold");
     doc.setTextColor(...cyanAccent);
-    doc.text("SOLUCIONES IT & INFRAESTRUCTURA DE REDES", margin + 8, 27);
+    doc.text("SOLUCIONES IT & INFRAESTRUCTURA DE REDES", headerTextStartX, 26);
 
     // Datos de contacto institucional
     doc.setFontSize(7.5);
@@ -65,8 +73,8 @@ export function ExportarPDFButton({ proyecto, items }: Props) {
     doc.setTextColor(...grayMedium);
     doc.text(
       "Servicios IT & Infraestructura  •  Soporte y Ciberseguridad  •  Catamarca, Argentina",
-      margin + 8,
-      32
+      headerTextStartX,
+      31
     );
 
     // Tarjeta superior derecha: Metadatos del Documento

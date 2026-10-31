@@ -41,3 +41,4 @@ Este documento define la barra de calidad, restricciones técnicas y umbrales in
 - **Commits atómicos y descriptivos**: Siguiendo el estándar de Conventional Commits (`feat:`, `fix:`, `refactor:`, `chore:`, etc.).
 - **SemVer estricto**: Cada incremento de versión debe auditarse y ejecutarse con las herramientas oficiales (`npm run version:patch / minor / major`).
 - **Definition of Done**: Todo entregable debe superar los criterios de aceptación y el checklist en `.agents/references/definition-of-done.md`.
+

@@ -55,3 +55,4 @@ Ante cualquier requerimiento, se debe consultar primero la meta-skill [using-age
 - **Defender la simplicidad**: Priorizar soluciones directas, legibles y mantenibles sobre abstracciones prematuras.
 - **Disciplina de alcance**: Tocar únicamente los archivos y módulos vinculados a la tarea encomendada.
 - **Verificación obligatoria (Definition of Done)**: Ninguna tarea se considera terminada sin superar el estándar del proyecto (`.agents/references/definition-of-done.md`).
+

@@ -10,8 +10,20 @@ import { ThemeProvider } from "@/components/theme/ThemeProvider";
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
-  title: "UPGRADE - ERP/CRM",
-  description: "Panel de administración interno para UPGRADE IT Infrastructure",
+  title: {
+    default: "UPGRADE ERP | Soluciones IT & Infraestructura",
+    template: "%s | UPGRADE ERP",
+  },
+  description: "Plataforma integral de gestión de proyectos, catálogo IT, bóveda criptográfica y finanzas para UPGRADE.",
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon.png", type: "image/png", sizes: "512x512" },
+    ],
+    apple: [
+      { url: "/apple-icon.png", sizes: "180x180", type: "image/png" },
+    ],
+  },
 };
 
 export const viewport: Viewport = {
