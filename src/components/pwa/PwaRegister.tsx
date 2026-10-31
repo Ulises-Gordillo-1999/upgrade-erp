@@ -24,9 +24,21 @@ export function PwaRegister() {
     const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e);
+
+      // Si ya está ejecutándose como aplicación instalada, no mostrar aviso
+      const isStandalone =
+        window.matchMedia("(display-mode: standalone)").matches ||
+        (navigator as any).standalone === true;
+      if (isStandalone) return;
+
+      // Solo mostrar banner en navegador de PC / Escritorio (no en celular)
+      const ua = navigator.userAgent || "";
+      const isMobile = /android|iphone|ipad|ipod|mobile/i.test(ua);
+      const isDesktop = !isMobile;
+
       // Solo mostrar banner si el usuario no lo cerró en esta sesión
       const dismissed = sessionStorage.getItem("upgrade_pwa_dismissed");
-      if (!dismissed) {
+      if (isDesktop && !dismissed) {
         setShowInstallBanner(true);
       }
     };
@@ -68,10 +80,10 @@ export function PwaRegister() {
           </div>
           <div className="min-w-0">
             <h5 className="text-xs font-bold text-slate-900 dark:text-zinc-100 truncate">
-              Instalar UPGRADE ERP
+              Instalar UPGRADE ERP en PC
             </h5>
             <p className="text-[11px] text-slate-500 dark:text-zinc-400 truncate">
-              Accede a pantalla completa desde tu celular
+              Accede directamente desde tu escritorio de forma nativa
             </p>
           </div>
         </div>

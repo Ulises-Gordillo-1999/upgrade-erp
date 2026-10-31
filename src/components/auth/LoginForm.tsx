@@ -18,10 +18,18 @@ export function LoginForm() {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isBiometricLoading, setIsBiometricLoading] = useState(false);
-  const [isBiometricSupported, setIsBiometricSupported] = useState<boolean | null>(null);
+  const [isBiometricSupported, setIsBiometricSupported] = useState(false);
+  const [isMobileDevice, setIsMobileDevice] = useState(false);
 
   useEffect(() => {
-    setIsBiometricSupported(browserSupportsWebAuthn());
+    if (typeof window !== "undefined") {
+      const ua = navigator.userAgent || "";
+      const isMobile = /android|iphone|ipad|ipod|mobile/i.test(ua);
+      setIsMobileDevice(isMobile);
+      if (isMobile) {
+        setIsBiometricSupported(browserSupportsWebAuthn());
+      }
+    }
   }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -167,8 +175,8 @@ export function LoginForm() {
         </button>
       </form>
 
-      {/* Separador Biometría */}
-      {isBiometricSupported !== false && (
+      {/* Separador & Botón Biometría (Exclusivo en Dispositivos Móviles / Celular) */}
+      {isMobileDevice && isBiometricSupported && (
         <div className="space-y-4">
           <div className="relative flex items-center justify-center my-2">
             <div className="border-t border-slate-200 dark:border-zinc-800/80 w-full" />
@@ -181,7 +189,7 @@ export function LoginForm() {
             type="button"
             onClick={handleBiometricLogin}
             disabled={isLoading || isBiometricLoading}
-            className="w-full py-3 px-4 rounded-xl font-medium text-sm text-slate-800 dark:text-zinc-100 bg-slate-100/80 dark:bg-zinc-900/80 hover:bg-slate-200 dark:hover:bg-zinc-800 border border-slate-200 dark:border-zinc-800 hover:border-cyan-500/50 active:scale-[0.99] transition-all duration-200 flex items-center justify-center gap-2.5 shadow-sm group disabled:opacity-50 disabled:pointer-events-none"
+            className="w-full py-3 px-4 rounded-xl font-medium text-sm text-slate-800 dark:text-zinc-100 bg-slate-100/80 dark:bg-zinc-900/80 hover:bg-slate-200 dark:hover:bg-zinc-800 border border-slate-200 dark:border-zinc-800 hover:border-cyan-500/50 active:scale-[0.99] transition-all duration-200 flex items-center justify-center gap-2.5 shadow-sm group disabled:opacity-50 disabled:pointer-events-none cursor-pointer"
           >
             {isBiometricLoading ? (
               <>

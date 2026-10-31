@@ -80,9 +80,9 @@ export default async function RootLayout({
         className={`${inter.variable} font-sans antialiased bg-slate-50 dark:bg-zinc-950 text-slate-900 dark:text-zinc-100 h-screen flex flex-col lg:flex-row overflow-hidden transition-colors`}
       >
         <ThemeProvider>
-          <PwaRegister />
           {session ? (
             <>
+              <PwaRegister />
               <Sidebar user={session} notificaciones={notificaciones} />
               <div className="flex-1 flex flex-col min-w-0 min-h-0 overflow-hidden">
                 <Header user={session} notificaciones={notificaciones} />
