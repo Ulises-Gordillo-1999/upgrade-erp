@@ -14,6 +14,10 @@ Este proyecto cuenta con un ecosistema completo de **Agent Skills** ubicado en `
 
 - **Contexto y Dominio**: Consulta `.agents/rules/upgrade-contexto-prompt-maestro.md` para reglas de negocio (PostgreSQL 16, Drizzle, Next.js 15, RBAC, Bóveda AES-256, El Problema del Cable, Finanzas ARS/USDT).
 - **Flujo de Trabajo y Habilidades**: Consulta `.agents/rules/agent-skills-framework.md` y la meta-skill `.agents/skills/using-agent-skills/SKILL.md` para orquestar cada tarea según su fase (definición, arquitectura, implementación incremental, pruebas, revisión de código, seguridad y despliegue).
+- **PWA & Manifest**: Consulta `.agents/skills/pwa-web-app-manifest/SKILL.md` para arquitectura Progressive Web App instalable.
+- **Diseño Responsivo**: Consulta `.agents/skills/responsive-design/SKILL.md` para diseño mobile-first y ergonomía táctil.
+- **Sistema de Temas**: Consulta `.agents/skills/theme-mode-system/SKILL.md` para Claro/Oscuro/Sistema sin parpadeo.
 - **Seguridad**: Respetar estrictamente `.agents/skills/env-security-protocol/SKILL.md` (cero credenciales o secretos en código).
 - **Versionado**: Seguir SemVer con `.agents/skills/semver-version-control/SKILL.md` y scripts `npm run version:*`.
+
 

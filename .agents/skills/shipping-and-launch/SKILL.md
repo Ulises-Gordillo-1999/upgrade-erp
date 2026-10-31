@@ -1,336 +1,65 @@
 ---
 name: shipping-and-launch
-description: Prepares production launches. Use when preparing to deploy to production, or when asking what needs to be in place before shipping. Use when you need a pre-launch checklist, when setting up monitoring, when planning a staged rollout, or when you need a rollback strategy.
+description: Prepara lanzamientos a producción seguros y verificables. Usar al preparar un despliegue crítico, verificar checklists previas al lanzamiento, configurar monitoreo post-deploy, o definir planes de contingencia y rollback inmediato.
 ---
 
-# Shipping and Launch
+# Lanzamiento y Despliegue a Producción (Shipping and Launch)
 
-## Overview
+## Descripción General
 
-Ship with confidence. The goal is not just to deploy — it's to deploy safely, with monitoring in place, a rollback plan ready, and a clear understanding of what success looks like. Every launch should be reversible, observable, and incremental.
+Despliega a producción con total confianza y serenidad técnica. El objetivo de la ingeniería no es simplemente "empujar código", sino desplegar de forma segura, con observabilidad en tiempo real, un plan de reversión (rollback) probado de antemano y una comprensión nítida de los indicadores de éxito. Cada lanzamiento debe ser reversible, observable e incremental.
 
-## When to Use
+## Cuándo Utilizarla
 
-- Deploying a feature to production for the first time
-- Releasing a significant change to users
-- Migrating data or infrastructure
-- Opening a beta or early access program
-- Any deployment that carries risk (all of them)
+- Al desplegar una funcionalidad mayor o módulo nuevo en el entorno de producción.
+- Al aplicar migraciones de esquema en la base de datos de producción.
+- Al migrar infraestructura, servicios en Docker o paneles de hosting (Coolify/Hetzner).
+- Al realizar cualquier despliegue que represente riesgo operativo sobre datos reales.
 
-## The Pre-Launch Checklist
+## Lista de Verificación Previa al Lanzamiento (Pre-Launch Checklist)
 
-### Code Quality
+### 1. Calidad del Código y Compilación
+- [ ] La verificación estricta de tipos pasa limpiamente (`npx tsc --noEmit`).
+- [ ] El build de producción se genera sin errores (`npm run build`).
+- [ ] No existen `console.log` diagnósticos ni comentarios `TODO` críticos en código productivo.
+- [ ] El manejo de errores y estados degradados está contemplado.
 
-- [ ] All tests pass (unit, integration, e2e)
-- [ ] Build succeeds with no warnings
-- [ ] Lint and type checking pass
-- [ ] Code reviewed and approved
-- [ ] No TODO comments that should be resolved before launch
-- [ ] No `console.log` debugging statements in production code
-- [ ] Error handling covers expected failure modes
+### 2. Seguridad y Protocolo de Entorno (`env-security-protocol`)
+- [ ] Cero secretos, contraseñas de Postgres o claves AES-256 en el repositorio Git.
+- [ ] Las variables de entorno de producción están correctamente cargadas en el panel del servidor.
+- [ ] Las rutas de Server Actions y endpoints validan roles y permisos (RBAC).
+- [ ] La entrada del usuario se valida exhaustivamente en el servidor.
+- [ ] Cabeceras de seguridad activas (CSP, anti-clickjacking, HttpOnly en cookies de sesión).
 
-### Security
+### 3. Rendimiento y Experiencia de Usuario
+- [ ] Los modales están desacoplados mediante React Portals para evitar clipping visual.
+- [ ] El diseño responde fluidamente en dispositivos móviles, tablets y monitores de escritorio.
+- [ ] Las imágenes y comprobantes están optimizados (ej. WebP con Sharp).
+- [ ] No existen consultas N+1 en pantallas principales o dashboards.
 
-- [ ] No secrets in code or version control
-- [ ] The ecosystem's dependency audit (`npm audit`, `pip-audit`, `cargo audit`, ...) shows no critical or high vulnerabilities
-- [ ] Input validation on all user-facing endpoints
-- [ ] Authentication and authorization checks in place
-- [ ] Security headers configured (CSP, HSTS, etc.)
-- [ ] Rate limiting on authentication endpoints
-- [ ] CORS configured to specific origins (not wildcard)
+### 4. Base de Datos e Integridad
+- [ ] Las migraciones Drizzle/SQL se han ejecutado y verificado en staging.
+- [ ] Las transacciones atómicas protegen operaciones de stock y finanzas críticas.
+- [ ] Se cuenta con un respaldo (backup) reciente de la base de datos antes de iniciar el despliegue.
 
-### Performance
+### 5. Plan de Contingencia y Rollback
+- [ ] Se conoce el hash del commit anterior estable para revertir de inmediato si es necesario.
+- [ ] El procedimiento para restaurar el contenedor o imagen previa está documentado y claro.
 
-- [ ] Core Web Vitals within "Good" thresholds
-- [ ] No N+1 queries in critical paths
-- [ ] Images optimized (compression, responsive sizes, lazy loading)
-- [ ] Bundle size within budget
-- [ ] Database queries have appropriate indexes
-- [ ] Caching configured for static assets and repeated queries
+## Estrategia de Lanzamiento Progresivo (Feature Flags & Canaries)
 
-### Accessibility
-
-- [ ] Keyboard navigation works for all interactive elements
-- [ ] Screen reader can convey page content and structure
-- [ ] Color contrast meets WCAG 2.1 AA (4.5:1 for text)
-- [ ] Focus management correct for modals and dynamic content
-- [ ] Error messages are descriptive and associated with form fields
-- [ ] No accessibility warnings in axe-core or Lighthouse
-
-### Infrastructure
-
-- [ ] Environment variables set in production
-- [ ] Database migrations applied (or ready to apply)
-- [ ] DNS and SSL configured
-- [ ] CDN configured for static assets
-- [ ] Logging and error reporting configured
-- [ ] Health check endpoint exists and responds
-
-### Documentation
-
-- [ ] README updated with any new setup requirements
-- [ ] API documentation current
-- [ ] ADRs written for any architectural decisions
-- [ ] Changelog updated
-- [ ] User-facing documentation updated (if applicable)
-
-## Feature Flag Strategy
-
-Ship behind feature flags to decouple deployment from release:
-
-```typescript
-// Feature flag check
-const flags = await getFeatureFlags(userId);
-
-if (flags.taskSharing) {
-  // New feature: task sharing
-  return <TaskSharingPanel task={task} />;
-}
-
-// Default: existing behavior
-return null;
-```
-
-**Feature flag lifecycle:**
+Para funcionalidades de alto impacto sobre el inventario o la facturación, separa el despliegue del código de su habilitación:
 
 ```
-1. DEPLOY with flag OFF     → Code is in production but inactive
-2. ENABLE for team/beta     → Internal testing in production environment
-3. GRADUAL ROLLOUT          → 5% → 25% → 50% → 100% of users
-4. MONITOR at each stage    → Watch error rates, performance, user feedback
-5. CLEAN UP                 → Remove flag and dead code path after full rollout
+1. Desplegar con la bandera en FALSO     → El código corre en producción pero permanece inactivo.
+2. Habilitar para administradores        → Pruebas con cuentas internas y datos reales controlados.
+3. Monitoreo de telemetría y logs       → Verificar ausencia de excepciones 500 o inconsistencias.
+4. Habilitación general para el equipo   → Apertura total tras confirmar estabilidad.
 ```
 
-**Rules:**
-- Every feature flag has an owner and an expiration date
-- Clean up flags within 2 weeks of full rollout
-- Don't nest feature flags (creates exponential combinations)
-- Test both flag states (on and off) in CI
+## Protocolo Post-Lanzamiento (Primeros 15 Minutos)
 
-## Staged Rollout
-
-### The Rollout Sequence
-
-```
-1. DEPLOY to staging
-   └── Full test suite in staging environment
-   └── Manual smoke test of critical flows
-
-2. DEPLOY to production (feature flag OFF)
-   └── Verify deployment succeeded (health check)
-   └── Check error monitoring (no new errors)
-
-3. ENABLE for team (flag ON for internal users)
-   └── Team uses the feature in production
-   └── 24-hour monitoring window
-
-4. CANARY rollout (flag ON for 5% of users)
-   └── Monitor error rates, latency, user behavior
-   └── Compare metrics: canary vs. baseline
-   └── 24-48 hour monitoring window
-   └── Advance only if all thresholds pass (see table below)
-
-5. GRADUAL increase (25% -> 50% -> 100%)
-   └── Same monitoring at each step
-   └── Ability to roll back to previous percentage at any point
-
-6. FULL rollout (flag ON for all users)
-   └── Monitor for 1 week
-   └── Clean up feature flag
-```
-
-### Rollout Decision Thresholds
-
-Use these thresholds to decide whether to advance, hold, or roll back at each stage:
-
-| Metric | Advance (green) | Hold and investigate (yellow) | Roll back (red) |
-|--------|-----------------|-------------------------------|-----------------|
-| Error rate | Within 10% of baseline | 10-100% above baseline | >2x baseline |
-| P95 latency | Within 20% of baseline | 20-50% above baseline | >50% above baseline |
-| Client JS errors | No new error types | New errors at <0.1% of sessions | New errors at >0.1% of sessions |
-| Business metrics | Neutral or positive | Decline <5% (may be noise) | Decline >5% |
-
-### When to Roll Back
-
-Roll back immediately if:
-- Error rate increases by more than 2x baseline
-- P95 latency increases by more than 50%
-- User-reported issues spike
-- Data integrity issues detected
-- Security vulnerability discovered
-
-## Monitoring and Observability
-
-### What to Monitor
-
-```
-Application metrics:
-├── Error rate (total and by endpoint)
-├── Response time (p50, p95, p99)
-├── Request volume
-├── Active users
-└── Key business metrics (conversion, engagement)
-
-Infrastructure metrics:
-├── CPU and memory utilization
-├── Database connection pool usage
-├── Disk space
-├── Network latency
-└── Queue depth (if applicable)
-
-Client metrics:
-├── Core Web Vitals (LCP, INP, CLS)
-├── JavaScript errors
-├── API error rates from client perspective
-└── Page load time
-```
-
-### Error Reporting
-
-```typescript
-// Set up error boundary with reporting
-class ErrorBoundary extends React.Component {
-  state = { hasError: false };
-
-  static getDerivedStateFromError() {
-    return { hasError: true };
-  }
-
-  componentDidCatch(error: Error, info: React.ErrorInfo) {
-    // Report to error tracking service
-    reportError(error, {
-      componentStack: info.componentStack,
-      userId: getCurrentUser()?.id,
-      page: window.location.pathname,
-    });
-  }
-
-  render() {
-    if (this.state.hasError) {
-      return <ErrorFallback onRetry={() => this.setState({ hasError: false })} />;
-    }
-    return this.props.children;
-  }
-}
-
-// Server-side error reporting
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-  reportError(err, {
-    method: req.method,
-    url: req.url,
-    userId: req.user?.id,
-  });
-
-  // Don't expose internals to users
-  res.status(500).json({
-    error: { code: 'INTERNAL_ERROR', message: 'Something went wrong' },
-  });
-});
-```
-
-### Post-Launch Verification
-
-In the first hour after launch:
-
-```
-1. Check health endpoint returns 200
-2. Check error monitoring dashboard (no new error types)
-3. Check latency dashboard (no regression)
-4. Test the critical user flow manually
-5. Verify logs are flowing and readable
-6. Confirm rollback mechanism works (dry run if possible)
-```
-
-## Error Budget Release Gate
-
-Your service's error budget — the fraction of requests or time your SLO allows to fail — determines whether it's safe to ship. Use it as an objective gate — not a negotiation:
-
-```
-Budget remaining > 20%  →  Ship normally; monitor closely
-Budget remaining 0–20%  →  Slow rollouts only; no high-risk changes
-Budget exhausted        →  Freeze feature work; focus entirely on reliability
-Budget resets           →  Resume normal pace; bake in the fix that recovered it
-```
-
-A high burn rate during a canary (consuming budget faster than the baseline pace) is a **hold** signal in the rollout thresholds table above — treat it the same as an elevated error rate.
-
-## Rollback Strategy
-
-Every deployment needs a rollback plan before it happens:
-
-```markdown
-## Rollback Plan for [Feature/Release]
-
-### Trigger Conditions
-- Error rate > 2x baseline
-- P95 latency > [X]ms
-- User reports of [specific issue]
-
-### Rollback Steps
-1. Disable feature flag (if applicable)
-   OR
-1. Deploy previous version: `git revert <commit> && git push`
-2. Verify rollback: health check, error monitoring
-3. Communicate: notify team of rollback
-
-### Database Considerations
-- Migration [X] has a rollback: <verified command or runbook link>
-- Data inserted by new feature: [preserved / cleaned up]
-
-### Time to Rollback
-- Feature flag: < 1 minute
-- Redeploy previous version: < 5 minutes
-- Database rollback: < 15 minutes
-```
-## See Also
-
-- For the project-wide Definition of Done that every change must clear before this checklist, see `../../references/definition-of-done.md`
-- For security pre-launch checks, see `../../references/security-checklist.md`
-- For performance pre-launch checklist, see `../../references/performance-checklist.md`
-- For accessibility verification before launch, see `../../references/accessibility-checklist.md`
-- For the alerting rules and SLO-tied thresholds, see `observability-and-instrumentation`
-
-## Common Rationalizations
-
-| Rationalization | Reality |
-|---|---|
-| "It works in staging, it'll work in production" | Production has different data, traffic patterns, and edge cases. Monitor after deploy. |
-| "We don't need feature flags for this" | Every feature benefits from a kill switch. Even "simple" changes can break things. |
-| "Monitoring is overhead" | Not having monitoring means you discover problems from user complaints instead of dashboards. |
-| "We'll add monitoring later" | Add it before launch. You can't debug what you can't see. |
-| "Rolling back is admitting failure" | Rolling back is responsible engineering. Shipping a broken feature is the failure. |
-| "The error rate looks fine, let's keep shipping" | Check the burn rate, not just the current error rate. Consuming budget faster than baseline is a hold signal even when individual thresholds are green. |
-
-## Red Flags
-
-- Deploying without a rollback plan
-- No monitoring or error reporting in production
-- Big-bang releases (everything at once, no staging)
-- Feature flags with no expiration or owner
-- No one monitoring the deploy for the first hour
-- Production environment configuration done by memory, not code
-- "It's Friday afternoon, let's ship it"
-- Error budget exhausted but feature work continues unchanged
-
-## Verification
-
-Before deploying:
-
-- [ ] Pre-launch checklist completed (all sections green)
-- [ ] Feature flag configured (if applicable)
-- [ ] Rollback plan documented
-- [ ] Monitoring dashboards set up
-- [ ] Team notified of deployment
-
-After deploying:
-
-- [ ] Health check returns 200
-- [ ] Error rate is normal
-- [ ] Latency is normal
-- [ ] Critical user flow works
-- [ ] Logs are flowing
-- [ ] Rollback tested or verified ready
-
-For every shipped service:
-
-- [ ] Error budget policy in place: know what action to take when budget drops below 20% and when it's exhausted
+Inmediatamente después de que el despliegue finalice en Coolify o el servidor:
+1. **Smoke Test Manual:** Inicia sesión con una cuenta real, abre el Dashboard, verifica que las métricas carguen y realiza una acción representativa del cambio.
+2. **Inspección de Logs:** Observa los registros en vivo del contenedor para detectar posibles excepciones no capturadas.
+3. **Confirmación:** Si todas las señales son óptimas, marca el lanzamiento como exitoso y actualiza el versionado SemVer correspondiente.\n

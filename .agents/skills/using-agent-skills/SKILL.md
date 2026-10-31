@@ -1,192 +1,151 @@
 ---
 name: using-agent-skills
-description: Discovers and invokes agent skills. Use when starting a session, or when you need to decide which skill or workflow applies to the piece of work at hand. This is the meta-skill that governs how all other skills are discovered and invoked.
+description: Descubre, selecciona y orquesta las habilidades de ingeniería (Agent Skills). Utilízala al iniciar cualquier sesión o tarea para determinar qué flujo de trabajo, estándar o proceso aplica a la fase actual del ciclo de vida del software. Esta es la meta-skill central que rige la activación de todas las demás.
 ---
 
-# Using Agent Skills
+# Orquestación Central: Agent Skills Framework
 
-## Overview
+## Visión General
 
-Agent Skills is a collection of engineering workflow skills organized by development phase. Each skill encodes a specific process that senior engineers follow. This meta-skill helps you discover and apply the right skill for your current task.
+**Agent Skills** es un ecosistema integral de habilidades de ingeniería de software organizadas por fases del ciclo de vida del desarrollo. Cada skill codifica un proceso riguroso y sistemático seguido por ingenieros senior. Esta meta-skill te guía para identificar y aplicar la habilidad adecuada ante cada requerimiento del usuario.
 
-## Skill Discovery
+---
 
-When a task arrives, identify the development phase and apply the corresponding skill:
+## 🗺️ Mapa de Descubrimiento de Habilidades
+
+Cuando llegue una solicitud o tarea, identifica la fase y aplica la skill correspondiente:
 
 ```
-Task arrives
+Requerimiento / Tarea
     │
-    ├── Don't know what you want yet? ──────→ interview-me
-    ├── Have a rough concept, need variants? → idea-refine
-    ├── New project/feature/change? ──→ spec-driven-development
-    ├── No quality bar written down? ──→ constraint-driven-development
-    ├── Have a spec, need tasks? ──────→ planning-and-task-breakdown
-    ├── Implementing code? ────────────→ incremental-implementation
-    │   ├── UI work? ─────────────────→ frontend-ui-engineering
-    │   ├── API work? ────────────────→ api-and-interface-design
-    │   ├── Need better context? ─────→ context-engineering
-    │   ├── Need doc-verified code? ───→ source-driven-development
-    │   └── Stakes high / unfamiliar code? ──→ doubt-driven-development
-    ├── Writing/running tests? ────────→ test-driven-development
-    │   └── Browser-based? ───────────→ browser-testing-with-devtools
-    ├── Something broke? ──────────────→ debugging-and-error-recovery
-    ├── Reviewing code? ───────────────→ code-review-and-quality
-    │   ├── Too complex? ─────────────→ code-simplification
-    │   ├── Security concerns? ───────→ security-and-hardening
-    │   └── Performance concerns? ────→ performance-optimization
-    ├── Committing/branching? ─────────→ git-workflow-and-versioning
-    ├── CI/CD pipeline work? ──────────→ ci-cd-and-automation
-    ├── Deprecating/migrating? ────────→ deprecation-and-migration
-    ├── Writing docs/ADRs? ───────────→ documentation-and-adrs
-    ├── Adding logs/metrics/alerts? ───→ observability-and-instrumentation
-    └── Deploying/launching? ─────────→ shipping-and-launch
+    ├── ¿Requerimiento ambiguo o vago? ─────────────────→ interview-me
+    ├── ¿Idea conceptual que necesita variantes/stress? ─→ idea-refine
+    ├── ¿Nueva funcionalidad, módulo o cambio grande? ──→ spec-driven-development
+    ├── ¿Sin estándares de calidad definidos? ───────────→ constraint-driven-development
+    ├── ¿Nueva aplicación web desde cero (Hetzner)? ────→ new-app-scaffolding
+    ├── ¿Existe especificación y se requieren tareas? ──→ planning-and-task-breakdown
+    ├── ¿Implementando código? ──────────────────────────→ incremental-implementation
+    │   ├── ¿Interfaz de usuario (UI / UX)? ─────────────→ frontend-ui-engineering
+    │   ├── ¿Diseño responsivo / Mobile-First / Drawer? → responsive-design
+    │   ├── ¿Soporte PWA / Web App Manifest / Offline? ─→ pwa-web-app-manifest
+    │   ├── ¿Temas Claro / Oscuro / Sistema? ───────────→ theme-mode-system
+    │   ├── ¿Diseño de APIs, tipos o Server Actions? ────→ api-and-interface-design
+    │   ├── ¿Optimizar contexto y tokens? ───────────────→ context-engineering
+    │   ├── ¿Verificar contra documentación oficial? ────→ source-driven-development
+    │   └── ¿Decisión crítica o arquitectura de riesgo? ─→ doubt-driven-development
+    ├── ¿Escribiendo o ejecutando pruebas? ──────────────→ test-driven-development
+    │   └── ¿Pruebas en runtime de navegador (DOM/Red)? → browser-testing-with-devtools
+    ├── ¿Algo falló o hay un bug en producción? ─────────→ debugging-and-error-recovery
+    ├── ¿Revisión de código antes de merge? ─────────────→ code-review-and-quality
+    │   ├── ¿Código sobrecomplicado? ───────────────────→ code-simplification
+    │   ├── ¿Vulnerabilidades o permisos? ──────────────→ security-and-hardening
+    │   ├── ¿Variables de entorno y secretos? ──────────→ env-security-protocol
+    │   └── ¿Lentitud, queries SQL o bundle pesado? ─────→ performance-optimization
+    ├── ¿Commits, ramas o releases? ─────────────────────→ git-workflow-and-versioning
+    │   └── ¿Incremento de versión SemVer? ──────────────→ semver-version-control
+    ├── ¿Pipeline de CI/CD, Docker o Coolify? ───────────→ ci-cd-and-automation
+    ├── ¿Retiro de código viejo o migración de BD? ──────→ deprecation-and-migration
+    ├── ¿Documentar decisiones técnicas (ADRs)? ─────────→ documentation-and-adrs
+    ├── ¿Logs estructurados, métricas o telemetría? ────→ observability-and-instrumentation
+    └── ¿Despliegue a producción y contingencia? ────────→ shipping-and-launch
 ```
 
-## Core Operating Behaviors
+---
 
-These behaviors apply at all times, across all skills. They are non-negotiable.
+## ⚡ Comportamientos Fundamentales Innegociables
 
-### 1. Surface Assumptions
+Estos principios aplican en todo momento y bajo cualquier circunstancia:
 
-Before implementing anything non-trivial, explicitly state your assumptions:
-
+### 1. Hacer Explícitas las Asunciones
+Antes de programar cualquier solución no trivial, declara formalmente tus asunciones:
 ```
-ASSUMPTIONS I'M MAKING:
-1. [assumption about requirements]
-2. [assumption about architecture]
-3. [assumption about scope]
-→ Correct me now or I'll proceed with these.
+ASUNCIONES ASUMIDAS:
+1. [Asunción sobre requerimientos]
+2. [Asunción sobre arquitectura o compatibilidad]
+3. [Asunción sobre alcance y límites]
+→ Corrige estas asunciones ahora o procederé con base en ellas.
 ```
+Nunca asumas requerimientos ambiguos en silencio. Aclarar dudas al inicio cuesta minutos; corregir código mal asumido cuesta horas.
 
-Don't silently fill in ambiguous requirements. The most common failure mode is making wrong assumptions and running with them unchecked. Surface uncertainty early — it's cheaper than rework.
+### 2. Gestionar la Confusión Activamente
+Si encuentras discrepancias entre especificaciones, código previo o dependencias:
+1. **DETENTE.** No sigas programando por intuición.
+2. Nombra con precisión la incongruencia técnica.
+3. Plantea las alternativas o preguntas concretas.
+4. Espera confirmación antes de modificar el código.
 
-### 2. Manage Confusion Actively
+### 3. Defender la Simplicidad
+La tendencia natural es sobrecomplicar. Resístela activamente:
+- ¿Se puede resolver esto con menos código y menos dependencias?
+- ¿Estas abstracciones realmente aportan valor o son complejidad prematura?
+- Prefiere la solución directa, legible y mantenible sobre el truco ingenioso.
 
-When you encounter inconsistencies, conflicting requirements, or unclear specifications:
+### 4. Disciplina Quirúrgica de Alcance
+Toca **únicamente** los archivos y líneas pertinentes al requerimiento encomendado:
+- Prohibido borrar comentarios o documentación técnica sin justificación.
+- Prohibido hacer refactorizaciones masivas no solicitadas.
+- Prohibido alterar estilos o módulos adyacentes fuera del alcance.
 
-1. **STOP.** Do not proceed with a guess.
-2. Name the specific confusion.
-3. Present the tradeoff or ask the clarifying question.
-4. Wait for resolution before continuing.
+### 5. Verificación Obligatoria (Definition of Done)
+Ninguna tarea se considera finalizada sin evidencia de verificación:
+- Compilación de TypeScript limpia (`tsc --noEmit`).
+- Pruebas o diagnósticos de runtime sin errores.
+- Verificación visual y funcional en el entorno correspondiente.
 
-**Bad:** Silently picking one interpretation and hoping it's right.
-**Good:** "I see X in the spec but Y in the existing code. Which takes precedence?"
+---
 
-### 3. Push Back When Warranted
+## 🔄 Secuencia Típica del Ciclo de Vida
 
-You are not a yes-machine. When an approach has clear problems:
+Para construir una nueva característica completa, la secuencia recomendada es:
 
-- Point out the issue directly
-- Explain the concrete downside (quantify when possible — "this adds ~200ms latency" not "this might be slower")
-- Propose an alternative
-- Accept the human's decision if they override with full information
+1. **`interview-me`** → Extraer los requerimientos reales del usuario pregunta a pregunta.
+2. **`idea-refine`** → Refinar la idea mediante pensamiento divergente y convergente.
+3. **`spec-driven-development`** → Redactar la especificación y criterios de aceptación.
+4. **`planning-and-task-breakdown`** → Descomponer en tareas pequeñas y ordenadas.
+5. **`context-engineering`** → Cargar únicamente los archivos necesarios.
+6. **`source-driven-development`** → Contrastar APIs contra documentación oficial.
+7. **`incremental-implementation`** → Desarrollar en rebanadas verticales delgadas.
+   - Complementar con `responsive-design`, `pwa-web-app-manifest` o `frontend-ui-engineering` según aplique.
+8. **`doubt-driven-development`** → Someter decisiones críticas a revisión adversarial.
+9. **`test-driven-development`** / **`browser-testing-with-devtools`** → Probar y validar funcionamiento.
+10. **`code-review-and-quality`** → Revisión multifactorial previa al merge.
+11. **`code-simplification`** → Reducir código redundante sin romper comportamiento.
+12. **`git-workflow-and-versioning`** & **`semver-version-control`** → Commits atómicos y versión SemVer.
+13. **`shipping-and-launch`** → Checklist previa a despliegue en Hetzner / Coolify.
 
-Sycophancy is a failure mode. "Of course!" followed by implementing a bad idea helps no one. Honest technical disagreement is more valuable than false agreement.
+---
 
-### 4. Enforce Simplicity
+## 📚 Catálogo Rápido de Skills
 
-Your natural tendency is to overcomplicate. Actively resist it.
-
-Before finishing any implementation, ask:
-- Can this be done in fewer lines?
-- Are these abstractions earning their complexity?
-- Would a staff engineer look at this and say "why didn't you just..."?
-
-If you build 1000 lines and 100 would suffice, you have failed. Prefer the boring, obvious solution. Cleverness is expensive.
-
-### 5. Maintain Scope Discipline
-
-Touch only what you're asked to touch.
-
-Do NOT:
-- Remove comments you don't understand
-- "Clean up" code orthogonal to the task
-- Refactor adjacent systems as a side effect
-- Delete code that seems unused without explicit approval
-- Add features not in the spec because they "seem useful"
-
-Your job is surgical precision, not unsolicited renovation.
-
-### 6. Verify, Don't Assume
-
-Every skill includes a verification step. A task is not complete until verification passes. "Seems right" is never sufficient — there must be evidence (passing tests, build output, runtime data).
-
-Per-skill verification is the local check. The project-wide bar that applies to *every* change, regardless of which skill is active, is the Definition of Done: tests pass, no regressions, behavior verified at runtime, docs updated. See `../../references/definition-of-done.md`. It complements each task's acceptance criteria rather than replacing them.
-
-## Failure Modes to Avoid
-
-These are the subtle errors that look like productivity but create problems:
-
-1. Making wrong assumptions without checking
-2. Not managing your own confusion — plowing ahead when lost
-3. Not surfacing inconsistencies you notice
-4. Not presenting tradeoffs on non-obvious decisions
-5. Being sycophantic ("Of course!") to approaches with clear problems
-6. Overcomplicating code and APIs
-7. Modifying code or comments orthogonal to the task
-8. Removing things you don't fully understand
-9. Building without a spec because "it's obvious"
-10. Skipping verification because "it looks right"
-
-## Skill Rules
-
-1. **Check for an applicable skill before starting work.** Skills encode processes that prevent common mistakes.
-
-2. **Skills are workflows, not suggestions.** Follow the steps in order. Don't skip verification steps.
-
-3. **Multiple skills can apply.** A feature implementation might involve `idea-refine` → `spec-driven-development` → `planning-and-task-breakdown` → `incremental-implementation` → `test-driven-development` → `code-review-and-quality` → `code-simplification` → `shipping-and-launch` in sequence.
-
-4. **When in doubt, start with a spec.** If the task is non-trivial and there's no spec, begin with `spec-driven-development`.
-
-## Lifecycle Sequence
-
-For a complete feature, the typical skill sequence is:
-
-```
-1.  interview-me                → Extract what the user actually wants
-2.  idea-refine                 → Refine vague ideas
-3.  spec-driven-development     → Define what we're building
-4.  planning-and-task-breakdown → Break into verifiable chunks
-5.  context-engineering         → Load the right context
-6.  source-driven-development   → Verify against official docs
-7.  incremental-implementation  → Build slice by slice
-8.  observability-and-instrumentation → Instrument as you build (runs parallel with 7-9, not after)
-9.  doubt-driven-development    → Cross-examine non-trivial decisions in-flight
-10. test-driven-development     → Prove each slice works
-11. code-review-and-quality     → Review before merge
-12. code-simplification         → Reduce unnecessary complexity while preserving behavior
-13. git-workflow-and-versioning → Clean commit history
-14. documentation-and-adrs      → Document decisions
-15. deprecation-and-migration   → Retire old systems and move users safely when needed
-16. shipping-and-launch         → Deploy safely
-```
-
-Not every task needs every skill. A bug fix might only need: `debugging-and-error-recovery` → `test-driven-development` → `code-review-and-quality`.
-
-## Quick Reference
-
-| Phase | Skill | One-Line Summary |
-|-------|-------|-----------------|
-| Define | interview-me | Surface what the user actually wants before any plan, spec, or code exists |
-| Define | idea-refine | Refine ideas through structured divergent and convergent thinking |
-| Define | spec-driven-development | Requirements and acceptance criteria before code |
-| Plan | planning-and-task-breakdown | Decompose into small, verifiable tasks |
-| Build | incremental-implementation | Thin vertical slices, test each before expanding |
-| Build | source-driven-development | Verify against official docs before implementing |
-| Build | doubt-driven-development | Adversarial fresh-context review of every non-trivial decision |
-| Build | context-engineering | Right context at the right time |
-| Build | frontend-ui-engineering | Production-quality UI with accessibility |
-| Build | api-and-interface-design | Stable interfaces with clear contracts |
-| Verify | test-driven-development | Failing test first, then make it pass |
-| Verify | browser-testing-with-devtools | Chrome DevTools MCP for runtime verification |
-| Verify | debugging-and-error-recovery | Reproduce → localize → fix → guard |
-| Review | code-review-and-quality | Five-axis review with quality gates |
-| Review | code-simplification | Preserve behavior while reducing unnecessary complexity |
-| Review | security-and-hardening | OWASP prevention, input validation, least privilege |
-| Review | performance-optimization | Measure first, optimize only what matters |
-| Ship | git-workflow-and-versioning | Atomic commits, clean history |
-| Ship | ci-cd-and-automation | Automated quality gates on every change |
-| Ship | deprecation-and-migration | Remove old systems and migrate users safely |
-| Ship | documentation-and-adrs | Document the why, not just the what |
-| Ship | observability-and-instrumentation | Structured logs, RED metrics, traces, symptom-based alerts |
-| Ship | shipping-and-launch | Pre-launch checklist, monitoring, rollback plan |
+| Fase | Skill | Propósito Central |
+| :--- | :--- | :--- |
+| **Definir** | `interview-me` | Entrevistar al usuario pregunta por pregunta ante ideas no maduras |
+| **Definir** | `idea-refine` | Explorar variantes y convergencia conceptual de una idea |
+| **Definir** | `spec-driven-development` | Criterios de aceptación y especificaciones formales previas a programar |
+| **Definir** | `constraint-driven-development` | Establecer y blindar umbrales de calidad innegociables (`CONSTRAINTS.md`) |
+| **Planificar** | `planning-and-task-breakdown` | Descomponer épicas o tareas complejas en pasos pequeños y verificables |
+| **Planificar** | `new-app-scaffolding` | Arquitectura y protocolo de arranque para apps en Hetzner + Coolify |
+| **Construir** | `incremental-implementation` | Entrega en rebanadas delgadas verificando cada paso antes del siguiente |
+| **Construir** | `source-driven-development` | Código respaldado en fuentes oficiales sin patrones obsoletos |
+| **Construir** | `context-engineering` | Optimizar ventana de contexto cargando solo información de alto valor |
+| **Construir** | `frontend-ui-engineering` | Interfaces web accesibles, Enterprise Dark y con animaciones fluidas |
+| **Construir** | `responsive-design` | Estándar Mobile-First, vistas híbridas tarjetas/tablas y ergonomía táctil |
+| **Construir** | `theme-mode-system` | Soporte de temas Claro, Oscuro y Sistema sin destello inicial (anti-flicker) |
+| **Construir** | `pwa-web-app-manifest` | Transformación en PWA instalable en móvil/escritorio con Service Worker |
+| **Construir** | `api-and-interface-design` | Contratos de tipos y límites estables entre frontend y backend |
+| **Construir** | `doubt-driven-development` | Revisión adversarial rigurosa ante decisiones de alto riesgo |
+| **Verificar** | `test-driven-development` | Ciclo red-green-refactor para garantizar corrección |
+| **Verificar** | `browser-testing-with-devtools` | Automatización e inspección en navegadores reales vía DevTools MCP |
+| **Verificar** | `debugging-and-error-recovery` | Diagnóstico metódico de causa raíz (reproducir, aislar, corregir, blindar) |
+| **Revisar** | `code-review-and-quality` | Auditoría multifactorial de calidad antes de fusionar cambios |
+| **Revisar** | `code-simplification` | Reducción de complejidad y anidación sin alterar funcionalidad |
+| **Seguridad** | `security-and-hardening` | Mitigación OWASP, validación estricta y menor privilegio |
+| **Seguridad** | `env-security-protocol` | Tolerancia cero a credenciales o secretos en código o commits Git |
+| **Rendimiento**| `performance-optimization` | Optimización de consultas SQL Drizzle, carga de bundle y Core Web Vitals |
+| **Entrega** | `git-workflow-and-versioning` | Flujo Git profesional con Conventional Commits y ramas limpias |
+| **Entrega** | `semver-version-control` | Auditoría, cálculo y actualización automática de versiones SemVer |
+| **Entrega** | `ci-cd-and-automation` | Configuración de calidad automatizada en pipelines y contenedores |
+| **Entrega** | `deprecation-and-migration` | Sunset ordenado de funciones y migraciones de esquema sin downtime |
+| **Entrega** | `documentation-and-adrs` | Registro de decisiones arquitectónicas y documentación duradera |
+| **Operaciones**| `observability-and-instrumentation` | Instrumentación de métricas RED, logs estructurados y alertas |
+| **Operaciones**| `shipping-and-launch` | Checklist pre-despliegue en VPS Hetzner y plan de contingencia |
