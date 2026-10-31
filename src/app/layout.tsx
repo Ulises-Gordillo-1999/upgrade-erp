@@ -77,8 +77,13 @@ export default async function RootLayout({
               <Sidebar user={session} notificaciones={notificaciones} />
               <div className="flex-1 flex flex-col h-full min-w-0 overflow-hidden">
                 <Header user={session} notificaciones={notificaciones} />
-                <main className="flex-1 overflow-y-auto bg-slate-50/60 dark:bg-zinc-950 text-slate-900 dark:text-zinc-100 transition-colors">
-                  <div className="mx-auto max-w-7xl px-3.5 sm:px-6 lg:px-8 py-4 sm:py-8 h-full">
+                <main className="flex-1 overflow-y-auto bg-slate-50/60 dark:bg-[#07090e] text-slate-900 dark:text-zinc-100 transition-colors relative">
+                  {/* Cyber Grid y Resplandor Ambiental */}
+                  <div className="absolute inset-0 cyber-grid pointer-events-none opacity-80" />
+                  <div className="absolute top-0 right-1/4 w-96 h-96 bg-cyan-500/5 dark:bg-cyan-500/10 rounded-full blur-[140px] pointer-events-none" />
+                  <div className="absolute top-1/3 left-10 w-96 h-96 bg-blue-600/5 dark:bg-blue-600/10 rounded-full blur-[160px] pointer-events-none" />
+
+                  <div className="relative z-10 mx-auto max-w-7xl px-3.5 sm:px-6 lg:px-8 py-4 sm:py-8 h-full">
                     {children}
                   </div>
                 </main>

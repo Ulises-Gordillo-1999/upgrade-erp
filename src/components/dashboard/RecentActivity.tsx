@@ -76,20 +76,28 @@ export function RecentActivity({ transacciones, proyectos }: Props) {
   return (
     <div className="grid gap-6 lg:grid-cols-2">
       {/* Panel 1: Últimas Transacciones */}
-      <div className="rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 backdrop-blur-sm p-5 shadow-sm space-y-4 flex flex-col justify-between transition-colors">
+      <div className="relative overflow-hidden rounded-xl border border-slate-200 dark:border-zinc-800/80 bg-white/80 dark:bg-[#0c101b]/80 backdrop-blur-xl p-5 shadow-sm space-y-4 flex flex-col justify-between transition-all telemetry-card">
+        {/* Acento superior de telemetría */}
+        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-emerald-500/20 via-emerald-500/50 to-transparent" />
+
         <div>
-          <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-zinc-800">
-            <div className="flex items-center gap-2">
+          <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-zinc-800/80">
+            <div className="flex items-center gap-2.5">
               <div className="p-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400">
                 <DollarSign className="w-4 h-4" />
               </div>
-              <h3 className="text-sm font-semibold text-slate-900 dark:text-zinc-100">
-                Últimos Movimientos Financieros
-              </h3>
+              <div>
+                <span className="text-[10px] font-mono text-cyan-600 dark:text-cyan-400 font-bold block">
+                  // LOG DE TELEMETRÍA FINANCIERA
+                </span>
+                <h3 className="text-sm font-bold text-slate-900 dark:text-zinc-100">
+                  Últimos Movimientos de Caja
+                </h3>
+              </div>
             </div>
             <Link
               href="/finanzas"
-              className="text-xs text-slate-500 dark:text-zinc-400 hover:text-cyan-600 dark:hover:text-cyan-400 font-medium flex items-center gap-1 transition-colors group"
+              className="text-xs font-mono text-slate-500 dark:text-zinc-400 hover:text-cyan-600 dark:hover:text-cyan-400 font-medium flex items-center gap-1 transition-colors group"
             >
               <span>Ver todos</span>
               <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
@@ -180,20 +188,28 @@ export function RecentActivity({ transacciones, proyectos }: Props) {
       </div>
 
       {/* Panel 2: Proyectos Recientes */}
-      <div className="rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 backdrop-blur-sm p-5 shadow-sm space-y-4 flex flex-col justify-between transition-colors">
+      <div className="relative overflow-hidden rounded-xl border border-slate-200 dark:border-zinc-800/80 bg-white/80 dark:bg-[#0c101b]/80 backdrop-blur-xl p-5 shadow-sm space-y-4 flex flex-col justify-between transition-all telemetry-card">
+        {/* Acento superior de telemetría */}
+        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-cyan-500/20 via-cyan-500/50 to-transparent" />
+
         <div>
-          <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-zinc-800">
-            <div className="flex items-center gap-2">
+          <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-zinc-800/80">
+            <div className="flex items-center gap-2.5">
               <div className="p-1.5 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-cyan-600 dark:text-cyan-400">
                 <FolderGit2 className="w-4 h-4" />
               </div>
-              <h3 className="text-sm font-semibold text-slate-900 dark:text-zinc-100">
-                Últimos Proyectos y Obras
-              </h3>
+              <div>
+                <span className="text-[10px] font-mono text-cyan-600 dark:text-cyan-400 font-bold block">
+                  // LOG DE TELEMETRÍA DE OBRAS
+                </span>
+                <h3 className="text-sm font-bold text-slate-900 dark:text-zinc-100">
+                  Últimos Proyectos y Obras
+                </h3>
+              </div>
             </div>
             <Link
               href="/proyectos"
-              className="text-xs text-slate-500 dark:text-zinc-400 hover:text-cyan-600 dark:hover:text-cyan-400 font-medium flex items-center gap-1 transition-colors group"
+              className="text-xs font-mono text-slate-500 dark:text-zinc-400 hover:text-cyan-600 dark:hover:text-cyan-400 font-medium flex items-center gap-1 transition-colors group"
             >
               <span>Ver todos</span>
               <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
