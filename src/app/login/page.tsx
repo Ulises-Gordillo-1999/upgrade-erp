@@ -27,7 +27,7 @@ export default function LoginPage() {
 
       <div className="relative z-10 w-full max-w-[440px]">
         {/* Tarjeta de Login Glassmorphic */}
-        <div className="backdrop-blur-2xl bg-white/80 dark:bg-zinc-900/70 border border-slate-200/80 dark:border-zinc-800/80 rounded-3xl p-7 sm:p-9 shadow-2xl shadow-slate-300/40 dark:shadow-black/80 ring-1 ring-black/5 dark:ring-white/5">
+        <div className="backdrop-blur-2xl bg-white/80 dark:bg-zinc-900/70 border border-slate-200/80 dark:border-zinc-800/80 rounded-2xl sm:rounded-3xl p-5 sm:p-9 shadow-2xl shadow-slate-300/40 dark:shadow-black/80 ring-1 ring-black/5 dark:ring-white/5">
           {/* Header con Isotipo y Marca */}
           <div className="flex flex-col items-center text-center mb-8">
             <div className="relative mb-4">

@@ -80,3 +80,4 @@ export async function clearWebauthnChallenge() {
   const cookieStore = await cookies();
   cookieStore.delete(CHALLENGE_COOKIE_NAME);
 }
+

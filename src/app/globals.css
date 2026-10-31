@@ -111,3 +111,13 @@ dialog[open] {
   transform: translateY(-2px);
 }
 
+/* Utility to hide scrollbars on touch-scrollable tabs & carousels */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+

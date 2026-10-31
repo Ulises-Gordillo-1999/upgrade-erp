@@ -160,15 +160,15 @@ export function BiometricEnrollment() {
   };
 
   return (
-    <div className="rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-6 sm:p-8 backdrop-blur-md space-y-6 shadow-sm">
+    <div className="rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-4 sm:p-6 lg:p-8 backdrop-blur-md space-y-6 shadow-sm w-full min-w-0">
       {/* Encabezado */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200 dark:border-zinc-800/80">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 pb-4 border-b border-slate-200 dark:border-zinc-800/80">
         <div>
           <div className="flex items-center gap-2">
-            <div className="p-2 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-500">
+            <div className="p-2 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-500 shrink-0">
               <Fingerprint className="w-5 h-5" />
             </div>
-            <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
+            <h3 className="text-base sm:text-lg font-semibold text-slate-900 dark:text-white">
               Autenticación Biométrica & Passkeys
             </h3>
           </div>
@@ -178,7 +178,7 @@ export function BiometricEnrollment() {
         </div>
 
         {/* Badge de estado del sensor en este equipo */}
-        <div className="flex items-center gap-2 self-start sm:self-auto">
+        <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
           {isSupported && hasPlatformAuthenticator ? (
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
@@ -196,7 +196,7 @@ export function BiometricEnrollment() {
       {/* Alerta de mensajes */}
       {mensaje && (
         <div
-          className={`p-4 rounded-xl text-xs font-medium flex items-center gap-3 animate-in fade-in ${
+          className={`p-3.5 sm:p-4 rounded-xl text-xs font-medium flex items-center gap-2.5 sm:gap-3 animate-in fade-in ${
             mensaje.type === "success"
               ? "bg-emerald-500/10 border border-emerald-500/20 text-emerald-400"
               : "bg-rose-500/10 border border-rose-500/20 text-rose-400"
@@ -212,7 +212,7 @@ export function BiometricEnrollment() {
       )}
 
       {/* Formulario de Vinculación de Nuevo Dispositivo */}
-      <div className="relative overflow-hidden rounded-2xl border border-cyan-500/20 bg-gradient-to-br from-cyan-950/20 via-zinc-900/60 to-zinc-950/80 p-5 sm:p-6 backdrop-blur-xl">
+      <div className="relative overflow-hidden rounded-2xl border border-cyan-500/20 bg-gradient-to-br from-cyan-950/20 via-zinc-900/60 to-zinc-950/80 p-4 sm:p-6 backdrop-blur-xl">
         <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/10 rounded-full blur-[80px] pointer-events-none" />
 
         <div className="relative space-y-4">
@@ -244,11 +244,11 @@ export function BiometricEnrollment() {
               </p>
             </div>
 
-            <div className="flex justify-end">
+            <div className="flex justify-end pt-1">
               <button
                 type="submit"
                 disabled={isEnrolling || isSupported === false}
-                className="px-5 py-2.5 rounded-xl text-sm font-medium text-white bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 transition-all flex items-center gap-2 shadow-lg shadow-cyan-950/40 disabled:opacity-50 disabled:pointer-events-none"
+                className="w-full sm:w-auto px-5 py-2.5 rounded-xl text-xs sm:text-sm font-medium text-white bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 transition-all flex items-center justify-center gap-2 shadow-lg shadow-cyan-950/40 disabled:opacity-50 disabled:pointer-events-none"
               >
                 {isEnrolling ? (
                   <>
@@ -345,3 +345,4 @@ export function BiometricEnrollment() {
     </div>
   );
 }
+
