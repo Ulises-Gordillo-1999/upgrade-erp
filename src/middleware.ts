@@ -14,12 +14,15 @@ const PUBLIC_PATHS = ["/login"];
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Permitir archivos estáticos, favicon, manifest y recursos de marca públicos
+  // Permitir archivos estáticos, favicon, manifest PWA, service worker y recursos de marca públicos
   if (
     pathname.startsWith("/_next") ||
     pathname === "/favicon.ico" ||
     pathname === "/icon.png" ||
     pathname === "/apple-icon.png" ||
+    pathname === "/sw.js" ||
+    pathname === "/manifest.webmanifest" ||
+    pathname === "/manifest.json" ||
     pathname.startsWith("/logo_") ||
     pathname.startsWith("/icons/")
   ) {

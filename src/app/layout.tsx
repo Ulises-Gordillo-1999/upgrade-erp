@@ -6,6 +6,7 @@ import { Header } from "@/components/Header";
 import { getSession } from "@/utils/auth";
 import { getNotificaciones } from "@/app/actions/notificaciones";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
+import { PwaRegister } from "@/components/pwa/PwaRegister";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -15,6 +16,12 @@ export const metadata: Metadata = {
     template: "%s | UPGRADE ERP",
   },
   description: "Plataforma integral de gestión de proyectos, catálogo IT, bóveda criptográfica y finanzas para UPGRADE.",
+  applicationName: "UPGRADE ERP",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "UPGRADE ERP",
+  },
   icons: {
     icon: [
       { url: "/favicon.ico", sizes: "any" },
@@ -29,11 +36,12 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#f8fafc" },
-    { media: "(prefers-color-scheme: dark)", color: "#09090b" },
+    { media: "(prefers-color-scheme: dark)", color: "#07090e" },
   ],
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
+  viewportFit: "cover",
 };
 
 export default async function RootLayout({
@@ -72,6 +80,7 @@ export default async function RootLayout({
         className={`${inter.variable} font-sans antialiased bg-slate-50 dark:bg-zinc-950 text-slate-900 dark:text-zinc-100 h-screen flex flex-col lg:flex-row overflow-hidden transition-colors`}
       >
         <ThemeProvider>
+          <PwaRegister />
           {session ? (
             <>
               <Sidebar user={session} notificaciones={notificaciones} />
