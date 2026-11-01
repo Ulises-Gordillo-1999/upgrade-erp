@@ -77,28 +77,34 @@ export default async function ProyectoDetallePage({
           <ArrowLeft className="w-4 h-4 mr-2" />
           Volver a Proyectos
         </Link>
-        <div className="flex items-center gap-2 flex-wrap">
-          <ExportarPDFButton proyecto={proyecto} items={items} />
-          <CerrarObraModal
-            proyectoId={id}
-            clienteNombre={
-              proyecto.clientes?.nombre_razon_social || "Cliente General"
-            }
-            items={items}
-            isFinalizado={isFinalizado}
-            totalEstimado={proyecto.total_estimado || 0}
-            totalFinal={proyecto.total_final || 0}
-          />
-          {isSuperAdmin && (
-            <DeleteProyectoButton
-              id={id}
-              nombreCliente={
-                proyecto.clientes?.nombre_razon_social || "este proyecto"
+        <div className="grid grid-cols-2 sm:flex sm:items-center gap-2 w-full sm:w-auto">
+          <div className="col-span-1 sm:col-auto">
+            <ExportarPDFButton proyecto={proyecto} items={items} />
+          </div>
+          <div className="col-span-1 sm:col-auto">
+            <CerrarObraModal
+              proyectoId={id}
+              clienteNombre={
+                proyecto.clientes?.nombre_razon_social || "Cliente General"
               }
-              isLiquidado={Boolean(proyecto.stock_descontado || isFinalizado)}
-              redirectToProyectos={true}
-              variant="button"
+              items={items}
+              isFinalizado={isFinalizado}
+              totalEstimado={proyecto.total_estimado || 0}
+              totalFinal={proyecto.total_final || 0}
             />
+          </div>
+          {isSuperAdmin && (
+            <div className="col-span-2 sm:col-auto">
+              <DeleteProyectoButton
+                id={id}
+                nombreCliente={
+                  proyecto.clientes?.nombre_razon_social || "este proyecto"
+                }
+                isLiquidado={Boolean(proyecto.stock_descontado || isFinalizado)}
+                redirectToProyectos={true}
+                variant="button"
+              />
+            </div>
           )}
         </div>
       </div>
@@ -141,9 +147,9 @@ export default async function ProyectoDetallePage({
 
           <form
             action={handleUpdateEstado}
-            className="flex items-center space-x-2 bg-slate-100 dark:bg-zinc-950 p-2 rounded-xl border border-slate-200 dark:border-zinc-800 self-start sm:self-auto"
+            className="flex items-center justify-between space-x-2 bg-slate-100 dark:bg-zinc-950 p-2 rounded-xl border border-slate-200 dark:border-zinc-800 w-full sm:w-auto"
           >
-            <label className="text-xs font-medium text-slate-600 dark:text-zinc-400 pl-2 flex items-center gap-1">
+            <label className="text-xs font-semibold text-slate-600 dark:text-zinc-400 pl-1 flex items-center gap-1 shrink-0">
               <Clock className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-500" />
               Estado:
             </label>
@@ -151,7 +157,7 @@ export default async function ProyectoDetallePage({
               key={proyecto.estado}
               name="estado"
               defaultValue={proyecto.estado || "Borrador_Bot"}
-              className="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-xs text-slate-900 dark:text-zinc-200 rounded-lg px-3 py-1.5 focus:outline-none focus:border-cyan-500"
+              className="min-h-[38px] bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-xs text-slate-900 dark:text-zinc-200 rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-cyan-500 cursor-pointer flex-1 sm:flex-initial"
             >
               <option value="Borrador_Bot">Borrador (Bot)</option>
               <option value="Pendiente_Aprobacion_Cliente">
@@ -164,7 +170,7 @@ export default async function ProyectoDetallePage({
             </select>
             <button
               type="submit"
-              className="text-xs px-2.5 py-1.5 bg-slate-200 hover:bg-slate-300 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-800 dark:text-zinc-200 rounded-lg border border-slate-300 dark:border-zinc-700 transition-colors"
+              className="min-h-[38px] px-3 py-1.5 bg-slate-200 hover:bg-slate-300 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-800 dark:text-zinc-200 text-xs font-semibold rounded-lg border border-slate-300 dark:border-zinc-700 transition-colors active:scale-95"
             >
               Guardar
             </button>
@@ -235,7 +241,143 @@ export default async function ProyectoDetallePage({
           </div>
         </div>
 
-        <div className="rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white/70 dark:bg-zinc-900/50 backdrop-blur-md overflow-hidden shadow-sm">
+        {/* VISTA MOBILE: Tarjetas Ergonómicas de Ítems (Patrón Híbrido block md:hidden) */}
+        <div className="block md:hidden space-y-3">
+          {items.length === 0 ? (
+            <div className="p-8 text-center text-slate-400 dark:text-zinc-500 rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 text-xs">
+              No hay ítems en este proyecto. Agrega materiales o servicios.
+            </div>
+          ) : (
+            <>
+              {items.map((item) => {
+                const cant_final =
+                  item.cantidad_real !== null && item.cantidad_real !== undefined
+                    ? item.cantidad_real
+                    : item.cantidad_estimada;
+                const subtotal = item.precio_congelado * (cant_final || 0);
+                const esConsumible = item.inventario?.tipo === "Consumible";
+
+                return (
+                  <div
+                    key={item.id}
+                    className={`p-4 rounded-2xl border transition-all space-y-3 ${
+                      esConsumible
+                        ? "border-amber-500/30 bg-amber-500/[0.03] dark:bg-amber-950/10"
+                        : "border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 shadow-sm"
+                    }`}
+                  >
+                    {/* Card Header: Nombre, SKU, Tipo y Eliminar */}
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0 flex-1">
+                        <h4 className="font-semibold text-slate-800 dark:text-zinc-100 text-sm leading-tight break-words">
+                          {item.inventario?.nombre}
+                        </h4>
+                        {item.inventario?.sku && (
+                          <span className="text-[10px] text-slate-400 dark:text-zinc-500 font-mono block mt-0.5">
+                            SKU: {item.inventario.sku}
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        <span
+                          className={`px-2 py-0.5 rounded text-[10px] font-semibold tracking-wider ${
+                            esConsumible
+                              ? "bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20"
+                              : item.inventario?.tipo === "Servicio"
+                              ? "bg-purple-500/10 text-purple-700 dark:text-purple-400 border border-purple-500/20"
+                              : "bg-blue-500/10 text-blue-700 dark:text-blue-400 border border-blue-500/20"
+                          }`}
+                        >
+                          {item.inventario?.tipo}
+                        </span>
+                        {!isFinalizado && (
+                          <DeleteItemButton id={item.id} proyecto_id={id} />
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Grid 2x2: Precios y Estimados */}
+                    <div className="grid grid-cols-2 gap-2 p-2.5 rounded-xl bg-slate-50 dark:bg-zinc-950/50 border border-slate-100 dark:border-zinc-800/60">
+                      <div>
+                        <span className="text-[10px] text-slate-400 dark:text-zinc-500 uppercase tracking-wider block font-semibold">
+                          {isPendiente ? "Precio Catálogo" : "Precio Congelado"}
+                        </span>
+                        <span className="font-mono text-xs font-semibold text-slate-700 dark:text-zinc-300">
+                          {new Intl.NumberFormat("es-AR", {
+                            style: "currency",
+                            currency: "ARS",
+                          }).format(item.precio_congelado)}
+                          {!isPendiente && " ❄️"}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-[10px] text-slate-400 dark:text-zinc-500 uppercase tracking-wider block font-semibold">
+                          Cant. Estimada
+                        </span>
+                        <span className="font-mono text-xs font-semibold text-slate-700 dark:text-zinc-300">
+                          {item.cantidad_estimada} {esConsumible ? "m" : "u"}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Fila Inferior: Medición Cant. Real (Cable) y Subtotal */}
+                    <div className="flex items-center justify-between gap-3 pt-1 border-t border-slate-100 dark:border-zinc-800/60">
+                      <div>
+                        <span className="text-[10px] text-slate-400 dark:text-zinc-500 uppercase font-semibold block mb-1">
+                          Cant. Real (Obra):
+                        </span>
+                        <ItemCantidadRealInput
+                          itemId={item.id}
+                          proyectoId={id}
+                          cantidadEstimada={item.cantidad_estimada || 0}
+                          cantidadRealInicial={item.cantidad_real}
+                          tipoItem={item.inventario?.tipo}
+                          isProyectoFinalizado={isFinalizado}
+                        />
+                      </div>
+                      <div className="text-right shrink-0">
+                        <span className="text-[10px] text-slate-400 dark:text-zinc-500 uppercase font-semibold block">
+                          Subtotal Final
+                        </span>
+                        <span className="font-mono text-sm font-bold text-slate-900 dark:text-zinc-100">
+                          {new Intl.NumberFormat("es-AR", {
+                            style: "currency",
+                            currency: "ARS",
+                          }).format(subtotal)}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+
+              {/* Tarjeta Resumen Total en Mobile */}
+              <div className="p-4 rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/80 shadow-sm space-y-2.5">
+                <div className="flex justify-between items-center text-xs text-slate-500 dark:text-zinc-400">
+                  <span className="font-medium">Costo Estimado (Presupuesto):</span>
+                  <span className="font-mono font-semibold text-slate-700 dark:text-zinc-300">
+                    {new Intl.NumberFormat("es-AR", {
+                      style: "currency",
+                      currency: "ARS",
+                    }).format(proyecto.total_estimado || 0)}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center text-sm font-bold pt-2 border-t border-slate-100 dark:border-zinc-800">
+                  <span className="text-slate-900 dark:text-white">Total Final Liquidado:</span>
+                  <span className="font-mono text-cyan-600 dark:text-cyan-400 text-base font-extrabold">
+                    {new Intl.NumberFormat("es-AR", {
+                      style: "currency",
+                      currency: "ARS",
+                    }).format(proyecto.total_final || 0)}
+                  </span>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* VISTA DESKTOP: Tabla Tradicional de 7 Columnas (hidden md:block) */}
+        <div className="hidden md:block rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white/70 dark:bg-zinc-900/50 backdrop-blur-md overflow-hidden shadow-sm">
           <div className="overflow-x-auto">
             <table className="w-full text-xs text-left">
               <thead className="text-[11px] text-slate-500 dark:text-zinc-400 uppercase tracking-wider bg-slate-50 dark:bg-zinc-950/80 border-b border-slate-200 dark:border-zinc-800">

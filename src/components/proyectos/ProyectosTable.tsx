@@ -109,7 +109,7 @@ export function ProyectosTable({ proyectos, isSuperAdmin }: Props) {
       {/* Barra de Búsqueda y Filtros */}
       <div className="p-3.5 rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 shadow-sm backdrop-blur-md space-y-3">
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-          {/* Input de Búsqueda */}
+          {/* Input de Búsqueda (16px en mobile para prevenir zoom de iOS) */}
           <div className="relative flex-1">
             <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-zinc-400 pointer-events-none" />
             <input
@@ -117,13 +117,13 @@ export function ProyectosTable({ proyectos, isSuperAdmin }: Props) {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Buscar por cliente o notas técnicas..."
-              className="w-full bg-slate-50 dark:bg-zinc-950/70 border border-slate-200 dark:border-zinc-800 rounded-xl pl-10 pr-9 py-2 text-xs sm:text-sm text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all"
+              className="w-full min-h-[44px] bg-slate-50 dark:bg-zinc-950/70 border border-slate-200 dark:border-zinc-800 rounded-xl pl-10 pr-9 py-2 text-base sm:text-xs text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all"
             />
             {searchTerm && (
               <button
                 type="button"
                 onClick={() => setSearchTerm("")}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:text-zinc-500 dark:hover:text-zinc-300 p-0.5 rounded transition-colors"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:text-zinc-500 dark:hover:text-zinc-300 p-1 rounded transition-colors"
                 title="Limpiar búsqueda"
               >
                 <X className="w-4 h-4" />
@@ -131,13 +131,13 @@ export function ProyectosTable({ proyectos, isSuperAdmin }: Props) {
             )}
           </div>
 
-          {/* Menú de Filtros Dropdowns */}
-          <div className="flex flex-wrap items-center gap-2">
+          {/* Menú de Filtros Dropdowns (2 columnas en mobile, flex en desktop) */}
+          <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2">
             {/* Estado */}
             <select
               value={estadoFiltro}
               onChange={(e) => setEstadoFiltro(e.target.value)}
-              className="bg-slate-50 dark:bg-zinc-950/80 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-xs text-slate-700 dark:text-zinc-300 focus:outline-none focus:border-cyan-500 transition-colors cursor-pointer"
+              className="w-full sm:w-auto min-h-[44px] sm:min-h-0 bg-slate-50 dark:bg-zinc-950/80 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-base sm:text-xs text-slate-700 dark:text-zinc-300 focus:outline-none focus:border-cyan-500 transition-colors cursor-pointer [&>option]:bg-white [&>option]:text-slate-900 dark:[&>option]:bg-zinc-900 dark:[&>option]:text-zinc-100 [color-scheme:light] dark:[color-scheme:dark]"
             >
               <option value="todos">Todos los Estados</option>
               <option value="Borrador_Bot">Borrador Bot</option>
@@ -152,7 +152,7 @@ export function ProyectosTable({ proyectos, isSuperAdmin }: Props) {
             <select
               value={liquidacionFiltro}
               onChange={(e) => setLiquidacionFiltro(e.target.value)}
-              className="bg-slate-50 dark:bg-zinc-950/80 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-xs text-slate-700 dark:text-zinc-300 focus:outline-none focus:border-cyan-500 transition-colors cursor-pointer"
+              className="w-full sm:w-auto min-h-[44px] sm:min-h-0 bg-slate-50 dark:bg-zinc-950/80 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-base sm:text-xs text-slate-700 dark:text-zinc-300 focus:outline-none focus:border-cyan-500 transition-colors cursor-pointer [&>option]:bg-white [&>option]:text-slate-900 dark:[&>option]:bg-zinc-900 dark:[&>option]:text-zinc-100 [color-scheme:light] dark:[color-scheme:dark]"
             >
               <option value="todos">Liquidación (Todos)</option>
               <option value="liquidado">Liquidados (Cierre realizado)</option>
@@ -164,7 +164,7 @@ export function ProyectosTable({ proyectos, isSuperAdmin }: Props) {
               <button
                 type="button"
                 onClick={resetFilters}
-                className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-rose-600 dark:text-rose-400 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 rounded-xl transition-all"
+                className="col-span-2 sm:col-auto w-full sm:w-auto min-h-[44px] sm:min-h-0 flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-medium text-rose-600 dark:text-rose-400 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 rounded-xl transition-all"
                 title="Limpiar todos los filtros"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
@@ -193,10 +193,10 @@ export function ProyectosTable({ proyectos, isSuperAdmin }: Props) {
         </div>
       </div>
 
-      {/* 1. Vista Móvil: Tarjetas de Proyectos (< md) */}
+      {/* 1. Vista Móvil: Tarjetas Ergonómicas de Proyectos (< md) */}
       <div className="md:hidden space-y-3">
         {filteredProyectos.length === 0 ? (
-          <div className="rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-8 text-center text-slate-400 dark:text-zinc-500">
+          <div className="rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-8 text-center text-slate-400 dark:text-zinc-500">
             <FilterX className="w-8 h-8 mx-auto mb-2 text-slate-400 dark:text-zinc-600 stroke-1" />
             <p className="text-sm font-medium text-slate-600 dark:text-zinc-400">
               {hasActiveFilters
@@ -214,75 +214,87 @@ export function ProyectosTable({ proyectos, isSuperAdmin }: Props) {
             )}
           </div>
         ) : (
-          filteredProyectos.map((proyecto) => (
-            <div
-              key={proyecto.id}
-              className="rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-4 shadow-sm space-y-3 transition-colors"
-            >
-              <div className="flex items-start justify-between gap-2">
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2 flex-wrap mb-1">
-                    <span
-                      className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold border ${getEstadoBadge(
-                        proyecto.estado as EstadoProyecto
-                      )}`}
-                    >
-                      {proyecto.estado?.replace(/_/g, " ")}
-                    </span>
-                    <span className="text-[11px] text-slate-400 dark:text-zinc-500 font-mono">
-                      {new Date(proyecto.created_at!).toLocaleDateString("es-AR")}
-                    </span>
+          filteredProyectos.map((proyecto) => {
+            const isLiquidado = Boolean(proyecto.stock_descontado || proyecto.estado === "Finalizado");
+            const montoFinal = proyecto.total_final && proyecto.total_final !== 0 ? proyecto.total_final : (proyecto.total_estimado || 0);
+
+            return (
+              <div
+                key={proyecto.id}
+                className="rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 backdrop-blur-md p-4 shadow-sm space-y-3 transition-colors"
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2 flex-wrap mb-1">
+                      <span
+                        className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold border ${getEstadoBadge(
+                          proyecto.estado as EstadoProyecto
+                        )}`}
+                      >
+                        {proyecto.estado?.replace(/_/g, " ")}
+                      </span>
+                      <span className="text-[11px] text-slate-400 dark:text-zinc-500 font-mono">
+                        {new Date(proyecto.created_at!).toLocaleDateString("es-AR")}
+                      </span>
+                      {isLiquidado && (
+                        <span className="text-[10px] font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20">
+                          Liquidado
+                        </span>
+                      )}
+                    </div>
+                    <h4 className="text-sm font-semibold text-slate-900 dark:text-zinc-100 leading-tight">
+                      {proyecto.clientes?.nombre_razon_social || "Cliente Desconocido"}
+                    </h4>
+                    {proyecto.notas_tecnicas && (
+                      <p className="text-xs text-slate-500 dark:text-zinc-400 mt-1 line-clamp-2 leading-relaxed">
+                        {proyecto.notas_tecnicas}
+                      </p>
+                    )}
                   </div>
-                  <h4 className="text-sm font-semibold text-slate-900 dark:text-zinc-100">
-                    {proyecto.clientes?.nombre_razon_social || "Desconocido"}
-                  </h4>
-                  {proyecto.notas_tecnicas && (
-                    <p className="text-xs text-slate-500 dark:text-zinc-400 mt-1 line-clamp-2">
-                      {proyecto.notas_tecnicas}
-                    </p>
+
+                  {isSuperAdmin && (
+                    <div className="shrink-0">
+                      <DeleteProyectoButton
+                        id={proyecto.id}
+                        nombreCliente={
+                          proyecto.clientes?.nombre_razon_social || "Proyecto"
+                        }
+                        isLiquidado={isLiquidado}
+                        variant="icon"
+                      />
+                    </div>
                   )}
                 </div>
 
-                {isSuperAdmin && (
-                  <div className="shrink-0">
-                    <DeleteProyectoButton
-                      id={proyecto.id}
-                      nombreCliente={
-                        proyecto.clientes?.nombre_razon_social || "Proyecto"
-                      }
-                      isLiquidado={Boolean(
-                        proyecto.stock_descontado ||
-                          proyecto.estado === "Finalizado"
-                      )}
-                      variant="icon"
-                    />
+                {/* Sub-tarjeta de importes */}
+                <div className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-zinc-950/50 border border-slate-100 dark:border-zinc-800/60 text-xs">
+                  <div>
+                    <span className="text-[10px] text-slate-400 dark:text-zinc-500 uppercase font-semibold block">
+                      {proyecto.total_final && proyecto.total_final !== 0 ? "Total Final Liquidado" : "Presupuesto Estimado"}
+                    </span>
+                    <span className="font-mono text-sm font-bold text-slate-900 dark:text-zinc-100">
+                      {new Intl.NumberFormat("es-AR", {
+                        style: "currency",
+                        currency: "ARS",
+                      }).format(montoFinal)}
+                    </span>
                   </div>
-                )}
-              </div>
-
-              <div className="flex items-center justify-between pt-2.5 border-t border-slate-100 dark:border-zinc-800/80 text-xs">
-                <div>
-                  <span className="text-[10px] text-slate-400 dark:text-zinc-500 uppercase font-medium block">
-                    Total
-                  </span>
-                  <span className="font-semibold text-slate-800 dark:text-zinc-200">
-                    {new Intl.NumberFormat("es-AR", {
-                      style: "currency",
-                      currency: "ARS",
-                    }).format(proyecto.total_final && proyecto.total_final !== 0 ? proyecto.total_final : (proyecto.total_estimado || 0))}
+                  <span className="text-[11px] font-mono text-slate-400 dark:text-zinc-500">
+                    ID: {proyecto.id.slice(0, 8)}...
                   </span>
                 </div>
 
+                {/* Botón de Acción Touch Target Completo */}
                 <Link
                   href={`/proyectos/${proyecto.id}`}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-700 dark:text-cyan-400 border border-cyan-500/20 rounded-xl transition-all"
+                  className="min-h-[44px] w-full flex items-center justify-center gap-2 text-xs font-semibold rounded-xl border border-cyan-500/20 bg-cyan-500/10 text-cyan-700 dark:text-cyan-400 hover:bg-cyan-500/20 active:scale-[0.98] transition-all shadow-sm"
                 >
                   <FileText className="w-3.5 h-3.5" />
-                  <span>Ver Detalle</span>
+                  <span>Ver Detalle de Obra</span>
                 </Link>
               </div>
-            </div>
-          ))
+            );
+          })
         )}
       </div>
 

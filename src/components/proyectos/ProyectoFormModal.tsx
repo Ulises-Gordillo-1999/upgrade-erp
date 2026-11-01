@@ -17,9 +17,10 @@ import { useRouter } from "next/navigation";
 
 interface Props {
   clientes: Cliente[];
+  triggerButton?: React.ReactNode;
 }
 
-export function ProyectoFormModal({ clientes }: Props) {
+export function ProyectoFormModal({ clientes, triggerButton }: Props) {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -57,25 +58,31 @@ export function ProyectoFormModal({ clientes }: Props) {
 
   return (
     <>
-      <button
-        onClick={() => setIsOpen(true)}
-        className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white rounded-xl transition-all text-sm font-medium shadow-lg shadow-cyan-950/20 dark:shadow-cyan-950/40"
-      >
-        <Plus className="w-4 h-4" />
-        Nuevo Proyecto
-      </button>
+      {triggerButton ? (
+        <div onClick={() => setIsOpen(true)} className="w-full sm:w-auto cursor-pointer">
+          {triggerButton}
+        </div>
+      ) : (
+        <button
+          onClick={() => setIsOpen(true)}
+          className="min-h-[44px] w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white rounded-xl transition-all text-sm font-semibold shadow-md shadow-cyan-950/20 active:scale-[0.98]"
+        >
+          <Plus className="w-4 h-4" />
+          <span>Nuevo Proyecto</span>
+        </button>
+      )}
 
       {isOpen && mounted && createPortal(
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 dark:bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
-          <div className="relative w-full max-w-xl rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/95 p-6 sm:p-7 shadow-2xl backdrop-blur-xl space-y-6 animate-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 dark:bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
+          <div className="relative w-full max-w-xl rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/95 p-5 sm:p-7 shadow-2xl backdrop-blur-xl space-y-5 animate-in zoom-in-95 duration-200 max-h-[90dvh] overflow-y-auto">
             {/* Header */}
-            <div className="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-zinc-800">
+            <div className="flex items-center justify-between pb-3.5 border-b border-slate-200 dark:border-zinc-800">
               <div className="flex items-center gap-3">
                 <div className="p-2.5 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-600 dark:text-cyan-400">
                   <FolderKanban className="w-5 h-5" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight">
+                  <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white tracking-tight">
                     Crear Proyecto / Presupuesto
                   </h2>
                   <p className="text-xs text-slate-500 dark:text-zinc-400">
@@ -96,7 +103,7 @@ export function ProyectoFormModal({ clientes }: Props) {
             {/* Form */}
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-slate-700 dark:text-zinc-300 block flex items-center gap-1.5">
+                <label className="text-xs font-semibold text-slate-700 dark:text-zinc-300 flex items-center gap-1.5">
                   <Building2 className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-500" />
                   Cliente Destino *
                 </label>
@@ -104,7 +111,7 @@ export function ProyectoFormModal({ clientes }: Props) {
                   name="cliente_id"
                   required
                   defaultValue=""
-                  className="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all"
+                  className="w-full min-h-[44px] bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all [color-scheme:light] dark:[color-scheme:dark]"
                 >
                   <option value="" disabled>
                     Selecciona un cliente...
@@ -118,7 +125,7 @@ export function ProyectoFormModal({ clientes }: Props) {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-slate-700 dark:text-zinc-300 block flex items-center gap-1.5">
+                <label className="text-xs font-semibold text-slate-700 dark:text-zinc-300 flex items-center gap-1.5">
                   <Clock className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-500" />
                   Estado Inicial *
                 </label>
@@ -126,7 +133,7 @@ export function ProyectoFormModal({ clientes }: Props) {
                   name="estado"
                   required
                   defaultValue="Borrador_Bot"
-                  className="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all"
+                  className="w-full min-h-[44px] bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all [color-scheme:light] dark:[color-scheme:dark]"
                 >
                   <option value="Borrador_Bot">Borrador (Bot / Interno)</option>
                   <option value="Pendiente_Aprobacion_Cliente">
@@ -140,7 +147,7 @@ export function ProyectoFormModal({ clientes }: Props) {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-slate-700 dark:text-zinc-300 block flex items-center gap-1.5">
+                <label className="text-xs font-semibold text-slate-700 dark:text-zinc-300 flex items-center gap-1.5">
                   <FileText className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-500" />
                   Notas Técnicas Iniciales
                 </label>
@@ -148,26 +155,26 @@ export function ProyectoFormModal({ clientes }: Props) {
                   name="notas_tecnicas"
                   rows={3}
                   placeholder="Requerimientos, detalles del sitio, topología, alcance del trabajo..."
-                  className="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-600 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all resize-none"
+                  className="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-600 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all resize-none"
                 />
               </div>
 
               {/* Botones */}
-              <div className="pt-3 flex justify-end gap-3 border-t border-slate-200 dark:border-zinc-800">
+              <div className="pt-3 grid grid-cols-2 gap-2 sm:flex sm:justify-end border-t border-slate-200 dark:border-zinc-800">
                 <button
                   type="button"
                   onClick={() => setIsOpen(false)}
-                  className="px-4 py-2.5 text-sm font-medium text-slate-500 hover:text-slate-900 dark:text-zinc-400 dark:hover:text-white transition-colors"
+                  className="min-h-[44px] flex items-center justify-center px-4 py-2.5 text-xs sm:text-sm font-medium text-slate-500 hover:text-slate-900 dark:text-zinc-400 dark:hover:text-white transition-colors rounded-xl border border-slate-200 dark:border-zinc-800 sm:border-0"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
                   disabled={loading}
-                  className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 disabled:opacity-50 text-white rounded-xl text-sm font-medium shadow-lg shadow-cyan-950/20 dark:shadow-cyan-950/40 transition-all"
+                  className="min-h-[44px] flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 disabled:opacity-50 text-white rounded-xl text-xs sm:text-sm font-semibold shadow-md shadow-cyan-950/20 active:scale-[0.98] transition-all"
                 >
                   {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-                  Crear Proyecto
+                  <span>Crear Proyecto</span>
                 </button>
               </div>
             </form>

@@ -54,7 +54,7 @@ export function DeleteItemButton({ id, proyecto_id, nombreItem = "este ítem" }:
     <>
       <button
         onClick={handleOpen}
-        className="p-1.5 text-slate-400 hover:text-rose-600 dark:text-zinc-500 dark:hover:text-rose-400 hover:bg-rose-500/10 rounded-md transition-colors ml-2"
+        className="min-h-[36px] min-w-[36px] inline-flex items-center justify-center p-1.5 text-slate-400 hover:text-rose-600 dark:text-zinc-500 dark:hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors ml-1"
         title="Quitar ítem del presupuesto"
         type="button"
       >

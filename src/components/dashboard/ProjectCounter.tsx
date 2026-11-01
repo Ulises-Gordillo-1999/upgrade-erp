@@ -189,8 +189,8 @@ export function ProjectCounter({ counts }: Props) {
         </Link>
       </div>
 
-      {/* Fila secundaria informativa */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3 text-xs">
+      {/* Fila secundaria informativa (2x2 en mobile) */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 text-xs">
         <div className="rounded-xl border border-slate-200 dark:border-zinc-800/70 bg-white dark:bg-zinc-900/40 p-2.5 flex items-center justify-between shadow-sm transition-colors">
           <span className="text-slate-600 dark:text-zinc-400">Pendientes Aprobación:</span>
           <span className="font-mono font-semibold text-amber-700 dark:text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">

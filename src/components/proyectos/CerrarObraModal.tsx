@@ -148,18 +148,18 @@ export function CerrarObraModal({
       {!isFinalizado ? (
         <button
           onClick={openModal}
-          className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white rounded-xl shadow-lg shadow-emerald-950/20 dark:shadow-emerald-950/40 text-sm font-semibold transition-all hover:scale-[1.02] active:scale-[0.98]"
+          className="min-h-[44px] w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white rounded-xl shadow-lg shadow-emerald-950/20 dark:shadow-emerald-950/40 text-xs sm:text-sm font-semibold transition-all active:scale-[0.98]"
         >
-          <CheckCircle2 className="w-4 h-4" />
-          Cierre de Obra / Liquidar
+          <CheckCircle2 className="w-4 h-4 shrink-0" />
+          <span>Cierre de Obra / Liquidar</span>
         </button>
       ) : (
         <button
           onClick={openModal}
-          className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 rounded-xl text-xs font-medium transition-colors"
+          className="min-h-[44px] w-full sm:w-auto flex items-center justify-center gap-1.5 px-3 py-1.5 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 rounded-xl text-xs font-semibold transition-colors active:scale-[0.98]"
         >
-          <CheckCircle2 className="w-3.5 h-3.5" />
-          Obra Liquidada (Ver / Reajustar)
+          <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
+          <span>Obra Liquidada</span>
         </button>
       )}
 
@@ -284,7 +284,7 @@ export function CerrarObraModal({
                                   onChange={(e) =>
                                     handleCantidadChange(item.id, e.target.value)
                                   }
-                                  className={`w-24 text-center bg-white dark:bg-zinc-900 border rounded-lg px-2.5 py-1.5 text-xs font-semibold focus:outline-none transition-all ${
+                                  className={`w-24 min-h-[38px] text-center bg-white dark:bg-zinc-900 border rounded-lg px-2.5 py-1.5 text-base sm:text-xs font-mono font-semibold focus:outline-none transition-all ${
                                     esConsumible
                                       ? "border-amber-500/40 text-amber-800 dark:text-amber-200 focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
                                       : "border-slate-300 dark:border-zinc-700 text-slate-900 dark:text-zinc-100 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500"
@@ -382,7 +382,7 @@ export function CerrarObraModal({
                 </label>
 
                 {registrarFinanzas && (
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 pl-6 animate-in fade-in duration-150">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 pl-0 sm:pl-6 animate-in fade-in duration-150">
                     <div className="space-y-1">
                       <label className="text-[10px] uppercase font-semibold text-slate-500 dark:text-zinc-400">
                         Método de Pago
@@ -390,7 +390,7 @@ export function CerrarObraModal({
                       <select
                         value={metodoPago}
                         onChange={(e) => setMetodoPago(e.target.value as MetodoPago)}
-                        className="w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 dark:text-zinc-200 focus:outline-none focus:border-emerald-500"
+                        className="w-full min-h-[44px] bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-base sm:text-xs text-slate-900 dark:text-zinc-200 focus:outline-none focus:border-emerald-500 [color-scheme:light] dark:[color-scheme:dark]"
                       >
                         <option value="Transferencia">Transferencia</option>
                         <option value="Efectivo">Efectivo</option>
@@ -405,7 +405,7 @@ export function CerrarObraModal({
                       <select
                         value={moneda}
                         onChange={(e) => setMoneda(e.target.value as Moneda)}
-                        className="w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 dark:text-zinc-200 focus:outline-none focus:border-emerald-500"
+                        className="w-full min-h-[44px] bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-base sm:text-xs text-slate-900 dark:text-zinc-200 focus:outline-none focus:border-emerald-500 [color-scheme:light] dark:[color-scheme:dark]"
                       >
                         <option value="ARS">Pesos (ARS)</option>
                         <option value="USDT">Crypto (USDT)</option>
@@ -419,7 +419,7 @@ export function CerrarObraModal({
                       <select
                         value={estadoPago}
                         onChange={(e) => setEstadoPago(e.target.value as EstadoPago)}
-                        className="w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 dark:text-zinc-200 focus:outline-none focus:border-emerald-500"
+                        className="w-full min-h-[44px] bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-base sm:text-xs text-slate-900 dark:text-zinc-200 focus:outline-none focus:border-emerald-500 [color-scheme:light] dark:[color-scheme:dark]"
                       >
                         <option value="Pagado">Cobrado / Pagado</option>
                         <option value="Pendiente">Pendiente de Cobro</option>
@@ -430,21 +430,21 @@ export function CerrarObraModal({
               </div>
 
               {/* Botones de acción */}
-              <div className="pt-3 flex flex-col-reverse sm:flex-row sm:justify-end gap-3 border-t border-slate-200 dark:border-zinc-800">
+              <div className="pt-3 grid grid-cols-2 gap-2 sm:flex sm:justify-end border-t border-slate-200 dark:border-zinc-800">
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="px-4 py-2.5 text-sm font-medium text-slate-500 hover:text-slate-900 dark:text-zinc-400 dark:hover:text-white transition-colors"
+                  className="min-h-[44px] flex items-center justify-center px-4 py-2.5 text-xs sm:text-sm font-medium text-slate-500 hover:text-slate-900 dark:text-zinc-400 dark:hover:text-white transition-colors rounded-xl border border-slate-200 dark:border-zinc-800 sm:border-0"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
                   disabled={loading}
-                  className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-50 text-white rounded-xl text-sm font-semibold shadow-lg shadow-emerald-950/20 dark:shadow-emerald-950/40 transition-all"
+                  className="min-h-[44px] col-span-2 sm:col-auto flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-50 text-white rounded-xl text-xs sm:text-sm font-semibold shadow-lg shadow-emerald-950/20 dark:shadow-emerald-950/40 active:scale-[0.98] transition-all"
                 >
                   {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-                  Confirmar Liquidación y Descontar Stock
+                  <span>Confirmar Liquidación y Descontar Stock</span>
                 </button>
               </div>
             </form>

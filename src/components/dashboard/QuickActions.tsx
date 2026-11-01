@@ -93,7 +93,7 @@ export function QuickActions() {
             <Link
               key={act.title}
               href={act.href}
-              className={`rounded-xl border border-slate-200 dark:border-zinc-800/80 bg-white/80 dark:bg-[#0c101b]/80 backdrop-blur-xl p-3.5 shadow-sm transition-all duration-200 group flex flex-col justify-between hover:bg-slate-50 dark:hover:bg-[#121726] hover:-translate-y-0.5 telemetry-card ${act.hoverBorder}`}
+              className={`rounded-xl border border-slate-200 dark:border-zinc-800/80 bg-white/80 dark:bg-[#0c101b]/80 backdrop-blur-xl p-3.5 shadow-sm transition-all duration-200 group flex flex-col justify-between hover:bg-slate-50 dark:hover:bg-[#121726] hover:-translate-y-0.5 telemetry-card last:col-span-2 sm:last:col-span-1 ${act.hoverBorder}`}
             >
               <div className="flex items-center justify-between mb-2">
                 <div className={`p-2 rounded-lg ${act.bg} ${act.border} ${act.color}`}>

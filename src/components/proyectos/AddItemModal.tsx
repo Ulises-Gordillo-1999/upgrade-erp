@@ -159,10 +159,10 @@ export function AddItemModal({ proyectoId, inventarioDisponible }: Props) {
     <>
       <button
         onClick={openModal}
-        className="flex items-center gap-2 px-3.5 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-800 dark:text-zinc-200 rounded-xl transition-all text-xs font-medium border border-slate-200 dark:border-zinc-700/80 shadow-sm"
+        className="min-h-[44px] w-full sm:w-auto flex items-center justify-center gap-2 px-3.5 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-800 dark:text-zinc-200 rounded-xl transition-all text-xs font-semibold border border-slate-200 dark:border-zinc-700/80 shadow-sm active:scale-[0.98]"
       >
         <Plus className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400" />
-        Agregar Material / Servicio
+        <span>Agregar Material / Servicio</span>
       </button>
 
       {isOpen && mounted && createPortal(
@@ -228,13 +228,13 @@ export function AddItemModal({ proyectoId, inventarioDisponible }: Props) {
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       placeholder="Buscar por nombre, SKU o categoría..."
-                      className="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl pl-9 pr-8 py-2 text-xs sm:text-sm text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500"
+                      className="w-full min-h-[44px] bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl pl-9 pr-8 py-2 text-base sm:text-xs text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500"
                     />
                     {searchTerm && (
                       <button
                         type="button"
                         onClick={() => setSearchTerm("")}
-                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:text-zinc-500 dark:hover:text-zinc-300"
+                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:text-zinc-500 dark:hover:text-zinc-300 p-1"
                       >
                         <X className="w-3.5 h-3.5" />
                       </button>
@@ -245,7 +245,7 @@ export function AddItemModal({ proyectoId, inventarioDisponible }: Props) {
                     <select
                       value={categoriaFiltro}
                       onChange={(e) => setCategoriaFiltro(e.target.value)}
-                      className="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-xs sm:text-sm text-slate-700 dark:text-zinc-300 focus:outline-none focus:border-cyan-500 transition-colors cursor-pointer truncate"
+                      className="w-full min-h-[44px] bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-base sm:text-xs text-slate-700 dark:text-zinc-300 focus:outline-none focus:border-cyan-500 transition-colors cursor-pointer truncate [color-scheme:light] dark:[color-scheme:dark]"
                     >
                       <option value="todos">Todas las Categorías</option>
                       {categoriasDisponibles.map((cat) => (
@@ -386,7 +386,7 @@ export function AddItemModal({ proyectoId, inventarioDisponible }: Props) {
                   <button
                     type="button"
                     onClick={stepDownCantidad}
-                    className="p-2.5 rounded-xl border border-slate-200 dark:border-zinc-800 bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-700 dark:text-zinc-200 transition-colors"
+                    className="min-h-[44px] min-w-[44px] flex items-center justify-center p-2.5 rounded-xl border border-slate-200 dark:border-zinc-800 bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-700 dark:text-zinc-200 transition-colors active:scale-95"
                     title="Disminuir 1 unidad"
                   >
                     <Minus className="w-4 h-4" />
@@ -402,13 +402,13 @@ export function AddItemModal({ proyectoId, inventarioDisponible }: Props) {
                     value={cantidad}
                     onChange={(e) => setCantidad(e.target.value)}
                     onKeyDown={handleKeyDownCantidad}
-                    className="flex-1 text-center font-bold font-mono text-base bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl py-2 text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all"
+                    className="flex-1 min-h-[44px] text-center font-bold font-mono text-base bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl py-2 text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all"
                   />
 
                   <button
                     type="button"
                     onClick={stepUpCantidad}
-                    className="p-2.5 rounded-xl border border-slate-200 dark:border-zinc-800 bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-700 dark:text-zinc-200 transition-colors"
+                    className="min-h-[44px] min-w-[44px] flex items-center justify-center p-2.5 rounded-xl border border-slate-200 dark:border-zinc-800 bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-700 dark:text-zinc-200 transition-colors active:scale-95"
                     title="Aumentar 1 unidad"
                   >
                     <Plus className="w-4 h-4" />
@@ -448,21 +448,21 @@ export function AddItemModal({ proyectoId, inventarioDisponible }: Props) {
               )}
 
               {/* Botones de Acción */}
-              <div className="pt-2 flex flex-col-reverse sm:flex-row sm:justify-end gap-3 border-t border-slate-200 dark:border-zinc-800">
+              <div className="pt-2 grid grid-cols-2 gap-2 sm:flex sm:justify-end border-t border-slate-200 dark:border-zinc-800">
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="px-4 py-2.5 text-sm font-medium text-slate-500 hover:text-slate-900 dark:text-zinc-400 dark:hover:text-white transition-colors"
+                  className="min-h-[44px] flex items-center justify-center px-4 py-2.5 text-xs sm:text-sm font-medium text-slate-500 hover:text-slate-900 dark:text-zinc-400 dark:hover:text-white transition-colors rounded-xl border border-slate-200 dark:border-zinc-800 sm:border-0"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
                   disabled={loading || !selectedItemId}
-                  className="flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 disabled:opacity-50 text-white rounded-xl text-sm font-medium shadow-lg shadow-cyan-950/20 dark:shadow-cyan-950/40 transition-all"
+                  className="min-h-[44px] flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 disabled:opacity-50 text-white rounded-xl text-xs sm:text-sm font-semibold shadow-lg shadow-cyan-950/20 dark:shadow-cyan-950/40 active:scale-[0.98] transition-all"
                 >
                   {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-                  Agregar al Proyecto
+                  <span>Agregar al Proyecto</span>
                 </button>
               </div>
             </form>

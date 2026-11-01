@@ -112,7 +112,7 @@ export function DeleteProyectoButton({
         <button
           type="button"
           onClick={handleOpen}
-          className="p-1.5 text-slate-400 dark:text-zinc-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-500/10 rounded-md transition-colors"
+          className="min-h-[36px] min-w-[36px] inline-flex items-center justify-center p-1.5 text-slate-400 dark:text-zinc-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors"
           title="Eliminar proyecto"
         >
           <Trash2 className="w-4 h-4" />
