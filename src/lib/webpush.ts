@@ -1,16 +1,57 @@
 import webpush from "web-push";
+import fs from "fs";
+import path from "path";
 
-const vapidPublicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || "";
-const vapidPrivateKey = process.env.VAPID_PRIVATE_KEY || "";
-const vapidSubject = process.env.VAPID_SUBJECT || "mailto:soporte@upgrade-informatica.com";
+/**
+ * Lee variables de entorno con fallback dinámico a .env.local
+ * para evitar requerir reinicio del servidor si el archivo fue creado recientemente.
+ */
+function getEnvValue(key: string): string {
+  if (process.env[key]) {
+    return process.env[key]!;
+  }
 
-if (vapidPublicKey && vapidPrivateKey) {
   try {
-    webpush.setVapidDetails(vapidSubject, vapidPublicKey, vapidPrivateKey);
-  } catch (err) {
-    console.warn("[WebPush] No se pudieron configurar los detalles VAPID:", err);
+    const envPath = path.join(process.cwd(), ".env.local");
+    if (fs.existsSync(envPath)) {
+      const content = fs.readFileSync(envPath, "utf8");
+      for (const line of content.split("\n")) {
+        const trimmed = line.trim();
+        if (trimmed.startsWith(`${key}=`)) {
+          const val = trimmed.slice(key.length + 1).trim();
+          process.env[key] = val;
+          return val;
+        }
+      }
+    }
+  } catch (e) {
+    // Silencioso si no se puede leer el archivo
+  }
+
+  return "";
+}
+
+let isVapidInitialized = false;
+
+function ensureVapidInitialized() {
+  if (isVapidInitialized) return;
+
+  const pubKey = getEnvValue("NEXT_PUBLIC_VAPID_PUBLIC_KEY");
+  const privKey = getEnvValue("VAPID_PRIVATE_KEY");
+  const subject = getEnvValue("VAPID_SUBJECT") || "mailto:soporte@upgrade-informatica.com";
+
+  if (pubKey && privKey) {
+    try {
+      webpush.setVapidDetails(subject, pubKey, privKey);
+      isVapidInitialized = true;
+    } catch (err) {
+      console.warn("[WebPush] No se pudieron configurar los detalles VAPID:", err);
+    }
   }
 }
+
+// Intentar inicialización inmediata
+ensureVapidInitialized();
 
 export interface PushNotificationPayload {
   title: string;
@@ -33,6 +74,8 @@ export async function sendWebPushNotification(
   payload: PushNotificationPayload
 ) {
   try {
+    ensureVapidInitialized();
+
     const payloadString = JSON.stringify({
       title: payload.title,
       body: payload.body,
@@ -56,5 +99,8 @@ export async function sendWebPushNotification(
 }
 
 export function getVapidPublicKey(): string {
-  return process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || "";
+  ensureVapidInitialized();
+  return getEnvValue("NEXT_PUBLIC_VAPID_PUBLIC_KEY");
 }
+
+

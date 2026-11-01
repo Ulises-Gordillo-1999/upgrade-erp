@@ -14,6 +14,8 @@ import {
   Send,
   ShieldCheck,
   Radio,
+  Copy,
+  Check,
 } from "lucide-react";
 import {
   getVapidPublicKeyAction,
@@ -71,6 +73,8 @@ export function PushNotificationManager() {
   const [subscriptionsList, setSubscriptionsList] = useState<DeviceSubscription[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isTesting, setIsTesting] = useState(false);
+  const [vapidMissing, setVapidMissing] = useState(false);
+  const [copiedKeys, setCopiedKeys] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error" | "info"; text: string } | null>(null);
 
   // 1. Diagnóstico de capacidades y suscripción actual
@@ -95,6 +99,14 @@ export function PushNotificationManager() {
     setDeviceName(detectDeviceName());
 
     try {
+      // Verificar si las claves VAPID están configuradas en el servidor
+      const vapidRes = await getVapidPublicKeyAction();
+      if (!vapidRes.publicKey) {
+        setVapidMissing(true);
+      } else {
+        setVapidMissing(false);
+      }
+
       const reg = await navigator.serviceWorker.ready;
       const sub = await reg.pushManager.getSubscription();
 
@@ -291,6 +303,58 @@ export function PushNotificationManager() {
           </div>
         </div>
       </div>
+
+      {/* Alerta de Configuración VAPID si faltan variables en el Servidor */}
+      {vapidMissing && (
+        <div className="rounded-2xl border border-amber-500/30 bg-amber-500/10 p-4 sm:p-5 text-slate-800 dark:text-zinc-200 space-y-3">
+          <div className="flex items-start gap-3">
+            <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+            <div className="space-y-1">
+              <h4 className="text-xs sm:text-sm font-bold text-amber-700 dark:text-amber-400">
+                Variables VAPID no configuradas en el servidor
+              </h4>
+              <p className="text-xs text-slate-600 dark:text-zinc-400">
+                Para que el servidor pueda emitir notificaciones Web Push hacia celulares y PCs, debes configurar las 3 variables de entorno criptográficas en tu servidor:
+              </p>
+            </div>
+          </div>
+
+          <div className="bg-slate-900 text-zinc-300 p-3 rounded-xl font-mono text-[11px] space-y-1 overflow-x-auto">
+            <p className="text-cyan-400 font-bold">// Variables para Coolify (Project &gt; Environment Variables) o .env.local:</p>
+            <p>NEXT_PUBLIC_VAPID_PUBLIC_KEY=BImKsUYXG0g1LMC7MmgKNaTOGGDuPQXQfyuKnNk_NacwKXxJR5EBv5S3KjrMzjDIkX4Oh_DJgh1xNLRTecTWKOg</p>
+            <p>VAPID_PRIVATE_KEY=-Cd6eHKB9YDVw6U1PTB0LYeKkwCvn2P33L6gSk2GVtI</p>
+            <p>VAPID_SUBJECT=mailto:soporte@upgrade-informatica.com</p>
+          </div>
+
+          <div className="flex items-center justify-between gap-2 pt-1 text-[11px]">
+            <span className="text-slate-500 dark:text-zinc-400">
+              En desarrollo local, reinicia <code className="text-cyan-600 dark:text-cyan-400">npm run dev</code> si acabas de agregarlas.
+            </span>
+            <button
+              type="button"
+              onClick={() => {
+                const text = `NEXT_PUBLIC_VAPID_PUBLIC_KEY=BImKsUYXG0g1LMC7MmgKNaTOGGDuPQXQfyuKnNk_NacwKXxJR5EBv5S3KjrMzjDIkX4Oh_DJgh1xNLRTecTWKOg\nVAPID_PRIVATE_KEY=-Cd6eHKB9YDVw6U1PTB0LYeKkwCvn2P33L6gSk2GVtI\nVAPID_SUBJECT=mailto:soporte@upgrade-informatica.com`;
+                navigator.clipboard.writeText(text);
+                setCopiedKeys(true);
+                setTimeout(() => setCopiedKeys(false), 2500);
+              }}
+              className="px-3 py-1.5 rounded-lg bg-amber-500/20 text-amber-700 dark:text-amber-300 hover:bg-amber-500/30 font-semibold flex items-center gap-1.5 shrink-0 transition-colors cursor-pointer"
+            >
+              {copiedKeys ? (
+                <>
+                  <Check className="w-3.5 h-3.5 text-emerald-500" />
+                  <span>¡Copiado!</span>
+                </>
+              ) : (
+                <>
+                  <Copy className="w-3.5 h-3.5" />
+                  <span>Copiar Variables</span>
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Feedback contextual */}
       {message && (
@@ -509,3 +573,4 @@ export function PushNotificationManager() {
     </div>
   );
 }
+
