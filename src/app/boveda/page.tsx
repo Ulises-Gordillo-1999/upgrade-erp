@@ -2,8 +2,15 @@ import { getBovedaData, getTiposCredencial } from "@/app/actions/boveda";
 import { BovedaTable } from "@/components/boveda/BovedaTable";
 import { GestionarTiposCredencialModal } from "@/components/boveda/GestionarTiposCredencialModal";
 import { ShieldAlert } from "lucide-react";
+import { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "Bóveda Segura Global | UPGRADE ERP",
+  description:
+    "Custodia centralizada de credenciales críticas y contraseñas de infraestructura IT con cifrado AES-256",
+};
 
 export default async function BovedaGlobalPage() {
   const [bovedaItems, tiposCredencial] = await Promise.all([

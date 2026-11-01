@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import Link from "next/link";
 import { MaskedValue } from "./MaskedValue";
 import { BovedaImageModal } from "./BovedaImageModal";
+import { getWhatsAppLink } from "@/utils/whatsapp";
 import {
   Search,
   X,
@@ -21,11 +22,13 @@ import {
   ExternalLink,
   ChevronDown,
   ChevronRight,
-  Layers,
-  Table as TableIcon,
   ShieldCheck,
+  Paperclip,
+  Phone,
+  Table as TableIcon,
+  Users,
 } from "lucide-react";
-import { TipoDatoBoveda, TipoCredencialBoveda } from "@/types/database";
+import { TipoCredencialBoveda } from "@/types/database";
 
 interface BovedaItem {
   id: string;
@@ -65,16 +68,41 @@ interface Props {
 
 const getTipoDatoIcon = (tipo: string) => {
   const t = (tipo || "").toLowerCase();
-  if (t.includes("pass") || t.includes("clave") || t.includes("token") || t.includes("contraseña")) {
+  if (
+    t.includes("pass") ||
+    t.includes("clave") ||
+    t.includes("token") ||
+    t.includes("contraseña")
+  ) {
     return <Key className="w-4 h-4 text-amber-500 dark:text-amber-400" />;
   }
-  if (t.includes("ip") || t.includes("subred") || t.includes("red") || t.includes("vlan") || t.includes("vpn")) {
+  if (
+    t.includes("ip") ||
+    t.includes("subred") ||
+    t.includes("red") ||
+    t.includes("vlan") ||
+    t.includes("vpn")
+  ) {
     return <Network className="w-4 h-4 text-blue-500 dark:text-blue-400" />;
   }
-  if (t.includes("anydesk") || t.includes("rustdesk") || t.includes("teamviewer") || t.includes("remoto") || t.includes("vnc")) {
-    return <MonitorSmartphone className="w-4 h-4 text-emerald-500 dark:text-emerald-400" />;
+  if (
+    t.includes("anydesk") ||
+    t.includes("rustdesk") ||
+    t.includes("teamviewer") ||
+    t.includes("remoto") ||
+    t.includes("vnc")
+  ) {
+    return (
+      <MonitorSmartphone className="w-4 h-4 text-emerald-500 dark:text-emerald-400" />
+    );
   }
-  if (t.includes("router") || t.includes("switch") || t.includes("mikrotik") || t.includes("firewall") || t.includes("ap")) {
+  if (
+    t.includes("router") ||
+    t.includes("switch") ||
+    t.includes("mikrotik") ||
+    t.includes("firewall") ||
+    t.includes("ap")
+  ) {
     return <Router className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />;
   }
   return <ShieldAlert className="w-4 h-4 text-slate-400 dark:text-zinc-400" />;
@@ -85,19 +113,19 @@ const getEstadoBadge = (estado?: string | null) => {
   switch (estado) {
     case "Finalizado":
       return (
-        <span className="text-[10px] px-2 py-0.5 rounded-full font-medium bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20">
+        <span className="text-[10px] px-2 py-0.5 rounded-full font-semibold bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20">
           Finalizado
         </span>
       );
     case "En_Ejecucion":
       return (
-        <span className="text-[10px] px-2 py-0.5 rounded-full font-medium bg-blue-500/10 text-blue-700 dark:text-blue-400 border border-blue-500/20">
+        <span className="text-[10px] px-2 py-0.5 rounded-full font-semibold bg-blue-500/10 text-blue-700 dark:text-blue-400 border border-blue-500/20">
           En Ejecución
         </span>
       );
     case "Aprobado":
       return (
-        <span className="text-[10px] px-2 py-0.5 rounded-full font-medium bg-cyan-500/10 text-cyan-700 dark:text-cyan-400 border border-cyan-500/20">
+        <span className="text-[10px] px-2 py-0.5 rounded-full font-semibold bg-cyan-500/10 text-cyan-700 dark:text-cyan-400 border border-cyan-500/20">
           Aprobado
         </span>
       );
@@ -112,12 +140,11 @@ const getEstadoBadge = (estado?: string | null) => {
 
 export function BovedaTable({ bovedaItems, tiposCredencial }: Props) {
   const [searchTerm, setSearchTerm] = useState("");
-  const [tipoDatoFiltro, setTipoDatoFiltro] = useState<string>("todos");
-  const [adjuntoFiltro, setAdjuntoFiltro] = useState<string>("todos");
+  const [filtroRapido, setFiltroRapido] = useState<string>("todos");
   const [clienteFiltro, setClienteFiltro] = useState<string>("todos");
   const [viewMode, setViewMode] = useState<"cliente" | "tabla">("cliente");
 
-  // Estado de colapso de tarjetas de cliente (por ID o nombre)
+  // Estado de colapso de clientes
   const [collapsedClients, setCollapsedClients] = useState<Record<string, boolean>>({});
 
   const toggleClientCollapse = (clienteKey: string) => {
@@ -127,7 +154,7 @@ export function BovedaTable({ bovedaItems, tiposCredencial }: Props) {
     }));
   };
 
-  // Lista de clientes únicos para el dropdown
+  // Clientes únicos para el dropdown
   const clientesDisponibles = useMemo(() => {
     const setClis = new Set<string>();
     bovedaItems.forEach((item) => {
@@ -141,16 +168,32 @@ export function BovedaTable({ bovedaItems, tiposCredencial }: Props) {
     return Array.from(setClis).sort();
   }, [bovedaItems]);
 
+  // Telemetría para métricas ejecutivas
+  const stats = useMemo(() => {
+    const total = bovedaItems.length;
+    const clientesCount = clientesDisponibles.length;
+    const passwords = bovedaItems.filter((i) => {
+      const t = (i.tipo_dato || "").toLowerCase();
+      return (
+        t.includes("pass") ||
+        t.includes("clave") ||
+        t.includes("token") ||
+        t.includes("contraseña")
+      );
+    }).length;
+    const conAdjunto = bovedaItems.filter(
+      (i) => Boolean(i.archivo_url && i.archivo_url.trim() !== "")
+    ).length;
+
+    return { total, clientesCount, passwords, conAdjunto };
+  }, [bovedaItems, clientesDisponibles]);
+
   const hasActiveFilters =
-    searchTerm !== "" ||
-    tipoDatoFiltro !== "todos" ||
-    adjuntoFiltro !== "todos" ||
-    clienteFiltro !== "todos";
+    searchTerm !== "" || filtroRapido !== "todos" || clienteFiltro !== "todos";
 
   const resetFilters = () => {
     setSearchTerm("");
-    setTipoDatoFiltro("todos");
-    setAdjuntoFiltro("todos");
+    setFiltroRapido("todos");
     setClienteFiltro("todos");
   };
 
@@ -184,38 +227,50 @@ export function BovedaTable({ bovedaItems, tiposCredencial }: Props) {
         if (!matches) return false;
       }
 
-      // 3. Filtro Tipo de Dato
-      if (tipoDatoFiltro !== "todos") {
-        const itemTipo = item.tipo_dato;
-        const legacyMatch: Record<string, string> = {
-          Password: "Contraseña / Token",
-          IP_Publica: "IP Pública / Subred",
-          AnyDesk_ID: "ID AnyDesk / RustDesk / TeamViewer",
-          Config_Router: "Configuración de Router / Switch",
-          Otro: "Otro dato sensible",
-        };
-        const normalized = legacyMatch[itemTipo] || itemTipo;
-        if (itemTipo !== tipoDatoFiltro && normalized !== tipoDatoFiltro) {
+      // 3. Filtro rápido de pills
+      if (filtroRapido === "passwords") {
+        const t = (item.tipo_dato || "").toLowerCase();
+        if (
+          !t.includes("pass") &&
+          !t.includes("clave") &&
+          !t.includes("token") &&
+          !t.includes("contraseña")
+        )
           return false;
-        }
-      }
-
-      // 4. Filtro Adjunto
-      if (adjuntoFiltro !== "todos") {
-        const hasAttachment = Boolean(
-          item.archivo_url && item.archivo_url.trim() !== ""
-        );
-        if (adjuntoFiltro === "con_adjunto" && !hasAttachment) {
+      } else if (filtroRapido === "redes") {
+        const t = (item.tipo_dato || "").toLowerCase();
+        if (
+          !t.includes("ip") &&
+          !t.includes("subred") &&
+          !t.includes("red") &&
+          !t.includes("vlan") &&
+          !t.includes("vpn")
+        )
           return false;
-        }
-        if (adjuntoFiltro === "sin_adjunto" && hasAttachment) {
+      } else if (filtroRapido === "remoto") {
+        const t = (item.tipo_dato || "").toLowerCase();
+        if (
+          !t.includes("anydesk") &&
+          !t.includes("rustdesk") &&
+          !t.includes("teamviewer") &&
+          !t.includes("remoto")
+        )
           return false;
-        }
+      } else if (filtroRapido === "routers") {
+        const t = (item.tipo_dato || "").toLowerCase();
+        if (
+          !t.includes("router") &&
+          !t.includes("switch") &&
+          !t.includes("mikrotik")
+        )
+          return false;
+      } else if (filtroRapido === "con_adjunto") {
+        if (!item.archivo_url || item.archivo_url.trim() === "") return false;
       }
 
       return true;
     });
-  }, [bovedaItems, searchTerm, tipoDatoFiltro, adjuntoFiltro, clienteFiltro]);
+  }, [bovedaItems, searchTerm, filtroRapido, clienteFiltro]);
 
   // Agrupación estructurada: Cliente -> Proyectos -> Credenciales
   const groupedByClient = useMemo(() => {
@@ -282,8 +337,87 @@ export function BovedaTable({ bovedaItems, tiposCredencial }: Props) {
   }, [filteredItems]);
 
   return (
-    <div className="space-y-5">
-      {/* Barra de Búsqueda, Filtros y Switch de Vista */}
+    <div className="space-y-4 sm:space-y-5">
+      {/* 1. MÉTRICAS EJECUTIVAS / TELEMETRÍA CRIPTOGRÁFICA (Mobile-First Grid) */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3.5">
+        <div className="p-3.5 sm:p-4 rounded-2xl bg-white dark:bg-zinc-900/60 border border-slate-200/90 dark:border-zinc-800/80 backdrop-blur-md shadow-sm">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] sm:text-xs font-medium text-slate-500 dark:text-zinc-400">
+              Total Encriptadas
+            </span>
+            <div className="p-2 rounded-xl bg-rose-500/10 text-rose-600 dark:text-rose-400">
+              <ShieldCheck className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="mt-2 flex items-baseline gap-1.5">
+            <span className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
+              {stats.total}
+            </span>
+            <span className="text-[10px] sm:text-xs text-slate-400 dark:text-zinc-500">
+              claves AES-256
+            </span>
+          </div>
+        </div>
+
+        <div className="p-3.5 sm:p-4 rounded-2xl bg-white dark:bg-zinc-900/60 border border-slate-200/90 dark:border-zinc-800/80 backdrop-blur-md shadow-sm">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] sm:text-xs font-medium text-slate-500 dark:text-zinc-400">
+              Clientes Custodiados
+            </span>
+            <div className="p-2 rounded-xl bg-cyan-500/10 text-cyan-600 dark:text-cyan-400">
+              <Users className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="mt-2 flex items-baseline gap-1.5">
+            <span className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
+              {stats.clientesCount}
+            </span>
+            <span className="text-[10px] sm:text-xs text-slate-400 dark:text-zinc-500">
+              con credenciales
+            </span>
+          </div>
+        </div>
+
+        <div className="p-3.5 sm:p-4 rounded-2xl bg-white dark:bg-zinc-900/60 border border-slate-200/90 dark:border-zinc-800/80 backdrop-blur-md shadow-sm">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] sm:text-xs font-medium text-slate-500 dark:text-zinc-400">
+              Contraseñas & Tokens
+            </span>
+            <div className="p-2 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
+              <Key className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="mt-2 flex items-baseline gap-1.5">
+            <span className="text-xl sm:text-2xl font-black text-amber-600 dark:text-amber-400 tracking-tight">
+              {stats.passwords}
+            </span>
+            <span className="text-[10px] sm:text-xs text-slate-400 dark:text-zinc-500">
+              claves de acceso
+            </span>
+          </div>
+        </div>
+
+        <div className="p-3.5 sm:p-4 rounded-2xl bg-white dark:bg-zinc-900/60 border border-slate-200/90 dark:border-zinc-800/80 backdrop-blur-md shadow-sm">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] sm:text-xs font-medium text-slate-500 dark:text-zinc-400">
+              Esquemas & Adjuntos
+            </span>
+            <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+              <Paperclip className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="mt-2 flex items-baseline gap-1.5">
+            <span className="text-xl sm:text-2xl font-black text-emerald-600 dark:text-emerald-400 tracking-tight">
+              {stats.conAdjunto}
+            </span>
+            <span className="text-[10px] sm:text-xs text-slate-400 dark:text-zinc-500">
+              planos / QR
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* 2. BARRA DE BÚSQUEDA Y FILTROS RÁPIDOS */}
       <div className="p-3.5 sm:p-4 rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 shadow-sm backdrop-blur-md space-y-3">
         <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-2.5 sm:gap-3">
           {/* Input de Búsqueda */}
@@ -294,13 +428,13 @@ export function BovedaTable({ bovedaItems, tiposCredencial }: Props) {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Buscar por cliente, proyecto o descripción de credencial..."
-              className="w-full min-h-[44px] bg-slate-50 dark:bg-zinc-950/70 border border-slate-200 dark:border-zinc-800 rounded-xl pl-10 pr-9 py-2 text-base sm:text-xs text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all"
+              className="w-full min-h-[46px] bg-slate-50 dark:bg-zinc-950/70 border border-slate-200 dark:border-zinc-800 rounded-xl pl-10 pr-10 py-2.5 text-base sm:text-xs text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all"
             />
             {searchTerm && (
               <button
                 type="button"
                 onClick={() => setSearchTerm("")}
-                className="min-h-[36px] min-w-[36px] inline-flex items-center justify-center absolute right-1.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:text-zinc-500 dark:hover:text-zinc-300 p-1 rounded-lg transition-colors"
+                className="min-h-[44px] min-w-[44px] inline-flex items-center justify-center absolute right-1 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:text-zinc-500 dark:hover:text-zinc-300 rounded-lg transition-colors"
                 title="Limpiar búsqueda"
               >
                 <X className="w-4 h-4" />
@@ -308,13 +442,12 @@ export function BovedaTable({ bovedaItems, tiposCredencial }: Props) {
             )}
           </div>
 
-          {/* Filtros Dropdowns */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 lg:flex items-center gap-2">
-            {/* Filtro por Cliente */}
+          {/* Selector de Cliente y Switch de Vista */}
+          <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
             <select
               value={clienteFiltro}
               onChange={(e) => setClienteFiltro(e.target.value)}
-              className="w-full sm:w-auto min-h-[44px] bg-slate-50 dark:bg-zinc-950/80 border border-slate-200 dark:border-zinc-800 rounded-xl px-3.5 py-2 text-base sm:text-xs text-slate-700 dark:text-zinc-300 focus:outline-none focus:border-cyan-500 transition-colors cursor-pointer max-w-full sm:max-w-[180px] truncate [color-scheme:light] dark:[color-scheme:dark]"
+              className="w-full sm:w-auto min-h-[46px] bg-slate-50 dark:bg-zinc-950/80 border border-slate-200 dark:border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-xs text-slate-700 dark:text-zinc-300 focus:outline-none focus:border-cyan-500 transition-colors cursor-pointer max-w-full sm:max-w-[190px] truncate [color-scheme:light] dark:[color-scheme:dark]"
             >
               <option value="todos">Todos los Clientes</option>
               {clientesDisponibles.map((cli) => (
@@ -324,50 +457,14 @@ export function BovedaTable({ bovedaItems, tiposCredencial }: Props) {
               ))}
             </select>
 
-            {/* Tipo de Dato */}
-            <select
-              value={tipoDatoFiltro}
-              onChange={(e) => setTipoDatoFiltro(e.target.value)}
-              className="w-full sm:w-auto min-h-[44px] bg-slate-50 dark:bg-zinc-950/80 border border-slate-200 dark:border-zinc-800 rounded-xl px-3.5 py-2 text-base sm:text-xs text-slate-700 dark:text-zinc-300 focus:outline-none focus:border-cyan-500 transition-colors cursor-pointer [color-scheme:light] dark:[color-scheme:dark]"
-            >
-              <option value="todos">Todos los Tipos</option>
-              {tiposCredencial && tiposCredencial.length > 0 ? (
-                tiposCredencial.map((t) => (
-                  <option key={t.id} value={t.nombre}>
-                    {t.nombre}
-                  </option>
-                ))
-              ) : (
-                <>
-                  <option value="Contraseña / Token">Contraseña / Token</option>
-                  <option value="IP Pública / Subred">IP Pública / Subred</option>
-                  <option value="ID AnyDesk / RustDesk / TeamViewer">ID AnyDesk / Remoto</option>
-                  <option value="Configuración de Router / Switch">Configuración Router</option>
-                  <option value="Otro dato sensible">Otro dato sensible</option>
-                </>
-              )}
-            </select>
-
-            {/* Adjunto */}
-            <select
-              value={adjuntoFiltro}
-              onChange={(e) => setAdjuntoFiltro(e.target.value)}
-              className="w-full sm:w-auto min-h-[44px] bg-slate-50 dark:bg-zinc-950/80 border border-slate-200 dark:border-zinc-800 rounded-xl px-3.5 py-2 text-base sm:text-xs text-slate-700 dark:text-zinc-300 focus:outline-none focus:border-cyan-500 transition-colors cursor-pointer [color-scheme:light] dark:[color-scheme:dark]"
-            >
-              <option value="todos">Adjuntos (Todos)</option>
-              <option value="con_adjunto">Con comprobante / imagen</option>
-              <option value="sin_adjunto">Solo texto encriptado</option>
-            </select>
-
-            {/* Selector de Modo de Visualización (Agrupado por Cliente vs Lista) */}
-            <div className="col-span-1 sm:col-span-3 lg:col-span-1 inline-flex items-center p-1 rounded-xl bg-slate-100 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700/60 shadow-xs min-h-[44px] justify-center">
+            <div className="inline-flex items-center p-1 rounded-xl bg-slate-100 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700/60 min-h-[46px]">
               <button
                 type="button"
                 onClick={() => setViewMode("cliente")}
-                className={`flex-1 sm:flex-none min-h-[36px] flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                className={`min-h-[38px] flex items-center justify-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold transition-all ${
                   viewMode === "cliente"
-                    ? "bg-white dark:bg-zinc-700 text-cyan-600 dark:text-cyan-400 shadow-xs"
-                    : "text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-200"
+                    ? "bg-white dark:bg-zinc-700 text-cyan-600 dark:text-cyan-400 shadow-sm"
+                    : "text-slate-600 dark:text-zinc-400"
                 }`}
                 title="Agrupar credenciales por cliente"
               >
@@ -378,10 +475,10 @@ export function BovedaTable({ bovedaItems, tiposCredencial }: Props) {
               <button
                 type="button"
                 onClick={() => setViewMode("tabla")}
-                className={`flex-1 sm:flex-none min-h-[36px] flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                className={`min-h-[38px] flex items-center justify-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold transition-all ${
                   viewMode === "tabla"
-                    ? "bg-white dark:bg-zinc-700 text-cyan-600 dark:text-cyan-400 shadow-xs"
-                    : "text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-200"
+                    ? "bg-white dark:bg-zinc-700 text-cyan-600 dark:text-cyan-400 shadow-sm"
+                    : "text-slate-600 dark:text-zinc-400"
                 }`}
                 title="Ver lista plana cronológica"
               >
@@ -389,40 +486,118 @@ export function BovedaTable({ bovedaItems, tiposCredencial }: Props) {
                 <span>Lista Plana</span>
               </button>
             </div>
-
-            {/* Botón Reset */}
-            {hasActiveFilters && (
-              <button
-                type="button"
-                onClick={resetFilters}
-                className="min-h-[44px] flex items-center justify-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-rose-600 dark:text-rose-400 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 rounded-xl transition-all active:scale-[0.98]"
-                title="Limpiar todos los filtros"
-              >
-                <RotateCcw className="w-3.5 h-3.5" />
-                <span>Restablecer</span>
-              </button>
-            )}
           </div>
         </div>
 
-        {/* Resumen de Resultados / Filtros Activos */}
-        <div className="flex items-center justify-between text-xs text-slate-500 dark:text-zinc-400 pt-1 border-t border-slate-200/60 dark:border-zinc-800/60">
+        {/* Píldoras / Tabs Deslizables Horizontales (Mobile Carousel) */}
+        <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar pb-1 pt-0.5">
+          <button
+            type="button"
+            onClick={() => setFiltroRapido("todos")}
+            className={`min-h-[38px] px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all shrink-0 flex items-center gap-1.5 ${
+              filtroRapido === "todos"
+                ? "bg-cyan-600 text-white shadow-sm shadow-cyan-600/30"
+                : "bg-slate-100 dark:bg-zinc-800/80 hover:bg-slate-200 dark:hover:bg-zinc-700/80 text-slate-600 dark:text-zinc-300"
+            }`}
+          >
+            Todas ({bovedaItems.length})
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setFiltroRapido("passwords")}
+            className={`min-h-[38px] px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all shrink-0 flex items-center gap-1.5 ${
+              filtroRapido === "passwords"
+                ? "bg-amber-600 text-white shadow-sm shadow-amber-600/30"
+                : "bg-slate-100 dark:bg-zinc-800/80 hover:bg-slate-200 dark:hover:bg-zinc-700/80 text-slate-600 dark:text-zinc-300"
+            }`}
+          >
+            <Key className="w-3.5 h-3.5" />
+            Contraseñas ({stats.passwords})
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setFiltroRapido("redes")}
+            className={`min-h-[38px] px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all shrink-0 flex items-center gap-1.5 ${
+              filtroRapido === "redes"
+                ? "bg-blue-600 text-white shadow-sm shadow-blue-600/30"
+                : "bg-slate-100 dark:bg-zinc-800/80 hover:bg-slate-200 dark:hover:bg-zinc-700/80 text-slate-600 dark:text-zinc-300"
+            }`}
+          >
+            <Network className="w-3.5 h-3.5" />
+            IPs & Redes
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setFiltroRapido("remoto")}
+            className={`min-h-[38px] px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all shrink-0 flex items-center gap-1.5 ${
+              filtroRapido === "remoto"
+                ? "bg-emerald-600 text-white shadow-sm shadow-emerald-600/30"
+                : "bg-slate-100 dark:bg-zinc-800/80 hover:bg-slate-200 dark:hover:bg-zinc-700/80 text-slate-600 dark:text-zinc-300"
+            }`}
+          >
+            <MonitorSmartphone className="w-3.5 h-3.5" />
+            AnyDesk / Remoto
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setFiltroRapido("routers")}
+            className={`min-h-[38px] px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all shrink-0 flex items-center gap-1.5 ${
+              filtroRapido === "routers"
+                ? "bg-cyan-700 text-white shadow-sm shadow-cyan-700/30"
+                : "bg-slate-100 dark:bg-zinc-800/80 hover:bg-slate-200 dark:hover:bg-zinc-700/80 text-slate-600 dark:text-zinc-300"
+            }`}
+          >
+            <Router className="w-3.5 h-3.5" />
+            Routers / Switches
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setFiltroRapido("con_adjunto")}
+            className={`min-h-[38px] px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all shrink-0 flex items-center gap-1.5 ${
+              filtroRapido === "con_adjunto"
+                ? "bg-purple-600 text-white shadow-sm shadow-purple-600/30"
+                : "bg-slate-100 dark:bg-zinc-800/80 hover:bg-slate-200 dark:hover:bg-zinc-700/80 text-slate-600 dark:text-zinc-300"
+            }`}
+          >
+            <Paperclip className="w-3.5 h-3.5" />
+            Con Adjunto ({stats.conAdjunto})
+          </button>
+
+          {hasActiveFilters && (
+            <button
+              type="button"
+              onClick={resetFilters}
+              className="min-h-[38px] px-3 py-1.5 rounded-xl text-xs font-bold text-rose-500 bg-rose-500/10 hover:bg-rose-500/20 transition-all shrink-0 flex items-center gap-1"
+              title="Restablecer filtros"
+            >
+              <RotateCcw className="w-3.5 h-3.5" />
+              <span>Limpiar</span>
+            </button>
+          )}
+        </div>
+
+        {/* Resumen de Resultados */}
+        <div className="flex items-center justify-between text-xs text-slate-500 dark:text-zinc-400 pt-1 border-t border-slate-100 dark:border-zinc-800/60">
           <span>
             Mostrando{" "}
-            <strong className="text-slate-800 dark:text-zinc-200">
+            <strong className="text-slate-900 dark:text-zinc-100 font-bold">
               {filteredItems.length}
             </strong>{" "}
-            credenciales distribuidas en{" "}
-            <strong className="text-slate-800 dark:text-zinc-200">
+            credenciales de{" "}
+            <strong className="text-slate-900 dark:text-zinc-100 font-bold">
               {groupedByClient.length}
             </strong>{" "}
             clientes
           </span>
 
           {hasActiveFilters && (
-            <span className="text-[11px] text-cyan-600 dark:text-cyan-400 flex items-center gap-1 font-semibold">
-              <SlidersHorizontal className="w-3 h-3" />
-              Filtros activos
+            <span className="text-[11px] text-cyan-600 dark:text-cyan-400 font-medium">
+              Filtro activo
             </span>
           )}
         </div>
@@ -432,7 +607,7 @@ export function BovedaTable({ bovedaItems, tiposCredencial }: Props) {
       {viewMode === "cliente" && (
         <div className="space-y-4">
           {groupedByClient.length === 0 ? (
-            <div className="rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-10 text-center text-slate-400 dark:text-zinc-500">
+            <div className="rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-8 sm:p-10 text-center text-slate-400 dark:text-zinc-500">
               <FilterX className="w-10 h-10 mx-auto mb-2 text-slate-400 dark:text-zinc-600 stroke-1" />
               <p className="text-sm font-medium text-slate-600 dark:text-zinc-400">
                 {hasActiveFilters
@@ -443,7 +618,7 @@ export function BovedaTable({ bovedaItems, tiposCredencial }: Props) {
                 <button
                   type="button"
                   onClick={resetFilters}
-                  className="mt-2 text-xs text-cyan-600 dark:text-cyan-400 hover:underline"
+                  className="mt-2 text-xs text-cyan-600 dark:text-cyan-400 hover:underline font-semibold"
                 >
                   Limpiar filtros
                 </button>
@@ -457,47 +632,53 @@ export function BovedaTable({ bovedaItems, tiposCredencial }: Props) {
               const proyectosArray = Array.from(
                 clientGroup.proyectosMap.values()
               );
+              const tieneWhatsapp = Boolean(
+                clientGroup.telefono && clientGroup.telefono.trim().length >= 6
+              );
+              const waUrl = tieneWhatsapp
+                ? getWhatsAppLink(
+                    clientGroup.telefono,
+                    `¡Hola ${clientGroup.clienteNombre}! Te contacto desde UPGRADE Soporte IT y Redes.`
+                  )
+                : "";
 
               return (
                 <div
                   key={clientGroup.clienteNombre}
-                  className="rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/70 shadow-sm overflow-hidden transition-all"
+                  className="rounded-2xl border border-slate-200/90 dark:border-zinc-800/90 bg-white dark:bg-zinc-900/70 shadow-sm overflow-hidden transition-all"
                 >
-                  {/* Encabezado del Cliente */}
+                  {/* Encabezado del Cliente con Touch Target Ergonómico */}
                   <div
                     onClick={() =>
                       toggleClientCollapse(clientGroup.clienteNombre)
                     }
-                    className="p-4 sm:p-5 bg-gradient-to-r from-slate-50 to-white dark:from-zinc-900 dark:to-zinc-900/80 border-b border-slate-200 dark:border-zinc-800 flex items-center justify-between gap-3 cursor-pointer select-none hover:bg-slate-100/60 dark:hover:bg-zinc-800/40 transition-colors"
+                    className="p-4 bg-gradient-to-r from-slate-50 to-white dark:from-zinc-900 dark:to-zinc-900/80 border-b border-slate-200 dark:border-zinc-800 flex items-center justify-between gap-3 cursor-pointer select-none hover:bg-slate-100/60 dark:hover:bg-zinc-800/40 transition-colors"
                   >
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className="p-2.5 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-600 dark:text-cyan-400 shrink-0">
+                      <div className="p-2.5 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-600 dark:text-cyan-400 shrink-0">
                         <Building2 className="w-5 h-5" />
                       </div>
                       <div className="min-w-0">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <h3 className="text-base font-bold text-slate-900 dark:text-zinc-100 tracking-tight truncate">
+                          <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-zinc-100 tracking-tight truncate">
                             {clientGroup.clienteNombre}
                           </h3>
-                          {clientGroup.telefono && (
-                            <span className="text-xs text-slate-500 dark:text-zinc-400">
-                              • Tel: {clientGroup.telefono}
-                            </span>
-                          )}
                         </div>
                         <p className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">
                           {clientGroup.totalItems}{" "}
                           {clientGroup.totalItems === 1
-                            ? "credencial resguardada"
-                            : "credenciales resguardadas"}{" "}
+                            ? "clave protegida"
+                            : "claves protegidas"}{" "}
                           en {proyectosArray.length}{" "}
-                          {proyectosArray.length === 1 ? "obra/instalación" : "obras/instalaciones"}
+                          {proyectosArray.length === 1
+                            ? "obra"
+                            : "obras/instalaciones"}
                         </p>
                       </div>
                     </div>
 
                     <div className="flex items-center gap-2 shrink-0">
-                      <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-cyan-500/10 text-cyan-700 dark:text-cyan-400 border border-cyan-500/20">
+                      <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-cyan-500/10 text-cyan-700 dark:text-cyan-400 border border-cyan-500/20">
                         <ShieldCheck className="w-3.5 h-3.5" />
                         {clientGroup.totalItems} claves
                       </span>
@@ -515,20 +696,20 @@ export function BovedaTable({ bovedaItems, tiposCredencial }: Props) {
                     </div>
                   </div>
 
-                  {/* Cuerpo del Cliente: Agrupado por Proyecto de Referencia */}
+                  {/* Cuerpo del Cliente: Agrupado por Obra / Proyecto */}
                   {!isCollapsed && (
-                    <div className="p-4 sm:p-5 space-y-5 bg-slate-50/30 dark:bg-zinc-950/20">
+                    <div className="p-3.5 sm:p-5 space-y-4 bg-slate-50/30 dark:bg-zinc-950/20">
                       {proyectosArray.map((proy) => (
                         <div
                           key={proy.proyectoId}
-                          className="rounded-xl border border-slate-200/80 dark:border-zinc-800/80 bg-white dark:bg-zinc-900/90 shadow-2xs overflow-hidden"
+                          className="rounded-2xl border border-slate-200/80 dark:border-zinc-800/80 bg-white dark:bg-zinc-900/90 shadow-xs overflow-hidden"
                         >
                           {/* Barra de Proyecto de Referencia */}
                           <div className="px-4 py-3 bg-slate-100/70 dark:bg-zinc-800/60 border-b border-slate-200 dark:border-zinc-800 flex items-center justify-between gap-3 flex-wrap">
                             <div className="flex items-center gap-2 min-w-0">
                               <FolderGit2 className="w-4 h-4 text-cyan-600 dark:text-cyan-400 shrink-0" />
                               <div className="flex items-center gap-2 flex-wrap min-w-0">
-                                <span className="font-semibold text-xs sm:text-sm text-slate-800 dark:text-zinc-200 truncate">
+                                <span className="font-bold text-xs sm:text-sm text-slate-800 dark:text-zinc-200 truncate">
                                   {proy.notasTecnicas && proy.notasTecnicas.trim() !== ""
                                     ? proy.notasTecnicas
                                     : `Proyecto #${proy.proyectoId.slice(0, 8)}`}
@@ -540,7 +721,7 @@ export function BovedaTable({ bovedaItems, tiposCredencial }: Props) {
                             {proy.proyectoId !== "sin_proyecto" && (
                               <Link
                                 href={`/proyectos/${proy.proyectoId}`}
-                                className="inline-flex items-center gap-1 text-xs font-medium text-cyan-600 dark:text-cyan-400 hover:underline underline-offset-2 shrink-0"
+                                className="min-h-[36px] inline-flex items-center gap-1 text-xs font-semibold text-cyan-600 dark:text-cyan-400 hover:underline shrink-0"
                               >
                                 Ver Proyecto / Obra
                                 <ExternalLink className="w-3.5 h-3.5" />
@@ -555,10 +736,10 @@ export function BovedaTable({ bovedaItems, tiposCredencial }: Props) {
                                 key={item.id}
                                 className="p-3.5 sm:p-4 hover:bg-slate-50/60 dark:hover:bg-zinc-800/30 transition-colors flex flex-col md:flex-row md:items-center justify-between gap-3"
                               >
-                                {/* Datos de la Credencial */}
+                                {/* Descripción y Tipo */}
                                 <div className="space-y-1.5 flex-1 min-w-0">
                                   <div className="flex items-center gap-2 flex-wrap">
-                                    <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg text-xs font-medium bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 border border-slate-200 dark:border-zinc-700/80">
+                                    <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 border border-slate-200 dark:border-zinc-700/80">
                                       {getTipoDatoIcon(item.tipo_dato)}
                                       {item.tipo_dato.replace(/_/g, " ")}
                                     </span>
@@ -568,13 +749,13 @@ export function BovedaTable({ bovedaItems, tiposCredencial }: Props) {
                                     </span>
                                   </div>
 
-                                  <h5 className="font-medium text-sm text-slate-900 dark:text-zinc-100">
+                                  <h5 className="font-semibold text-sm text-slate-900 dark:text-zinc-100">
                                     {item.descripcion}
                                   </h5>
                                 </div>
 
-                                {/* Valor Desencriptado & Adjunto */}
-                                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2.5 shrink-0 pt-2 md:pt-0 border-t md:border-t-0 border-slate-100 dark:border-zinc-800/60">
+                                {/* Valor Desencriptado Táctil & Adjunto */}
+                                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 shrink-0 pt-2 md:pt-0 border-t md:border-t-0 border-slate-100 dark:border-zinc-800/60">
                                   <MaskedValue
                                     value={item.valor_desencriptado || ""}
                                     recordId={item.id}
@@ -602,10 +783,10 @@ export function BovedaTable({ bovedaItems, tiposCredencial }: Props) {
       {/* VISTA 2: LISTA PLANA CRONOLÓGICA */}
       {viewMode === "tabla" && (
         <div className="space-y-4">
-          {/* Móvil: Tarjetas (< md) */}
+          {/* Móvil: Tarjetas Táctiles (< md) */}
           <div className="md:hidden space-y-3">
             {filteredItems.length === 0 ? (
-              <div className="rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-8 text-center text-slate-400 dark:text-zinc-500">
+              <div className="rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-8 text-center text-slate-400 dark:text-zinc-500">
                 <FilterX className="w-8 h-8 mx-auto mb-2 text-slate-400 dark:text-zinc-600 stroke-1" />
                 <p className="text-sm font-medium text-slate-600 dark:text-zinc-400">
                   {hasActiveFilters
@@ -616,7 +797,7 @@ export function BovedaTable({ bovedaItems, tiposCredencial }: Props) {
                   <button
                     type="button"
                     onClick={resetFilters}
-                    className="mt-2 text-xs text-cyan-600 dark:text-cyan-400 hover:underline"
+                    className="mt-2 text-xs text-cyan-600 dark:text-cyan-400 hover:underline font-semibold"
                   >
                     Limpiar filtros
                   </button>
@@ -626,13 +807,13 @@ export function BovedaTable({ bovedaItems, tiposCredencial }: Props) {
               filteredItems.map((item) => (
                 <div
                   key={item.id}
-                  className="rounded-2xl border border-slate-200 dark:border-zinc-800/90 bg-white dark:bg-zinc-900/60 p-4 shadow-sm space-y-3.5 transition-colors"
+                  className="rounded-2xl border border-slate-200/90 dark:border-zinc-800/90 bg-white dark:bg-zinc-900/70 p-4 shadow-sm space-y-3 transition-colors"
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-                        <span className="inline-flex items-center gap-1.5 bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 text-[10px] px-2 py-0.5 rounded-lg border border-slate-200 dark:border-zinc-700 font-medium">
-                          {getTipoDatoIcon(item.tipo_dato as TipoDatoBoveda)}
+                        <span className="inline-flex items-center gap-1.5 bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 text-[10px] px-2 py-0.5 rounded-lg border border-slate-200 dark:border-zinc-700 font-semibold">
+                          {getTipoDatoIcon(item.tipo_dato)}
                           {item.tipo_dato.replace(/_/g, " ")}
                         </span>
                         <span className="text-[11px] text-slate-400 dark:text-zinc-500 font-mono">
@@ -640,7 +821,7 @@ export function BovedaTable({ bovedaItems, tiposCredencial }: Props) {
                         </span>
                       </div>
 
-                      <h4 className="text-sm font-semibold text-slate-900 dark:text-zinc-100">
+                      <h4 className="text-sm font-bold text-slate-900 dark:text-zinc-100">
                         {item.proyecto?.cliente?.nombre_razon_social ||
                           item.proyectos?.clientes?.nombre_razon_social ||
                           "Desconocido"}
@@ -650,7 +831,7 @@ export function BovedaTable({ bovedaItems, tiposCredencial }: Props) {
                       </p>
 
                       {item.proyecto_id && (
-                        <div className="pt-1">
+                        <div className="pt-1.5">
                           <Link
                             href={`/proyectos/${item.proyecto_id}`}
                             className="inline-flex items-center gap-1 text-[11px] text-cyan-600 dark:text-cyan-400 hover:underline font-mono"
@@ -664,7 +845,7 @@ export function BovedaTable({ bovedaItems, tiposCredencial }: Props) {
                   </div>
 
                   <div className="pt-2.5 border-t border-slate-100 dark:border-zinc-800/80 space-y-2">
-                    <span className="text-[10px] text-slate-400 dark:text-zinc-500 uppercase font-medium block">
+                    <span className="text-[10px] text-slate-400 dark:text-zinc-500 uppercase font-semibold block">
                       Credencial / Clave Resguardada
                     </span>
                     <MaskedValue
@@ -685,19 +866,19 @@ export function BovedaTable({ bovedaItems, tiposCredencial }: Props) {
           </div>
 
           {/* Desktop & Tablet: Tabla Completa (>= md) */}
-          <div className="hidden md:block rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 backdrop-blur-sm overflow-hidden shadow-sm dark:shadow-xl">
+          <div className="hidden md:block rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 backdrop-blur-sm overflow-hidden shadow-sm">
             <div className="overflow-x-auto">
               <table className="w-full text-sm text-left">
-                <thead className="text-xs text-slate-500 dark:text-zinc-400 uppercase bg-slate-50 dark:bg-zinc-900/80 border-b border-slate-200 dark:border-zinc-800">
+                <thead className="text-xs text-slate-500 dark:text-zinc-400 uppercase bg-slate-50/90 dark:bg-zinc-900/80 border-b border-slate-200 dark:border-zinc-800 font-semibold">
                   <tr>
-                    <th className="px-6 py-4 font-medium">Cliente & Proyecto Ref.</th>
-                    <th className="px-6 py-4 font-medium">Tipo de Dato</th>
-                    <th className="px-6 py-4 font-medium">Descripción</th>
-                    <th className="px-6 py-4 font-medium">Valor Desencriptado</th>
-                    <th className="px-6 py-4 font-medium text-right">Fecha</th>
+                    <th className="px-6 py-4">Cliente & Proyecto Ref.</th>
+                    <th className="px-6 py-4">Tipo de Dato</th>
+                    <th className="px-6 py-4">Descripción</th>
+                    <th className="px-6 py-4">Valor Desencriptado</th>
+                    <th className="px-6 py-4 text-right">Fecha</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-200 dark:divide-zinc-800">
+                <tbody className="divide-y divide-slate-100 dark:divide-zinc-800/80">
                   {filteredItems.length === 0 ? (
                     <tr>
                       <td
@@ -715,7 +896,7 @@ export function BovedaTable({ bovedaItems, tiposCredencial }: Props) {
                             <button
                               type="button"
                               onClick={resetFilters}
-                              className="mt-2 text-xs text-cyan-600 dark:text-cyan-400 hover:underline underline-offset-4"
+                              className="mt-2 text-xs text-cyan-600 dark:text-cyan-400 hover:underline underline-offset-4 font-semibold"
                             >
                               Limpiar filtros de búsqueda
                             </button>
@@ -733,7 +914,7 @@ export function BovedaTable({ bovedaItems, tiposCredencial }: Props) {
                           <div className="flex items-center">
                             <FolderGit2 className="w-4 h-4 mr-2 text-cyan-600 dark:text-cyan-400 shrink-0" />
                             <div className="flex flex-col">
-                              <span className="font-medium text-slate-900 dark:text-zinc-100">
+                              <span className="font-bold text-slate-900 dark:text-zinc-100">
                                 {item.proyecto?.cliente?.nombre_razon_social ||
                                   item.proyectos?.clientes?.nombre_razon_social ||
                                   "Desconocido"}
@@ -750,21 +931,20 @@ export function BovedaTable({ bovedaItems, tiposCredencial }: Props) {
                             </div>
                           </div>
                         </td>
+
                         <td className="px-6 py-4">
-                          <div className="flex items-center text-slate-700 dark:text-zinc-300">
-                            <div className="mr-2 p-1.5 bg-slate-100 dark:bg-zinc-800 rounded-md">
-                              {getTipoDatoIcon(item.tipo_dato as TipoDatoBoveda)}
-                            </div>
-                            <span className="text-xs font-medium">
-                              {item.tipo_dato.replace(/_/g, " ")}
-                            </span>
-                          </div>
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 border border-slate-200 dark:border-zinc-700/80">
+                            {getTipoDatoIcon(item.tipo_dato)}
+                            {item.tipo_dato.replace(/_/g, " ")}
+                          </span>
                         </td>
+
                         <td className="px-6 py-4 text-slate-700 dark:text-zinc-300 font-medium">
                           {item.descripcion}
                         </td>
+
                         <td className="px-6 py-4">
-                          <div className="flex flex-col gap-2">
+                          <div className="flex items-center gap-2">
                             <MaskedValue
                               value={item.valor_desencriptado || ""}
                               recordId={item.id}
@@ -776,11 +956,9 @@ export function BovedaTable({ bovedaItems, tiposCredencial }: Props) {
                             )}
                           </div>
                         </td>
-                        <td className="px-6 py-4 text-slate-500 dark:text-zinc-500 text-xs text-right">
-                          <div className="flex items-center justify-end">
-                            <Calendar className="w-3.5 h-3.5 mr-1.5 opacity-70" />
-                            {new Date(item.created_at!).toLocaleDateString("es-AR")}
-                          </div>
+
+                        <td className="px-6 py-4 text-right text-xs text-slate-500 dark:text-zinc-400 font-mono">
+                          {new Date(item.created_at!).toLocaleDateString("es-AR")}
                         </td>
                       </tr>
                     ))
@@ -794,4 +972,3 @@ export function BovedaTable({ bovedaItems, tiposCredencial }: Props) {
     </div>
   );
 }
-
