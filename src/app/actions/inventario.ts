@@ -306,3 +306,53 @@ export async function deleteItemInventario(id: string) {
   }
 }
 
+export async function ajustarStockInventario(id: string, delta: number) {
+  try {
+    const existing = await db
+      .select()
+      .from(inventario)
+      .where(eq(inventario.id, id))
+      .limit(1);
+
+    if (existing.length === 0) {
+      throw new Error("Ítem no encontrado");
+    }
+
+    const item = existing[0];
+    if (item.tipo === "Servicio") {
+      throw new Error("Los ítems de tipo Servicio no gestionan stock físico");
+    }
+
+    const stockActual = item.stock_actual ?? 0;
+    const nuevoStock = Math.max(0, stockActual + delta);
+
+    const [updated] = await db
+      .update(inventario)
+      .set({ stock_actual: nuevoStock })
+      .where(eq(inventario.id, id))
+      .returning();
+
+    // Si el stock cae por debajo del mínimo o a 0 y fue un decremento, disparar push notification
+    if (nuevoStock <= (item.stock_minimo ?? 0) && delta < 0) {
+      sendPushNotificationToRoles(["SuperAdmin", "Admin"], {
+        title: "⚠️ Alerta de Stock Crítico",
+        body: `"${item.nombre}" quedó en ${nuevoStock} u. (Mínimo requerido: ${item.stock_minimo}).`,
+        url: "/inventario",
+        tag: `stock-critico-${item.id}`,
+      }).catch(() => {});
+    }
+
+    revalidatePath("/inventario");
+    revalidatePath("/");
+
+    return {
+      success: true,
+      nuevoStock,
+    };
+  } catch (error: any) {
+    console.error("Error al ajustar stock:", error);
+    throw new Error(error.message || "Error al ajustar stock");
+  }
+}
+
+

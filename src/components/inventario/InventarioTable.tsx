@@ -3,16 +3,27 @@
 import { useState, useMemo } from "react";
 import { InventarioFormModal } from "./InventarioFormModal";
 import { DeleteInventarioButton } from "./DeleteInventarioButton";
+import { ajustarStockInventario } from "@/app/actions/inventario";
 import {
   Search,
   X,
   RotateCcw,
-  Hash,
-  CircleDollarSign,
   AlertTriangle,
   FilterX,
   SlidersHorizontal,
   FolderTree,
+  Cpu,
+  Boxes,
+  Wrench,
+  Copy,
+  Check,
+  Plus,
+  Minus,
+  Loader2,
+  PackageCheck,
+  CheckCircle2,
+  Layers,
+  ArrowUpDown,
 } from "lucide-react";
 import { TipoItem, CategoriaInventario } from "@/types/database";
 
@@ -36,23 +47,47 @@ interface Props {
 const getBadgeStyles = (tipo: TipoItem) => {
   switch (tipo) {
     case "Fijo":
-      return "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20";
+      return {
+        badge: "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/25",
+        avatar: "from-blue-600 to-cyan-600 text-white",
+        icon: Cpu,
+        label: "Equipo Fijo",
+      };
     case "Consumible":
-      return "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20";
+      return {
+        badge: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/25",
+        avatar: "from-amber-600 to-orange-600 text-white",
+        icon: Boxes,
+        label: "Consumible",
+      };
     case "Servicio":
-      return "bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20";
+      return {
+        badge: "bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/25",
+        avatar: "from-purple-600 to-indigo-600 text-white",
+        icon: Wrench,
+        label: "Servicio / M.O.",
+      };
     default:
-      return "bg-zinc-500/10 text-zinc-600 dark:text-zinc-400 border-zinc-500/20";
+      return {
+        badge: "bg-zinc-500/10 text-zinc-600 dark:text-zinc-400 border-zinc-500/20",
+        avatar: "from-zinc-600 to-slate-700 text-white",
+        icon: Layers,
+        label: tipo,
+      };
   }
 };
 
 export function InventarioTable({ inventario, categorias = [] }: Props) {
   const [searchTerm, setSearchTerm] = useState("");
-  const [tipoFiltro, setTipoFiltro] = useState<string>("todos");
+  const [filtroRapido, setFiltroRapido] = useState<string>("todos");
   const [categoriaFiltro, setCategoriaFiltro] = useState<string>("todos");
-  const [stockFiltro, setStockFiltro] = useState<string>("todos");
+  const [copiedSkuId, setCopiedSkuId] = useState<string | null>(null);
 
-  // Lista de categorías únicas para el dropdown
+  // Estado optimista para ajuste rápido de stock
+  const [stockOverrides, setStockOverrides] = useState<Record<string, number>>({});
+  const [updatingStockId, setUpdatingStockId] = useState<string | null>(null);
+
+  // Lista de categorías únicas
   const categoriasDisponibles = useMemo(() => {
     const setCats = new Set<string>();
     categorias.forEach((c) => setCats.add(c.nombre));
@@ -62,21 +97,69 @@ export function InventarioTable({ inventario, categorias = [] }: Props) {
     return Array.from(setCats).sort();
   }, [categorias, inventario]);
 
+  // Estadísticas para las métricas del header
+  const stats = useMemo(() => {
+    const total = inventario.length;
+    const criticos = inventario.filter((i) => {
+      if (i.tipo === "Servicio") return false;
+      const actual = stockOverrides[i.id] ?? i.stock_actual ?? 0;
+      const minimo = i.stock_minimo ?? 0;
+      return actual <= minimo;
+    }).length;
+    const fisicos = inventario.filter(
+      (i) => i.tipo === "Fijo" || i.tipo === "Consumible"
+    ).length;
+    const servicios = inventario.filter((i) => i.tipo === "Servicio").length;
+
+    return { total, criticos, fisicos, servicios };
+  }, [inventario, stockOverrides]);
+
   const hasActiveFilters =
-    searchTerm !== "" ||
-    tipoFiltro !== "todos" ||
-    categoriaFiltro !== "todos" ||
-    stockFiltro !== "todos";
+    searchTerm !== "" || filtroRapido !== "todos" || categoriaFiltro !== "todos";
 
   const resetFilters = () => {
     setSearchTerm("");
-    setTipoFiltro("todos");
+    setFiltroRapido("todos");
     setCategoriaFiltro("todos");
-    setStockFiltro("todos");
+  };
+
+  const handleCopySku = async (sku: string, id: string) => {
+    try {
+      await navigator.clipboard.writeText(sku);
+      setCopiedSkuId(id);
+      setTimeout(() => setCopiedSkuId(null), 2000);
+    } catch (err) {
+      console.error("Error al copiar SKU:", err);
+    }
+  };
+
+  const handleAjustarStock = async (id: string, delta: number, currentStock: number) => {
+    if (updatingStockId) return;
+
+    const targetStock = Math.max(0, currentStock + delta);
+    setUpdatingStockId(id);
+
+    // Optimista
+    setStockOverrides((prev) => ({ ...prev, [id]: targetStock }));
+
+    try {
+      await ajustarStockInventario(id, delta);
+    } catch (err) {
+      console.error("Error al ajustar stock:", err);
+      // Revertir
+      setStockOverrides((prev) => ({ ...prev, [id]: currentStock }));
+      alert("No se pudo actualizar el stock en el servidor.");
+    } finally {
+      setUpdatingStockId(null);
+    }
   };
 
   const filteredInventario = useMemo(() => {
     return inventario.filter((item) => {
+      const actualStock = stockOverrides[item.id] ?? item.stock_actual ?? 0;
+      const minimoStock = item.stock_minimo ?? 0;
+      const isCritical = item.tipo !== "Servicio" && actualStock <= minimoStock;
+
       // 1. Filtro texto de búsqueda
       if (searchTerm.trim() !== "") {
         const query = searchTerm.toLowerCase().trim();
@@ -89,9 +172,15 @@ export function InventarioTable({ inventario, categorias = [] }: Props) {
         if (!matches) return false;
       }
 
-      // 2. Filtro Tipo
-      if (tipoFiltro !== "todos" && item.tipo !== tipoFiltro) {
-        return false;
+      // 2. Filtro rápido de pills
+      if (filtroRapido === "critico") {
+        if (!isCritical) return false;
+      } else if (filtroRapido === "Fijo") {
+        if (item.tipo !== "Fijo") return false;
+      } else if (filtroRapido === "Consumible") {
+        if (item.tipo !== "Consumible") return false;
+      } else if (filtroRapido === "Servicio") {
+        if (item.tipo !== "Servicio") return false;
       }
 
       // 3. Filtro Categoría
@@ -103,31 +192,104 @@ export function InventarioTable({ inventario, categorias = [] }: Props) {
         }
       }
 
-      // 4. Filtro Stock
-      if (stockFiltro !== "todos") {
-        const isService = item.tipo === "Servicio";
-        const actual = item.stock_actual ?? 0;
-        const minimo = item.stock_minimo ?? 0;
-        const isCritical = !isService && actual <= minimo;
-
-        if (stockFiltro === "critico" && !isCritical) {
-          return false;
-        }
-        if (stockFiltro === "disponible" && (isService || actual <= minimo)) {
-          return false;
-        }
-        if (stockFiltro === "servicio" && !isService) {
-          return false;
-        }
-      }
-
       return true;
     });
-  }, [inventario, searchTerm, tipoFiltro, categoriaFiltro, stockFiltro]);
+  }, [inventario, searchTerm, filtroRapido, categoriaFiltro, stockOverrides]);
 
   return (
-    <div className="space-y-4">
-      {/* Barra de Búsqueda y Filtros */}
+    <div className="space-y-4 sm:space-y-5">
+      {/* 1. MÉTRICAS EJECUTIVAS / TELEMETRÍA DE STOCK (Mobile-First Grid) */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3.5">
+        <div className="p-3.5 sm:p-4 rounded-2xl bg-white dark:bg-zinc-900/60 border border-slate-200/90 dark:border-zinc-800/80 backdrop-blur-md shadow-sm">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] sm:text-xs font-medium text-slate-500 dark:text-zinc-400">
+              Total Catálogo
+            </span>
+            <div className="p-2 rounded-xl bg-cyan-500/10 text-cyan-600 dark:text-cyan-400">
+              <PackageCheck className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="mt-2 flex items-baseline gap-1.5">
+            <span className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
+              {stats.total}
+            </span>
+            <span className="text-[10px] sm:text-xs text-slate-400 dark:text-zinc-500">
+              ítems activos
+            </span>
+          </div>
+        </div>
+
+        <div className="p-3.5 sm:p-4 rounded-2xl bg-white dark:bg-zinc-900/60 border border-slate-200/90 dark:border-zinc-800/80 backdrop-blur-md shadow-sm">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] sm:text-xs font-medium text-slate-500 dark:text-zinc-400">
+              Stock Crítico / Bajo
+            </span>
+            <div
+              className={`p-2 rounded-xl ${
+                stats.criticos > 0
+                  ? "bg-amber-500/15 text-amber-500"
+                  : "bg-emerald-500/10 text-emerald-500"
+              }`}
+            >
+              <AlertTriangle className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="mt-2 flex items-baseline gap-1.5">
+            <span
+              className={`text-xl sm:text-2xl font-black tracking-tight ${
+                stats.criticos > 0
+                  ? "text-amber-500"
+                  : "text-emerald-600 dark:text-emerald-400"
+              }`}
+            >
+              {stats.criticos}
+            </span>
+            <span className="text-[10px] sm:text-xs text-slate-400 dark:text-zinc-500">
+              {stats.criticos === 1 ? "ítem a reponer" : "ítems a reponer"}
+            </span>
+          </div>
+        </div>
+
+        <div className="p-3.5 sm:p-4 rounded-2xl bg-white dark:bg-zinc-900/60 border border-slate-200/90 dark:border-zinc-800/80 backdrop-blur-md shadow-sm">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] sm:text-xs font-medium text-slate-500 dark:text-zinc-400">
+              Equipos & Insumos
+            </span>
+            <div className="p-2 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400">
+              <Boxes className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="mt-2 flex items-baseline gap-1.5">
+            <span className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
+              {stats.fisicos}
+            </span>
+            <span className="text-[10px] sm:text-xs text-slate-400 dark:text-zinc-500">
+              físicos controlados
+            </span>
+          </div>
+        </div>
+
+        <div className="p-3.5 sm:p-4 rounded-2xl bg-white dark:bg-zinc-900/60 border border-slate-200/90 dark:border-zinc-800/80 backdrop-blur-md shadow-sm">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] sm:text-xs font-medium text-slate-500 dark:text-zinc-400">
+              Servicios & Abonos
+            </span>
+            <div className="p-2 rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-400">
+              <Wrench className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="mt-2 flex items-baseline gap-1.5">
+            <span className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
+              {stats.servicios}
+            </span>
+            <span className="text-[10px] sm:text-xs text-slate-400 dark:text-zinc-500">
+              mano de obra
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* 2. BARRA DE BÚSQUEDA Y FILTROS RÁPIDOS TÁCTILES */}
       <div className="p-3.5 sm:p-4 rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 shadow-sm backdrop-blur-md space-y-3 transition-colors">
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 sm:gap-3">
           {/* Input de Búsqueda */}
@@ -137,14 +299,14 @@ export function InventarioTable({ inventario, categorias = [] }: Props) {
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Buscar por nombre de ítem o código SKU..."
-              className="w-full min-h-[44px] bg-slate-50 dark:bg-zinc-950/70 border border-slate-200 dark:border-zinc-800 rounded-xl pl-10 pr-9 py-2 text-base sm:text-xs text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all"
+              placeholder="Buscar por nombre, SKU o categoría..."
+              className="w-full min-h-[46px] bg-slate-50 dark:bg-zinc-950/70 border border-slate-200 dark:border-zinc-800 rounded-xl pl-10 pr-10 py-2.5 text-base sm:text-xs text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all"
             />
             {searchTerm && (
               <button
                 type="button"
                 onClick={() => setSearchTerm("")}
-                className="min-h-[36px] min-w-[36px] inline-flex items-center justify-center absolute right-1.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:text-zinc-500 dark:hover:text-zinc-300 p-1 rounded-lg transition-colors"
+                className="min-h-[44px] min-w-[44px] inline-flex items-center justify-center absolute right-1 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:text-zinc-500 dark:hover:text-zinc-300 rounded-lg transition-colors"
                 title="Limpiar búsqueda"
               >
                 <X className="w-4 h-4" />
@@ -152,25 +314,12 @@ export function InventarioTable({ inventario, categorias = [] }: Props) {
             )}
           </div>
 
-          {/* Menú de Filtros Dropdowns */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 lg:flex items-center gap-2">
-            {/* Tipo */}
-            <select
-              value={tipoFiltro}
-              onChange={(e) => setTipoFiltro(e.target.value)}
-              className="w-full sm:w-auto min-h-[44px] bg-slate-50 dark:bg-zinc-950/80 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-base sm:text-xs text-slate-700 dark:text-zinc-300 focus:outline-none focus:border-cyan-500 transition-colors cursor-pointer [color-scheme:light] dark:[color-scheme:dark]"
-            >
-              <option value="todos">Todos los Tipos</option>
-              <option value="Fijo">Fijo (Equipos)</option>
-              <option value="Consumible">Consumible (Insumos)</option>
-              <option value="Servicio">Servicio (Mano de obra)</option>
-            </select>
-
-            {/* Subcategoría / Categoría */}
+          {/* Selector de Categoría */}
+          <div className="w-full sm:w-auto">
             <select
               value={categoriaFiltro}
               onChange={(e) => setCategoriaFiltro(e.target.value)}
-              className="w-full sm:w-auto min-h-[44px] bg-slate-50 dark:bg-zinc-950/80 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-base sm:text-xs text-slate-700 dark:text-zinc-300 focus:outline-none focus:border-cyan-500 transition-colors cursor-pointer max-w-[200px] truncate [color-scheme:light] dark:[color-scheme:dark]"
+              className="w-full sm:w-auto min-h-[46px] bg-slate-50 dark:bg-zinc-950/80 border border-slate-200 dark:border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-xs text-slate-700 dark:text-zinc-300 focus:outline-none focus:border-cyan-500 transition-colors cursor-pointer max-w-full sm:max-w-[220px] truncate [color-scheme:light] dark:[color-scheme:dark]"
             >
               <option value="todos">Todas las Categorías</option>
               {categoriasDisponibles.map((cat) => (
@@ -180,54 +329,109 @@ export function InventarioTable({ inventario, categorias = [] }: Props) {
               ))}
               <option value="sin_categoria">Sin categoría</option>
             </select>
-
-            {/* Estado de Stock */}
-            <select
-              value={stockFiltro}
-              onChange={(e) => setStockFiltro(e.target.value)}
-              className="w-full sm:w-auto min-h-[44px] bg-slate-50 dark:bg-zinc-950/80 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-base sm:text-xs text-slate-700 dark:text-zinc-300 focus:outline-none focus:border-cyan-500 transition-colors cursor-pointer [color-scheme:light] dark:[color-scheme:dark]"
-            >
-              <option value="todos">Todos los Stocks</option>
-              <option value="critico">⚠️ Stock Crítico / Bajo</option>
-              <option value="disponible">✓ Con Stock Disponible</option>
-              <option value="servicio">Servicios (Sin stock físico)</option>
-            </select>
-
-            {/* Botón Reset */}
-            {hasActiveFilters && (
-              <button
-                type="button"
-                onClick={resetFilters}
-                className="min-h-[44px] flex items-center justify-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-rose-600 dark:text-rose-400 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 rounded-xl transition-all active:scale-[0.98]"
-                title="Limpiar todos los filtros"
-              >
-                <RotateCcw className="w-3.5 h-3.5" />
-                <span>Restablecer</span>
-              </button>
-            )}
           </div>
         </div>
 
-        {/* Resumen de Resultados / Filtros Activos */}
-        <div className="flex items-center justify-between text-xs text-slate-500 dark:text-zinc-400 pt-1 border-t border-slate-200/60 dark:border-zinc-800/60">
+        {/* Píldoras / Tabs Deslizables Horizontales (Mobile Carousel) */}
+        <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar pb-1 pt-0.5">
+          <button
+            type="button"
+            onClick={() => setFiltroRapido("todos")}
+            className={`min-h-[38px] px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all shrink-0 flex items-center gap-1.5 ${
+              filtroRapido === "todos"
+                ? "bg-cyan-600 text-white shadow-sm shadow-cyan-600/30"
+                : "bg-slate-100 dark:bg-zinc-800/80 hover:bg-slate-200 dark:hover:bg-zinc-700/80 text-slate-600 dark:text-zinc-300"
+            }`}
+          >
+            Todos ({inventario.length})
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setFiltroRapido("critico")}
+            className={`min-h-[38px] px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all shrink-0 flex items-center gap-1.5 ${
+              filtroRapido === "critico"
+                ? "bg-amber-600 text-white shadow-sm shadow-amber-600/30"
+                : "bg-slate-100 dark:bg-zinc-800/80 hover:bg-slate-200 dark:hover:bg-zinc-700/80 text-slate-600 dark:text-zinc-300"
+            }`}
+          >
+            {stats.criticos > 0 && (
+              <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse shrink-0" />
+            )}
+            ⚠️ Stock Crítico ({stats.criticos})
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setFiltroRapido("Fijo")}
+            className={`min-h-[38px] px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all shrink-0 flex items-center gap-1.5 ${
+              filtroRapido === "Fijo"
+                ? "bg-blue-600 text-white shadow-sm shadow-blue-600/30"
+                : "bg-slate-100 dark:bg-zinc-800/80 hover:bg-slate-200 dark:hover:bg-zinc-700/80 text-slate-600 dark:text-zinc-300"
+            }`}
+          >
+            <Cpu className="w-3.5 h-3.5" />
+            Equipos Fijos
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setFiltroRapido("Consumible")}
+            className={`min-h-[38px] px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all shrink-0 flex items-center gap-1.5 ${
+              filtroRapido === "Consumible"
+                ? "bg-orange-600 text-white shadow-sm shadow-orange-600/30"
+                : "bg-slate-100 dark:bg-zinc-800/80 hover:bg-slate-200 dark:hover:bg-zinc-700/80 text-slate-600 dark:text-zinc-300"
+            }`}
+          >
+            <Boxes className="w-3.5 h-3.5" />
+            Consumibles
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setFiltroRapido("Servicio")}
+            className={`min-h-[38px] px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all shrink-0 flex items-center gap-1.5 ${
+              filtroRapido === "Servicio"
+                ? "bg-purple-600 text-white shadow-sm shadow-purple-600/30"
+                : "bg-slate-100 dark:bg-zinc-800/80 hover:bg-slate-200 dark:hover:bg-zinc-700/80 text-slate-600 dark:text-zinc-300"
+            }`}
+          >
+            <Wrench className="w-3.5 h-3.5" />
+            Servicios
+          </button>
+
+          {hasActiveFilters && (
+            <button
+              type="button"
+              onClick={resetFilters}
+              className="min-h-[38px] px-3 py-1.5 rounded-xl text-xs font-bold text-rose-500 bg-rose-500/10 hover:bg-rose-500/20 transition-all shrink-0 flex items-center gap-1"
+              title="Restablecer filtros"
+            >
+              <RotateCcw className="w-3.5 h-3.5" />
+              <span>Limpiar</span>
+            </button>
+          )}
+        </div>
+
+        {/* Resumen de Resultados */}
+        <div className="flex items-center justify-between text-xs text-slate-500 dark:text-zinc-400 pt-1 border-t border-slate-100 dark:border-zinc-800/60">
           <span>
             Mostrando{" "}
-            <strong className="text-slate-800 dark:text-zinc-200">
+            <strong className="text-slate-900 dark:text-zinc-100 font-bold">
               {filteredInventario.length}
             </strong>{" "}
             de {inventario.length} ítems
           </span>
 
           {hasActiveFilters && (
-            <span className="text-[11px] text-cyan-600 dark:text-cyan-400 flex items-center gap-1 font-semibold">
-              <SlidersHorizontal className="w-3 h-3" />
-              Filtros activos
+            <span className="text-[11px] text-cyan-600 dark:text-cyan-400 font-medium">
+              Filtro activo
             </span>
           )}
         </div>
       </div>
 
-      {/* 1. Vista Móvil: Tarjetas Táctiles (< md) */}
+      {/* 3. VISTA MÓVIL: Tarjetas Táctiles Adaptativas (< md) */}
       <div className="md:hidden space-y-3">
         {filteredInventario.length === 0 ? (
           <div className="rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-8 text-center text-slate-400 dark:text-zinc-500">
@@ -249,58 +453,83 @@ export function InventarioTable({ inventario, categorias = [] }: Props) {
           </div>
         ) : (
           filteredInventario.map((item) => {
-            const isLowStock =
-              item.tipo !== "Servicio" &&
-              (item.stock_actual ?? 0) <= (item.stock_minimo ?? 0);
+            const badgeMeta = getBadgeStyles(item.tipo);
+            const Icon = badgeMeta.icon;
+            const isService = item.tipo === "Servicio";
+            const currentStock = stockOverrides[item.id] ?? item.stock_actual ?? 0;
+            const minStock = item.stock_minimo ?? 0;
+            const isCritical = !isService && currentStock <= minStock;
+            const isZero = !isService && currentStock === 0;
+            const isUpdating = updatingStockId === item.id;
+            const isSkuCopied = copiedSkuId === item.id;
+
+            // Porcentaje para la barra de stock
+            const maxCap = Math.max(1, minStock * 2);
+            const stockPct = Math.min(100, Math.round((currentStock / maxCap) * 100));
 
             return (
               <div
                 key={item.id}
-                className="rounded-2xl border border-slate-200 dark:border-zinc-800/90 bg-white dark:bg-zinc-900/60 p-4 shadow-sm space-y-3.5 transition-colors"
+                className={`rounded-2xl border bg-white dark:bg-zinc-900/70 p-4 shadow-sm space-y-3.5 transition-all ${
+                  isZero
+                    ? "border-rose-500/40 dark:border-rose-500/30"
+                    : isCritical
+                    ? "border-amber-500/40 dark:border-amber-500/30"
+                    : "border-slate-200/90 dark:border-zinc-800/90"
+                }`}
               >
-                <div className="flex items-start justify-between gap-2">
-                  <div className="min-w-0 flex-1">
-                    <h4 className="text-sm font-bold text-slate-900 dark:text-zinc-100 leading-snug">
-                      {item.nombre}
-                    </h4>
-                    <div className="flex items-center gap-2 mt-1.5 flex-wrap">
-                      <span
-                        className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold border uppercase tracking-wider ${getBadgeStyles(
-                          item.tipo
-                        )}`}
-                      >
-                        {item.tipo}
-                      </span>
-                      {item.categoria && (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-medium bg-cyan-500/10 text-cyan-700 dark:text-cyan-400 border border-cyan-500/20">
-                          <FolderTree className="w-2.5 h-2.5" />
-                          {item.categoria}
+                {/* Cabecera: Icono, Nombre, SKU y Acciones */}
+                <div className="flex items-start justify-between gap-2.5">
+                  <div className="flex items-center gap-3 min-w-0 flex-1">
+                    <div
+                      className={`h-11 w-11 rounded-2xl bg-gradient-to-br ${badgeMeta.avatar} flex items-center justify-center shrink-0 shadow-sm`}
+                    >
+                      <Icon className="w-5 h-5" />
+                    </div>
+
+                    <div className="min-w-0 flex-1">
+                      <h4 className="text-sm sm:text-base font-bold text-slate-900 dark:text-zinc-100 truncate leading-snug">
+                        {item.nombre}
+                      </h4>
+
+                      <div className="flex items-center gap-1.5 flex-wrap mt-1">
+                        <span
+                          className={`inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold border ${badgeMeta.badge}`}
+                        >
+                          {badgeMeta.label}
                         </span>
-                      )}
-                      {item.sku && (
-                        <span className="text-[11px] font-mono text-slate-500 dark:text-zinc-400">
-                          #{item.sku}
-                        </span>
-                      )}
+
+                        {item.categoria && (
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-medium bg-cyan-500/10 text-cyan-700 dark:text-cyan-400 border border-cyan-500/20 truncate max-w-[150px]">
+                            <FolderTree className="w-2.5 h-2.5 shrink-0" />
+                            <span className="truncate">{item.categoria}</span>
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-1.5 shrink-0">
+                  {/* Acciones de Edición y Eliminación */}
+                  <div className="flex items-center gap-1 shrink-0">
                     <InventarioFormModal
                       itemInicial={item as any}
                       isEdit={true}
                       categorias={categorias}
                     />
-                    <DeleteInventarioButton id={item.id} nombreItem={item.nombre} />
+                    <DeleteInventarioButton
+                      id={item.id}
+                      nombreItem={item.nombre}
+                    />
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between pt-2.5 border-t border-slate-100 dark:border-zinc-800/80 text-xs">
+                {/* Sub-tarjeta de SKU y Precio Unitario */}
+                <div className="grid grid-cols-2 gap-2 p-2.5 rounded-xl bg-slate-50 dark:bg-zinc-950/60 border border-slate-200/80 dark:border-zinc-800/60 text-xs">
                   <div>
-                    <span className="text-[10px] text-slate-400 dark:text-zinc-500 uppercase font-medium block">
+                    <span className="text-[10px] text-slate-400 dark:text-zinc-500 uppercase font-semibold block">
                       Precio Unitario
                     </span>
-                    <span className="font-semibold text-slate-800 dark:text-zinc-200">
+                    <span className="text-sm font-extrabold text-slate-900 dark:text-zinc-100">
                       {new Intl.NumberFormat("es-AR", {
                         style: "currency",
                         currency: "ARS",
@@ -309,54 +538,152 @@ export function InventarioTable({ inventario, categorias = [] }: Props) {
                   </div>
 
                   <div className="text-right">
-                    <span className="text-[10px] text-slate-400 dark:text-zinc-500 uppercase font-medium block">
-                      Stock
+                    <span className="text-[10px] text-slate-400 dark:text-zinc-500 uppercase font-semibold block">
+                      Código SKU
                     </span>
-                    {item.tipo === "Servicio" ? (
-                      <span className="text-slate-400 dark:text-zinc-500 font-medium">N/A</span>
-                    ) : (
-                      <span
-                        className={`font-semibold inline-flex items-center gap-1 ${
-                          isLowStock
-                            ? "text-amber-600 dark:text-amber-400"
-                            : "text-slate-800 dark:text-zinc-200"
+                    {item.sku ? (
+                      <button
+                        type="button"
+                        onClick={() => handleCopySku(item.sku!, item.id)}
+                        className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded font-mono text-[11px] font-semibold transition-all ${
+                          isSkuCopied
+                            ? "bg-emerald-500 text-white"
+                            : "text-slate-700 dark:text-zinc-300 hover:text-cyan-500"
                         }`}
+                        title="Copiar SKU"
                       >
-                        {isLowStock && <AlertTriangle className="w-3.5 h-3.5 text-amber-500" />}
-                        {item.stock_actual || 0} u.
-                        {item.stock_minimo ? (
-                          <span className="text-[10px] text-slate-400 dark:text-zinc-500 font-normal">
-                            (mín: {item.stock_minimo})
-                          </span>
-                        ) : null}
+                        <span>#{item.sku}</span>
+                        {isSkuCopied ? (
+                          <Check className="w-3 h-3" />
+                        ) : (
+                          <Copy className="w-3 h-3 opacity-60" />
+                        )}
+                      </button>
+                    ) : (
+                      <span className="text-slate-400 dark:text-zinc-600 font-mono text-[11px]">
+                        Sin SKU
                       </span>
                     )}
                   </div>
                 </div>
+
+                {/* Sección de Stock Físico con Barra y Stepper Rápido */}
+                {isService ? (
+                  <div className="flex items-center justify-between p-2.5 rounded-xl bg-purple-500/5 border border-purple-500/15 text-xs text-purple-600 dark:text-purple-300">
+                    <span className="font-semibold flex items-center gap-1.5">
+                      <Wrench className="w-3.5 h-3.5" />
+                      Servicio sin inventario físico
+                    </span>
+                    <span className="text-[11px] opacity-80">Mano de obra</span>
+                  </div>
+                ) : (
+                  <div className="space-y-2 pt-1 border-t border-slate-100 dark:border-zinc-800/80">
+                    {/* Indicador de Stock y Badge de Salud */}
+                    <div className="flex items-center justify-between text-xs">
+                      <div className="flex items-center gap-1.5">
+                        <span className="font-bold text-slate-900 dark:text-zinc-100 text-sm">
+                          {currentStock} u.
+                        </span>
+                        <span className="text-[11px] text-slate-400 dark:text-zinc-500">
+                          (mín: {minStock} u.)
+                        </span>
+                      </div>
+
+                      {isZero ? (
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20">
+                          Agotado
+                        </span>
+                      ) : isCritical ? (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/25">
+                          <AlertTriangle className="w-3 h-3 text-amber-500" />
+                          Stock Crítico
+                        </span>
+                      ) : (
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                          Stock Disponible
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Barra de Nivel de Stock */}
+                    <div className="w-full h-1.5 rounded-full bg-slate-100 dark:bg-zinc-800 overflow-hidden">
+                      <div
+                        className={`h-full rounded-full transition-all duration-300 ${
+                          isZero
+                            ? "bg-rose-500"
+                            : isCritical
+                            ? "bg-amber-500"
+                            : "bg-emerald-500"
+                        }`}
+                        style={{ width: `${Math.max(5, stockPct)}%` }}
+                      />
+                    </div>
+
+                    {/* Control Rápido de Stock (+ / -) con Touch Target de 44px */}
+                    <div className="flex items-center justify-between pt-1">
+                      <span className="text-[11px] font-semibold text-slate-500 dark:text-zinc-400">
+                        Ajuste rápido en depósito:
+                      </span>
+
+                      <div className="flex items-center gap-1 bg-slate-100 dark:bg-zinc-800/80 p-0.5 rounded-xl border border-slate-200 dark:border-zinc-700/60">
+                        <button
+                          type="button"
+                          onClick={() => handleAjustarStock(item.id, -1, currentStock)}
+                          disabled={isUpdating || currentStock <= 0}
+                          className="min-h-[38px] min-w-[38px] flex items-center justify-center rounded-lg bg-white dark:bg-zinc-900 text-slate-700 dark:text-zinc-300 hover:text-rose-500 dark:hover:text-rose-400 disabled:opacity-40 transition-colors shadow-sm active:scale-95"
+                          title="Restar 1 unidad"
+                        >
+                          <Minus className="w-3.5 h-3.5" />
+                        </button>
+
+                        <div className="px-2.5 min-w-[32px] text-center font-mono text-xs font-bold text-slate-800 dark:text-zinc-200">
+                          {isUpdating ? (
+                            <Loader2 className="w-3.5 h-3.5 animate-spin mx-auto text-cyan-500" />
+                          ) : (
+                            currentStock
+                          )}
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => handleAjustarStock(item.id, 1, currentStock)}
+                          disabled={isUpdating}
+                          className="min-h-[38px] min-w-[38px] flex items-center justify-center rounded-lg bg-white dark:bg-zinc-900 text-slate-700 dark:text-zinc-300 hover:text-emerald-500 dark:hover:text-emerald-400 disabled:opacity-40 transition-colors shadow-sm active:scale-95"
+                          title="Sumar 1 unidad"
+                        >
+                          <Plus className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             );
           })
         )}
       </div>
 
-      {/* 2. Vista Desktop & Tablet: Tabla Completa (>= md) */}
-      <div className="hidden md:block rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 backdrop-blur-sm overflow-hidden shadow-sm dark:shadow-xl">
+      {/* 4. VISTA DESKTOP & TABLET: Tabla Completa de Alta Densidad (>= md) */}
+      <div className="hidden md:block rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 backdrop-blur-sm overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left">
-            <thead className="text-xs text-slate-500 dark:text-zinc-400 uppercase bg-slate-50 dark:bg-zinc-900/80 border-b border-slate-200 dark:border-zinc-800">
+            <thead className="text-xs text-slate-500 dark:text-zinc-400 uppercase bg-slate-50/90 dark:bg-zinc-900/80 border-b border-slate-200 dark:border-zinc-800 font-semibold">
               <tr>
-                <th className="px-6 py-4 font-medium">Ítem</th>
-                <th className="px-6 py-4 font-medium">Categoría</th>
-                <th className="px-6 py-4 font-medium">SKU</th>
-                <th className="px-6 py-4 font-medium">Precio Unitario</th>
-                <th className="px-6 py-4 font-medium">Stock</th>
-                <th className="px-6 py-4 font-medium text-right">Acciones</th>
+                <th className="px-6 py-4">Ítem / Artículo</th>
+                <th className="px-6 py-4">Tipo & Categoría</th>
+                <th className="px-6 py-4">Código SKU</th>
+                <th className="px-6 py-4">Precio Unitario</th>
+                <th className="px-6 py-4">Nivel de Stock</th>
+                <th className="px-6 py-4 text-right">Acciones</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-200 dark:divide-zinc-800">
+            <tbody className="divide-y divide-slate-100 dark:divide-zinc-800/80">
               {filteredInventario.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-14 text-center text-slate-400 dark:text-zinc-500">
+                  <td
+                    colSpan={6}
+                    className="px-6 py-14 text-center text-slate-400 dark:text-zinc-500"
+                  >
                     <div className="flex flex-col items-center justify-center space-y-2">
                       <FilterX className="w-8 h-8 text-slate-400 dark:text-zinc-600 stroke-1" />
                       <p className="text-sm font-medium text-slate-600 dark:text-zinc-400">
@@ -368,7 +695,7 @@ export function InventarioTable({ inventario, categorias = [] }: Props) {
                         <button
                           type="button"
                           onClick={resetFilters}
-                          className="mt-2 text-xs text-cyan-600 dark:text-cyan-400 hover:underline underline-offset-4"
+                          className="mt-2 text-xs text-cyan-600 dark:text-cyan-400 hover:underline underline-offset-4 font-semibold"
                         >
                           Limpiar filtros de búsqueda
                         </button>
@@ -378,84 +705,153 @@ export function InventarioTable({ inventario, categorias = [] }: Props) {
                 </tr>
               ) : (
                 filteredInventario.map((item) => {
-                  const isLowStock =
-                    item.tipo !== "Servicio" &&
-                    (item.stock_actual ?? 0) <= (item.stock_minimo ?? 0);
+                  const badgeMeta = getBadgeStyles(item.tipo);
+                  const Icon = badgeMeta.icon;
+                  const isService = item.tipo === "Servicio";
+                  const currentStock = stockOverrides[item.id] ?? item.stock_actual ?? 0;
+                  const minStock = item.stock_minimo ?? 0;
+                  const isCritical = !isService && currentStock <= minStock;
+                  const isZero = !isService && currentStock === 0;
+                  const isUpdating = updatingStockId === item.id;
+                  const isSkuCopied = copiedSkuId === item.id;
 
                   return (
                     <tr
                       key={item.id}
                       className="hover:bg-slate-50/80 dark:hover:bg-zinc-800/40 transition-colors"
                     >
+                      {/* Ítem y Avatar */}
                       <td className="px-6 py-4">
-                        <div className="flex flex-col space-y-1.5">
-                          <span className="font-medium text-slate-900 dark:text-zinc-100">
-                            {item.nombre}
-                          </span>
+                        <div className="flex items-center gap-3">
+                          <div
+                            className={`h-9 w-9 rounded-xl bg-gradient-to-br ${badgeMeta.avatar} flex items-center justify-center shrink-0 shadow-sm`}
+                          >
+                            <Icon className="w-4 h-4" />
+                          </div>
                           <div>
-                            <span
-                              className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold border uppercase tracking-wider ${getBadgeStyles(
-                                item.tipo
-                              )}`}
-                            >
-                              {item.tipo}
+                            <span className="font-bold text-slate-900 dark:text-zinc-100 block">
+                              {item.nombre}
+                            </span>
+                            <span className="text-[11px] text-slate-400 dark:text-zinc-500 font-mono">
+                              ID: {item.id.substring(0, 8)}
                             </span>
                           </div>
                         </div>
                       </td>
+
+                      {/* Tipo y Categoría */}
                       <td className="px-6 py-4">
-                        {item.categoria ? (
-                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 border border-slate-200 dark:border-zinc-700/70">
-                            <FolderTree className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400 shrink-0" />
-                            {item.categoria}
+                        <div className="flex flex-col gap-1 items-start">
+                          <span
+                            className={`inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold border ${badgeMeta.badge}`}
+                          >
+                            {badgeMeta.label}
                           </span>
-                        ) : (
-                          <span className="text-xs text-slate-400 dark:text-zinc-600 italic">
-                            Sin categoría
-                          </span>
-                        )}
-                      </td>
-                      <td className="px-6 py-4 text-slate-500 dark:text-zinc-400">
-                        <div className="flex items-center">
-                          <Hash className="w-3.5 h-3.5 mr-1.5 opacity-70" />
-                          <span className="font-mono text-xs">
-                            {item.sku || "N/A"}
-                          </span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 text-slate-700 dark:text-zinc-300 font-medium">
-                        <div className="flex items-center">
-                          <CircleDollarSign className="w-4 h-4 mr-1.5 text-slate-400 dark:text-zinc-500 shrink-0" />
-                          {new Intl.NumberFormat("es-AR", {
-                            style: "currency",
-                            currency: "ARS",
-                          }).format(item.precio_unitario)}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        {item.tipo === "Servicio" ? (
-                          <span className="text-slate-400 dark:text-zinc-500 text-sm">N/A</span>
-                        ) : (
-                          <div className="flex items-center">
-                            <span
-                              className={`font-medium ${
-                                isLowStock ? "text-amber-600 dark:text-amber-400 font-bold" : "text-slate-700 dark:text-zinc-300"
-                              }`}
-                            >
-                              {item.stock_actual || 0}
-                            </span>
-                            {isLowStock && (
-                              <span
-                                title={`Stock bajo: mínimo ${item.stock_minimo || 0}`}
-                                className="flex items-center"
-                              >
-                                <AlertTriangle className="w-4 h-4 ml-2 text-amber-600 dark:text-amber-400" />
+                          {item.categoria ? (
+                            <span className="inline-flex items-center gap-1 text-xs text-slate-600 dark:text-zinc-400">
+                              <FolderTree className="w-3 h-3 opacity-60 shrink-0" />
+                              <span className="truncate max-w-[150px]">
+                                {item.categoria}
                               </span>
+                            </span>
+                          ) : (
+                            <span className="text-xs text-slate-400 dark:text-zinc-600">
+                              Sin categoría
+                            </span>
+                          )}
+                        </div>
+                      </td>
+
+                      {/* SKU con copiado */}
+                      <td className="px-6 py-4 font-mono text-xs">
+                        {item.sku ? (
+                          <button
+                            type="button"
+                            onClick={() => handleCopySku(item.sku!, item.id)}
+                            className="inline-flex items-center gap-1 text-slate-700 dark:text-zinc-300 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors"
+                            title="Copiar SKU"
+                          >
+                            <span>#{item.sku}</span>
+                            {isSkuCopied ? (
+                              <Check className="w-3 h-3 text-emerald-500" />
+                            ) : (
+                              <Copy className="w-3 h-3 opacity-50 hover:opacity-100" />
                             )}
+                          </button>
+                        ) : (
+                          <span className="text-slate-400 dark:text-zinc-600">-</span>
+                        )}
+                      </td>
+
+                      {/* Precio Unitario */}
+                      <td className="px-6 py-4 font-bold text-slate-900 dark:text-zinc-100">
+                        {new Intl.NumberFormat("es-AR", {
+                          style: "currency",
+                          currency: "ARS",
+                        }).format(item.precio_unitario)}
+                      </td>
+
+                      {/* Nivel de Stock y Stepper */}
+                      <td className="px-6 py-4">
+                        {isService ? (
+                          <span className="text-xs text-slate-400 dark:text-zinc-500 italic">
+                            Intangible (Servicio)
+                          </span>
+                        ) : (
+                          <div className="flex items-center gap-3">
+                            <div className="space-y-1 min-w-[100px]">
+                              <div className="flex items-center gap-1.5">
+                                <span
+                                  className={`text-xs font-bold ${
+                                    isZero
+                                      ? "text-rose-600 dark:text-rose-400"
+                                      : isCritical
+                                      ? "text-amber-600 dark:text-amber-400"
+                                      : "text-slate-800 dark:text-zinc-200"
+                                  }`}
+                                >
+                                  {currentStock} u.
+                                </span>
+                                {isCritical && (
+                                  <AlertTriangle className="w-3 h-3 text-amber-500" />
+                                )}
+                              </div>
+                              <span className="text-[10px] text-slate-400 dark:text-zinc-500 block">
+                                Mínimo: {minStock} u.
+                              </span>
+                            </div>
+
+                            {/* Mini stepper en tabla */}
+                            <div className="flex items-center gap-0.5 bg-slate-100 dark:bg-zinc-800 p-0.5 rounded-lg border border-slate-200 dark:border-zinc-700/70">
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  handleAjustarStock(item.id, -1, currentStock)
+                                }
+                                disabled={isUpdating || currentStock <= 0}
+                                className="h-6 w-6 flex items-center justify-center rounded bg-white dark:bg-zinc-900 text-slate-700 dark:text-zinc-300 hover:text-rose-500 disabled:opacity-30 shadow-sm transition-colors"
+                                title="Restar 1"
+                              >
+                                <Minus className="w-3 h-3" />
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  handleAjustarStock(item.id, 1, currentStock)
+                                }
+                                disabled={isUpdating}
+                                className="h-6 w-6 flex items-center justify-center rounded bg-white dark:bg-zinc-900 text-slate-700 dark:text-zinc-300 hover:text-emerald-500 disabled:opacity-30 shadow-sm transition-colors"
+                                title="Sumar 1"
+                              >
+                                <Plus className="w-3 h-3" />
+                              </button>
+                            </div>
                           </div>
                         )}
                       </td>
-                      <td className="px-6 py-4">
+
+                      {/* Acciones */}
+                      <td className="px-6 py-4 text-right">
                         <div className="flex justify-end items-center gap-1">
                           <InventarioFormModal
                             itemInicial={item as any}
