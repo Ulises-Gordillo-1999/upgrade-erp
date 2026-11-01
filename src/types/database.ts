@@ -141,5 +141,17 @@ export interface LogAuditoria {
   created_at?: string;
 }
 
+export interface SuscripcionPush {
+  id: string; // UUID
+  usuario_id: string; // UUID
+  endpoint: string;
+  p256dh: string;
+  auth: string;
+  user_agent?: string | null;
+  nombre_dispositivo?: string | null;
+  created_at?: string;
+  last_used_at?: string | null;
+}
+
 
 

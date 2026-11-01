@@ -14,6 +14,7 @@ import {
 import { revalidatePath } from "next/cache";
 import { getSession } from "@/utils/auth";
 import { registrarAuditoria } from "./auditoria";
+import { sendPushNotificationToRoles } from "./webpush";
 
 export async function getProyectos() {
   try {
@@ -161,6 +162,14 @@ export async function createProyecto(data: {
       accion: "Crear Proyecto",
       detalle: `Creó proyecto para cliente ID ${data.cliente_id} en estado '${data.estado}'`,
     });
+
+    // Despacho no bloqueante de notificación Web Push
+    sendPushNotificationToRoles(["SuperAdmin", "Admin", "Tecnico"], {
+      title: "📋 Nuevo Proyecto Creado",
+      body: `Se ha registrado una nueva obra/proyecto en estado "${data.estado}".`,
+      url: `/proyectos/${newProyecto.id}`,
+      tag: "nuevo-proyecto",
+    }).catch(() => {});
 
     return {
       ...newProyecto,
@@ -468,6 +477,14 @@ export async function cerrarProyectoConLiquidacion(data: {
       accion: "Cierre de Obra con Liquidación",
       detalle: `Finalizó y liquidó obra para '${proyecto.cliente?.nombre_razon_social || "Cliente"}' (ID: ${data.proyecto_id}). Total final: $${proyectoActualizado.total_final} ARS. Stock de insumos y consumibles descontado.${data.registrar_transaccion ? " Cobro registrado en Finanzas." : ""}`,
     });
+
+    // Despacho no bloqueante de notificación Web Push
+    sendPushNotificationToRoles(["SuperAdmin", "Admin"], {
+      title: "🏗️ Obra Liquidada y Concluida",
+      body: `Obra finalizada para '${proyecto.cliente?.nombre_razon_social || "Cliente"}'. Total final: $${proyectoActualizado.total_final} ARS.`,
+      url: `/proyectos/${data.proyecto_id}`,
+      tag: "obra-liquidada",
+    }).catch(() => {});
 
     return {
       success: true,

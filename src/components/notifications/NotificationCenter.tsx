@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   Bell,
+  BellRing,
   Package,
   AlertTriangle,
   FolderGit2,
@@ -303,22 +304,34 @@ export function NotificationCenter({ initialNotificaciones }: Props) {
 
           {/* Footer del Popover */}
           <div className="p-2.5 bg-slate-50 dark:bg-zinc-950/70 border-t border-slate-200 dark:border-zinc-800 flex items-center justify-between text-[11px]">
-            <Link
-              href="/inventario"
-              onClick={() => setIsOpen(false)}
-              className="text-slate-500 hover:text-cyan-600 dark:text-zinc-400 dark:hover:text-cyan-400 transition-colors flex items-center gap-1 font-medium px-2 py-1 rounded"
-            >
-              <span>Inventario</span>
-              <ExternalLink className="w-3 h-3" />
-            </Link>
+            <div className="flex items-center gap-2">
+              <Link
+                href="/inventario"
+                onClick={() => setIsOpen(false)}
+                className="text-slate-500 hover:text-cyan-600 dark:text-zinc-400 dark:hover:text-cyan-400 transition-colors flex items-center gap-1 font-medium px-1.5 py-1 rounded"
+              >
+                <span>Inventario</span>
+                <ExternalLink className="w-3 h-3" />
+              </Link>
+
+              <Link
+                href="/proyectos"
+                onClick={() => setIsOpen(false)}
+                className="text-slate-500 hover:text-cyan-600 dark:text-zinc-400 dark:hover:text-cyan-400 transition-colors flex items-center gap-1 font-medium px-1.5 py-1 rounded"
+              >
+                <span>Proyectos</span>
+                <ExternalLink className="w-3 h-3" />
+              </Link>
+            </div>
 
             <Link
-              href="/proyectos"
+              href="/perfil"
               onClick={() => setIsOpen(false)}
-              className="text-slate-500 hover:text-cyan-600 dark:text-zinc-400 dark:hover:text-cyan-400 transition-colors flex items-center gap-1 font-medium px-2 py-1 rounded"
+              className="text-cyan-700 dark:text-cyan-400 hover:underline transition-colors flex items-center gap-1 font-semibold px-1.5 py-1 rounded"
+              title="Configurar Notificaciones Push en este equipo"
             >
-              <span>Proyectos</span>
-              <ExternalLink className="w-3 h-3" />
+              <BellRing className="w-3 h-3 text-cyan-600 dark:text-cyan-400" />
+              <span>Alertas Push</span>
             </Link>
           </div>
         </div>

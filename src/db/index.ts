@@ -73,6 +73,17 @@ export async function ensureDatabaseSchema() {
       created_at TIMESTAMPTZ DEFAULT NOW(),
       last_used_at TIMESTAMPTZ
     );`,
+    `CREATE TABLE IF NOT EXISTS suscripciones_push (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      usuario_id UUID NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
+      endpoint TEXT NOT NULL UNIQUE,
+      p256dh TEXT NOT NULL,
+      auth TEXT NOT NULL,
+      user_agent TEXT,
+      nombre_dispositivo TEXT DEFAULT 'Navegador Web',
+      created_at TIMESTAMPTZ DEFAULT NOW(),
+      last_used_at TIMESTAMPTZ
+    );`,
   ];
 
   for (const q of queries) {

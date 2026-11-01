@@ -15,9 +15,11 @@ import {
   Calendar,
   Lock,
   Fingerprint,
+  Bell,
 } from "lucide-react";
 import { updateMiPerfil, cambiarMiEmail, cambiarMiPassword } from "@/app/actions/perfil";
 import { BiometricEnrollment } from "./BiometricEnrollment";
+import { PushNotificationManager } from "@/components/pwa/PushNotificationManager";
 
 interface PerfilFormProps {
   usuario: {
@@ -33,8 +35,8 @@ interface PerfilFormProps {
 }
 
 export function PerfilForm({ usuario }: PerfilFormProps) {
-  // Pestaña activa: 'personal' | 'email' | 'password' | 'biometria'
-  const [tab, setTab] = useState<"personal" | "email" | "password" | "biometria">("personal");
+  // Pestaña activa: 'personal' | 'email' | 'password' | 'biometria' | 'notificaciones'
+  const [tab, setTab] = useState<"personal" | "email" | "password" | "biometria" | "notificaciones">("personal");
 
   // Estado pestaña personal
   const [nombre, setNombre] = useState(usuario.nombre);
@@ -200,6 +202,19 @@ export function PerfilForm({ usuario }: PerfilFormProps) {
         >
           <Fingerprint className="w-4 h-4 shrink-0" />
           <span>Huella / Passkeys</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setTab("notificaciones")}
+          className={`shrink-0 min-h-[44px] px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all relative flex items-center gap-2 whitespace-nowrap active:scale-[0.98] cursor-pointer ${
+            tab === "notificaciones"
+              ? "bg-white dark:bg-zinc-800 text-cyan-600 dark:text-cyan-400 shadow-sm"
+              : "text-slate-600 hover:text-slate-900 dark:text-zinc-400 dark:hover:text-zinc-200"
+          }`}
+        >
+          <Bell className="w-4 h-4 shrink-0" />
+          <span>Alertas Push</span>
         </button>
       </div>
 
@@ -453,6 +468,13 @@ export function PerfilForm({ usuario }: PerfilFormProps) {
 
       {/* Contenido Pestaña 4: Autenticación Biométrica & Passkeys */}
       {tab === "biometria" && <BiometricEnrollment />}
+
+      {/* Contenido Pestaña 5: Notificaciones Web Push Nativas */}
+      {tab === "notificaciones" && (
+        <div className="rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-4 sm:p-6 lg:p-8 backdrop-blur-md shadow-sm w-full min-w-0">
+          <PushNotificationManager />
+        </div>
+      )}
     </div>
   );
 }

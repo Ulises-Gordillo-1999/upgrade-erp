@@ -197,9 +197,31 @@ export const autenticadoresBiometricos = pgTable("autenticadores_biometricos", {
   last_used_at: timestamp("last_used_at", { withTimezone: true }),
 });
 
+export const suscripcionesPush = pgTable("suscripciones_push", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  usuario_id: uuid("usuario_id")
+    .notNull()
+    .references(() => usuarios.id, { onDelete: "cascade" }),
+  endpoint: text("endpoint").notNull().unique(),
+  p256dh: text("p256dh").notNull(),
+  auth: text("auth").notNull(),
+  user_agent: text("user_agent"),
+  nombre_dispositivo: text("nombre_dispositivo").default("Navegador Web"),
+  created_at: timestamp("created_at", { withTimezone: true }).defaultNow(),
+  last_used_at: timestamp("last_used_at", { withTimezone: true }),
+});
+
 // 3. Relaciones (Drizzle Relations)
 export const usuariosRelations = relations(usuarios, ({ many }) => ({
   autenticadores: many(autenticadoresBiometricos),
+  suscripcionesPush: many(suscripcionesPush),
+}));
+
+export const suscripcionesPushRelations = relations(suscripcionesPush, ({ one }) => ({
+  usuario: one(usuarios, {
+    fields: [suscripcionesPush.usuario_id],
+    references: [usuarios.id],
+  }),
 }));
 
 export const autenticadoresBiometricosRelations = relations(autenticadoresBiometricos, ({ one }) => ({

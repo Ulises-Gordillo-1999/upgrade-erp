@@ -6,6 +6,7 @@ import { desc, asc, eq } from "drizzle-orm";
 import { Inventario, CategoriaInventario } from "@/types/database";
 import { revalidatePath } from "next/cache";
 import { syncPreciosProyectosPendientes } from "@/app/actions/proyectos";
+import { sendPushNotificationToRoles } from "./webpush";
 
 const DEFAULT_CATEGORIAS: Array<{ nombre: string; tipo_asociado: "Producto" | "Servicio" | "Ambos" }> = [
   // Productos (Fijos / Consumibles)
@@ -263,6 +264,20 @@ export async function updateItemInventario(id: string, item: Partial<Omit<Invent
       await syncPreciosProyectosPendientes(id, valuesToUpdate.precio_unitario);
       revalidatePath("/proyectos");
       revalidatePath("/");
+    }
+
+    // Si el stock físico cayó por debajo del mínimo, disparar alerta Web Push a Administradores
+    if (
+      updated.tipo !== "Servicio" &&
+      item.stock_actual !== undefined &&
+      (updated.stock_actual ?? 0) <= (updated.stock_minimo ?? 0)
+    ) {
+      sendPushNotificationToRoles(["SuperAdmin", "Admin"], {
+        title: "⚠️ Alerta de Stock Crítico",
+        body: `"${updated.nombre}" ha alcanzado nivel crítico (${updated.stock_actual} restantes, mín: ${updated.stock_minimo}).`,
+        url: "/inventario",
+        tag: `stock-critico-${updated.id}`,
+      }).catch(() => {});
     }
 
     revalidatePath("/inventario");
