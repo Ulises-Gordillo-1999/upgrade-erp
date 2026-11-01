@@ -3,6 +3,8 @@ import { BovedaTable } from "@/components/boveda/BovedaTable";
 import { GestionarTiposCredencialModal } from "@/components/boveda/GestionarTiposCredencialModal";
 import { ShieldAlert } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
 export default async function BovedaGlobalPage() {
   const [bovedaItems, tiposCredencial] = await Promise.all([
     getBovedaData(),

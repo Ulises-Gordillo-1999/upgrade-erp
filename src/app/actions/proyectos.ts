@@ -651,3 +651,21 @@ export async function deleteProyecto(id: string) {
     throw new Error(error.message || "Error al eliminar el proyecto");
   }
 }
+
+export async function registrarCompartirWhatsAppAction(
+  proyectoId: string,
+  clienteNombre: string,
+  telefono: string
+) {
+  try {
+    await registrarAuditoria({
+      modulo: "Proyectos",
+      accion: "Compartir Presupuesto por WhatsApp",
+      detalle: `Se generó y envió cotización #COT-${proyectoId.substring(0, 8).toUpperCase()} para cliente '${clienteNombre}' (Destino: ${telefono || "WhatsApp"}).`,
+    });
+    return { success: true };
+  } catch (error) {
+    console.error("Error al registrar auditoría WhatsApp:", error);
+    return { success: false };
+  }
+}

@@ -12,6 +12,7 @@ import { DeleteBovedaButton } from "@/components/boveda/DeleteBovedaButton";
 import { MaskedValue } from "@/components/boveda/MaskedValue";
 import { BovedaImageModal } from "@/components/boveda/BovedaImageModal";
 import { ExportarPDFButton } from "@/components/proyectos/ExportarPDFButton";
+import { CompartirWhatsAppModal } from "@/components/proyectos/CompartirWhatsAppModal";
 import { DeleteProyectoButton } from "@/components/proyectos/DeleteProyectoButton";
 import {
   FolderGit2,
@@ -27,6 +28,8 @@ import Link from "next/link";
 import { EstadoProyecto } from "@/types/database";
 import { revalidatePath } from "next/cache";
 import { getSession } from "@/utils/auth";
+
+export const dynamic = "force-dynamic";
 
 export default async function ProyectoDetallePage({
   params,
@@ -79,9 +82,12 @@ export default async function ProyectoDetallePage({
         </Link>
         <div className="grid grid-cols-2 sm:flex sm:items-center gap-2 w-full sm:w-auto">
           <div className="col-span-1 sm:col-auto">
-            <ExportarPDFButton proyecto={proyecto} items={items} />
+            <CompartirWhatsAppModal proyecto={proyecto} items={items} />
           </div>
           <div className="col-span-1 sm:col-auto">
+            <ExportarPDFButton proyecto={proyecto} items={items} />
+          </div>
+          <div className="col-span-2 sm:col-auto">
             <CerrarObraModal
               proyectoId={id}
               clienteNombre={

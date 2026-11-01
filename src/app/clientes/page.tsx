@@ -2,6 +2,8 @@ import { getClientes } from "@/app/actions/clientes";
 import { ClienteFormModal } from "@/components/clientes/ClienteFormModal";
 import { ClientesTable } from "@/components/clientes/ClientesTable";
 
+export const dynamic = "force-dynamic";
+
 export default async function ClientesPage() {
   const clientes = await getClientes();
 

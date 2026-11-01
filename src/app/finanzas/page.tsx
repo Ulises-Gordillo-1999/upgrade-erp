@@ -5,6 +5,8 @@ import {
 } from "@/app/actions/finanzas";
 import { FinanzasDashboard } from "@/components/finanzas/FinanzasDashboard";
 
+export const dynamic = "force-dynamic";
+
 export default async function FinanzasPage() {
   const [transacciones, rentabilidad, categorias] = await Promise.all([
     getTransacciones(),

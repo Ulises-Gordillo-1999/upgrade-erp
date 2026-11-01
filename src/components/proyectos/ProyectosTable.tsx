@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import Link from "next/link";
 import { DeleteProyectoButton } from "./DeleteProyectoButton";
+import { CompartirWhatsAppModal } from "./CompartirWhatsAppModal";
 import {
   Search,
   X,
@@ -252,8 +253,12 @@ export function ProyectosTable({ proyectos, isSuperAdmin }: Props) {
                     )}
                   </div>
 
-                  {isSuperAdmin && (
-                    <div className="shrink-0">
+                  <div className="flex items-center gap-1 shrink-0">
+                    <CompartirWhatsAppModal
+                      proyecto={proyecto}
+                      variant="icon"
+                    />
+                    {isSuperAdmin && (
                       <DeleteProyectoButton
                         id={proyecto.id}
                         nombreCliente={
@@ -262,8 +267,8 @@ export function ProyectosTable({ proyectos, isSuperAdmin }: Props) {
                         isLiquidado={isLiquidado}
                         variant="icon"
                       />
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
 
                 {/* Sub-tarjeta de importes */}
@@ -391,7 +396,11 @@ export function ProyectosTable({ proyectos, isSuperAdmin }: Props) {
                       </div>
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <div className="flex items-center justify-end gap-2">
+                      <div className="flex items-center justify-end gap-1.5">
+                        <CompartirWhatsAppModal
+                          proyecto={proyecto}
+                          variant="icon"
+                        />
                         <Link
                           href={`/proyectos/${proyecto.id}`}
                           className="inline-flex items-center px-3 py-1 text-xs font-medium bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-700 dark:text-zinc-300 rounded-md transition-colors border border-slate-200 dark:border-zinc-700"

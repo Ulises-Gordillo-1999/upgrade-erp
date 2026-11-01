@@ -4,6 +4,8 @@ import { getSession } from "@/utils/auth";
 import { ProyectoFormModal } from "@/components/proyectos/ProyectoFormModal";
 import { ProyectosTable } from "@/components/proyectos/ProyectosTable";
 
+export const dynamic = "force-dynamic";
+
 export default async function ProyectosPage() {
   const [proyectos, clientes, session] = await Promise.all([
     getProyectos(),

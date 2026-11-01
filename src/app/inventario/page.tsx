@@ -3,6 +3,8 @@ import { InventarioFormModal } from "@/components/inventario/InventarioFormModal
 import { GestionarCategoriasModal } from "@/components/inventario/GestionarCategoriasModal";
 import { InventarioTable } from "@/components/inventario/InventarioTable";
 
+export const dynamic = "force-dynamic";
+
 export default async function InventarioPage() {
   const [inventario, categorias] = await Promise.all([
     getInventario(),
