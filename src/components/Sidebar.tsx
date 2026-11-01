@@ -16,6 +16,8 @@ import {
   UserCog,
   Menu,
   X,
+  Smartphone,
+  Download,
 } from "lucide-react";
 import { logoutUser } from "@/app/actions/auth";
 import { SessionUser } from "@/utils/auth";
@@ -66,6 +68,23 @@ export function Sidebar({
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
+
+  // Verificar si la aplicación ya se ejecuta en modo PWA standalone
+  const [isStandalone, setIsStandalone] = useState(false);
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const standaloneMode =
+        window.matchMedia("(display-mode: standalone)").matches ||
+        (navigator as any).standalone === true;
+      setIsStandalone(standaloneMode);
+    }
+  }, []);
+
+  const triggerPwaInstall = () => {
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new CustomEvent("upgrade:trigger-pwa-install"));
+    }
+  };
 
   // Función auxiliar para renderizar los enlaces de navegación
   const renderNavLinks = (onItemClick?: () => void) => (
@@ -261,6 +280,28 @@ export function Sidebar({
           {renderNavLinks(() => setIsMobileOpen(false))}
         </nav>
 
+        {!isStandalone && (
+          <div className="px-3 pb-2 pt-1">
+            <button
+              type="button"
+              onClick={() => {
+                setIsMobileOpen(false);
+                triggerPwaInstall();
+              }}
+              className="w-full flex items-center justify-between min-h-[44px] px-3.5 py-2.5 rounded-xl text-xs font-semibold bg-gradient-to-r from-cyan-500/10 via-blue-500/10 to-transparent hover:from-cyan-500/20 hover:to-blue-500/20 text-cyan-700 dark:text-cyan-300 border border-cyan-500/30 transition-all cursor-pointer group shadow-sm active:scale-[0.99]"
+            >
+              <div className="flex items-center gap-2.5">
+                <Smartphone className="w-4 h-4 text-cyan-600 dark:text-cyan-400 group-hover:scale-110 transition-transform" />
+                <div className="text-left">
+                  <p className="font-bold text-[12px] leading-tight text-slate-800 dark:text-zinc-100">Instalar Aplicación</p>
+                  <p className="text-[10px] text-slate-500 dark:text-zinc-400 font-normal">Acceso directo en celular</p>
+                </div>
+              </div>
+              <Download className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400 opacity-70 group-hover:opacity-100 transition-opacity" />
+            </button>
+          </div>
+        )}
+
         {renderUserFooter(() => setIsMobileOpen(false))}
       </aside>
 
@@ -291,6 +332,25 @@ export function Sidebar({
         <nav className="flex-1 space-y-1 px-3 py-4 overflow-y-auto">
           {renderNavLinks()}
         </nav>
+
+        {!isStandalone && (
+          <div className="px-3 pb-2 pt-1">
+            <button
+              type="button"
+              onClick={triggerPwaInstall}
+              className="w-full flex items-center justify-between min-h-[40px] px-3 py-2 rounded-xl text-xs font-semibold bg-gradient-to-r from-cyan-500/10 via-blue-500/10 to-transparent hover:from-cyan-500/20 hover:to-blue-500/20 text-cyan-700 dark:text-cyan-300 border border-cyan-500/30 transition-all cursor-pointer group shadow-sm active:scale-[0.99]"
+            >
+              <div className="flex items-center gap-2">
+                <Smartphone className="w-4 h-4 text-cyan-600 dark:text-cyan-400 group-hover:scale-110 transition-transform" />
+                <div className="text-left">
+                  <p className="font-bold text-[11px] leading-tight text-slate-800 dark:text-zinc-100">Instalar Aplicación</p>
+                  <p className="text-[10px] text-slate-500 dark:text-zinc-400 font-normal">Acceso directo en PC</p>
+                </div>
+              </div>
+              <Download className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400 opacity-70 group-hover:opacity-100 transition-opacity" />
+            </button>
+          </div>
+        )}
 
         {renderUserFooter()}
       </aside>
