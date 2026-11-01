@@ -5,14 +5,38 @@ import { clientes } from "@/db/schema";
 import { desc, eq } from "drizzle-orm";
 import { Cliente } from "@/types/database";
 
-export async function getClientes() {
+export async function getClientes(): Promise<Cliente[]> {
   try {
-    const data = await db
-      .select()
-      .from(clientes)
-      .orderBy(desc(clientes.created_at));
+    const list = await db.query.clientes.findMany({
+      with: {
+        proyectos: {
+          columns: {
+            id: true,
+            estado: true,
+          },
+        },
+      },
+      orderBy: [desc(clientes.created_at)],
+    });
 
-    return data as unknown as Cliente[];
+    return list.map((c) => {
+      const projs = c.proyectos || [];
+      const proyectos_activos = projs.filter(
+        (p) => p.estado === "En_Ejecucion" || p.estado === "Aprobado"
+      ).length;
+
+      return {
+        id: c.id,
+        nombre_razon_social: c.nombre_razon_social,
+        telefono: c.telefono ?? undefined,
+        cuit_cuil: c.cuit_cuil ?? undefined,
+        condicion_iva: (c.condicion_iva as any) ?? undefined,
+        direccion: c.direccion ?? undefined,
+        created_at: c.created_at ? c.created_at.toISOString() : undefined,
+        total_proyectos: projs.length,
+        proyectos_activos,
+      };
+    });
   } catch (error: any) {
     console.error("Error al obtener clientes:", error);
     throw new Error(error.message || "Error al obtener clientes");

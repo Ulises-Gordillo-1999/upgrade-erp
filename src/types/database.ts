@@ -18,6 +18,8 @@ export interface Cliente {
   condicion_iva?: CondicionIva;
   direccion?: string;
   created_at?: string;
+  total_proyectos?: number;
+  proyectos_activos?: number;
 }
 
 export interface CategoriaInventario {

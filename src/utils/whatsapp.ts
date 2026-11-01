@@ -33,6 +33,16 @@ export function sanitizeWhatsAppPhone(rawPhone?: string | null): string {
   return digits;
 }
 
+/**
+ * Genera una URL de wa.me con número normalizado y mensaje codificado opcional
+ */
+export function getWhatsAppLink(rawPhone?: string | null, message?: string): string {
+  const sanitized = sanitizeWhatsAppPhone(rawPhone);
+  if (!sanitized) return "";
+  const query = message ? `?text=${encodeURIComponent(message)}` : "";
+  return `https://wa.me/${sanitized}${query}`;
+}
+
 export interface BudgetMessageData {
   proyectoId: string;
   clienteNombre: string;
@@ -95,3 +105,4 @@ export function generateBudgetMessage(data: BudgetMessageData): string {
 
   return msg;
 }
+
