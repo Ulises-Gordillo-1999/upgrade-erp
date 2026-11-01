@@ -208,9 +208,144 @@ export function CerrarObraModal({
               </div>
             )}
 
-            {/* Tabla de ítems a liquidar */}
+            {/* Tabla / Tarjetas de ítems a liquidar (Híbrido Mobile / Desktop) */}
             <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="rounded-xl border border-slate-200 dark:border-zinc-800 bg-slate-50/70 dark:bg-zinc-950/70 overflow-hidden">
+              {/* Vista Móvil: Tarjetas de Ítems (< md) */}
+              <div className="md:hidden space-y-3">
+                {items.map((item) => {
+                  const cantEstimada = item.cantidad_estimada || 0;
+                  const cantReal = cantidades[item.id] ?? cantEstimada;
+                  const delta = cantReal - cantEstimada;
+                  const precio = item.precio_congelado || 0;
+                  const subtotalReal = precio * cantReal;
+                  const esConsumible = item.inventario?.tipo === "Consumible";
+                  const esServicio = item.inventario?.tipo === "Servicio";
+
+                  return (
+                    <div
+                      key={item.id}
+                      className={`p-3.5 rounded-2xl border space-y-2.5 transition-all ${
+                        esConsumible
+                          ? "border-amber-500/30 bg-amber-500/[0.04] dark:bg-amber-950/20"
+                          : "border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60"
+                      }`}
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="min-w-0 flex-1">
+                          <span className="font-bold text-slate-900 dark:text-zinc-100 text-xs block leading-tight">
+                            {item.inventario?.nombre || "Ítem"}
+                          </span>
+                          {item.inventario?.sku && (
+                            <span className="text-[10px] text-slate-400 dark:text-zinc-500 font-mono">
+                              #{item.inventario.sku}
+                            </span>
+                          )}
+                        </div>
+                        <span
+                          className={`px-2 py-0.5 rounded text-[10px] font-semibold tracking-wider shrink-0 ${
+                            esConsumible
+                              ? "bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20"
+                              : esServicio
+                              ? "bg-purple-500/10 text-purple-700 dark:text-purple-400 border border-purple-500/20"
+                              : "bg-blue-500/10 text-blue-700 dark:text-blue-400 border border-blue-500/20"
+                          }`}
+                        >
+                          {item.inventario?.tipo || "Fijo"}
+                        </span>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-2 text-[11px] p-2 rounded-xl bg-slate-50 dark:bg-zinc-950/50 border border-slate-100 dark:border-zinc-800/60">
+                        <div>
+                          <span className="text-[10px] text-slate-400 dark:text-zinc-500 uppercase font-semibold block">
+                            Precio Congelado
+                          </span>
+                          <span className="font-mono font-bold text-slate-800 dark:text-zinc-200">
+                            {formatMoneda(precio)} ❄️
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-[10px] text-slate-400 dark:text-zinc-500 uppercase font-semibold block">
+                            Cant. Estimada
+                          </span>
+                          <span className="font-mono font-bold text-slate-800 dark:text-zinc-200">
+                            {cantEstimada} {esConsumible ? "m" : "u."}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between gap-2 pt-1 border-t border-slate-100 dark:border-zinc-800/60">
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-[11px] font-semibold text-slate-600 dark:text-zinc-400">
+                            Cant. Real:
+                          </span>
+                          <div className="flex items-center gap-1">
+                            <button
+                              type="button"
+                              onClick={() =>
+                                handleCantidadChange(
+                                  item.id,
+                                  Math.max(0, Math.round((cantReal - (esConsumible ? 5 : 1)) * 10) / 10).toString()
+                                )
+                              }
+                              className="h-8 w-8 flex items-center justify-center rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-700 dark:text-zinc-300 border border-slate-200 dark:border-zinc-700 text-xs font-bold"
+                            >
+                              -
+                            </button>
+                            <input
+                              type="number"
+                              inputMode="decimal"
+                              step="0.1"
+                              min="0"
+                              value={cantReal}
+                              onChange={(e) => handleCantidadChange(item.id, e.target.value)}
+                              className="w-16 h-8 text-center bg-white dark:bg-zinc-900 border border-slate-300 dark:border-zinc-700 rounded-lg text-base sm:text-xs font-mono font-bold text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-cyan-500"
+                            />
+                            <button
+                              type="button"
+                              onClick={() =>
+                                handleCantidadChange(
+                                  item.id,
+                                  (Math.round((cantReal + (esConsumible ? 5 : 1)) * 10) / 10).toString()
+                                )
+                              }
+                              className="h-8 w-8 flex items-center justify-center rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-700 dark:text-zinc-300 border border-slate-200 dark:border-zinc-700 text-xs font-bold"
+                            >
+                              +
+                            </button>
+                          </div>
+                        </div>
+
+                        <div className="text-right">
+                          <span className="text-[10px] text-slate-400 dark:text-zinc-500 uppercase font-semibold block">
+                            Subtotal Real
+                          </span>
+                          <span className="font-mono text-xs font-extrabold text-cyan-600 dark:text-cyan-400">
+                            {formatMoneda(subtotalReal)}
+                          </span>
+                        </div>
+                      </div>
+
+                      {delta !== 0 && (
+                        <div className="text-[10px] text-right font-bold">
+                          <span
+                            className={
+                              delta > 0
+                                ? "text-emerald-600 dark:text-emerald-400"
+                                : "text-rose-600 dark:text-rose-400"
+                            }
+                          >
+                            {delta > 0 ? "+" : ""}
+                            {delta.toFixed(1)} {esConsumible ? "m" : "u."} vs estimado
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Vista Desktop & Tablet: Tabla Completa (>= md) */}
+              <div className="hidden md:block rounded-xl border border-slate-200 dark:border-zinc-800 bg-slate-50/70 dark:bg-zinc-950/70 overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full text-xs text-left">
                     <thead className="text-[11px] uppercase tracking-wider text-slate-500 dark:text-zinc-400 bg-slate-100/90 dark:bg-zinc-900/90 border-b border-slate-200 dark:border-zinc-800">

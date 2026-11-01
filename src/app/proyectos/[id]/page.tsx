@@ -70,7 +70,7 @@ export default async function ProyectoDetallePage({
   const hayConsumibles = items.some((i) => i.inventario?.tipo === "Consumible");
 
   return (
-    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-10">
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-24 sm:pb-12">
       {/* Barra superior de navegación y acciones */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <Link
@@ -623,6 +623,25 @@ export default async function ProyectoDetallePage({
               </div>
             ))
           )}
+        </div>
+      </div>
+
+      {/* Barra de Acciones Flotante / Sticky para Móvil (Ergonomía en Terreno) */}
+      <div className="sm:hidden fixed bottom-3 inset-x-3 z-40 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-xl border border-slate-200/90 dark:border-zinc-800/90 p-2 rounded-2xl shadow-2xl flex items-center justify-between gap-2 animate-in slide-in-from-bottom-5 duration-300">
+        <div className="flex-1 min-w-0">
+          <CerrarObraModal
+            proyectoId={id}
+            clienteNombre={
+              proyecto.clientes?.nombre_razon_social || "Cliente General"
+            }
+            items={items}
+            isFinalizado={isFinalizado}
+            totalEstimado={proyecto.total_estimado || 0}
+            totalFinal={proyecto.total_final || 0}
+          />
+        </div>
+        <div className="flex items-center gap-1.5 shrink-0">
+          <CompartirWhatsAppModal proyecto={proyecto} items={items} variant="icon" />
         </div>
       </div>
     </div>
