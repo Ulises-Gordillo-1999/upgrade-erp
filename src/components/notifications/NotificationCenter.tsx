@@ -135,7 +135,7 @@ export function NotificationCenter({ initialNotificaciones }: Props) {
         ref={buttonRef}
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className={`relative p-2 rounded-xl border transition-all ${
+        className={`relative min-w-[40px] min-h-[40px] flex items-center justify-center p-2 rounded-xl border transition-all cursor-pointer ${
           isOpen
             ? "bg-slate-100 dark:bg-zinc-800 border-cyan-500/40 text-cyan-600 dark:text-cyan-400 shadow-sm"
             : "border-slate-200 dark:border-zinc-800 hover:bg-slate-100 dark:hover:bg-zinc-800/60 text-slate-600 dark:text-zinc-300 hover:text-slate-900 dark:hover:text-white"
@@ -164,7 +164,7 @@ export function NotificationCenter({ initialNotificaciones }: Props) {
       {isOpen && (
         <div
           ref={dropdownRef}
-          className="absolute right-0 mt-2.5 w-80 sm:w-96 rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white/95 dark:bg-zinc-900/95 shadow-2xl backdrop-blur-xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-150"
+          className="absolute -right-2 sm:right-0 mt-2.5 w-[calc(100vw-1.5rem)] sm:w-96 max-w-sm rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white/95 dark:bg-zinc-900/95 shadow-2xl backdrop-blur-xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-150"
         >
           {/* Header del Popover */}
           <div className="p-3.5 sm:p-4 border-b border-slate-200 dark:border-zinc-800 flex items-center justify-between bg-slate-50/70 dark:bg-zinc-950/60">
@@ -189,7 +189,7 @@ export function NotificationCenter({ initialNotificaciones }: Props) {
               <button
                 type="button"
                 onClick={handleRefresh}
-                className="p-1.5 text-slate-400 hover:text-slate-600 dark:text-zinc-500 dark:hover:text-zinc-300 rounded-lg hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors"
+                className="min-w-[32px] min-h-[32px] flex items-center justify-center p-1.5 text-slate-400 hover:text-slate-600 dark:text-zinc-500 dark:hover:text-zinc-300 rounded-lg hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
                 title="Actualizar alertas"
               >
                 <RotateCw
@@ -199,7 +199,7 @@ export function NotificationCenter({ initialNotificaciones }: Props) {
               <button
                 type="button"
                 onClick={() => setIsOpen(false)}
-                className="p-1.5 text-slate-400 hover:text-slate-600 dark:text-zinc-500 dark:hover:text-zinc-300 rounded-lg hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors"
+                className="min-w-[32px] min-h-[32px] flex items-center justify-center p-1.5 text-slate-400 hover:text-slate-600 dark:text-zinc-500 dark:hover:text-zinc-300 rounded-lg hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
                 title="Cerrar panel"
               >
                 <X className="w-3.5 h-3.5" />
@@ -212,7 +212,7 @@ export function NotificationCenter({ initialNotificaciones }: Props) {
             <button
               type="button"
               onClick={() => setFiltro("todas")}
-              className={`flex-1 py-1 px-2 rounded-lg font-medium transition-all ${
+              className={`flex-1 min-h-[36px] py-1.5 px-2 rounded-lg font-medium transition-all cursor-pointer ${
                 filtro === "todas"
                   ? "bg-white dark:bg-zinc-800 text-slate-900 dark:text-white shadow-xs font-semibold"
                   : "text-slate-500 dark:text-zinc-400 hover:text-slate-800 dark:hover:text-zinc-200"
@@ -223,7 +223,7 @@ export function NotificationCenter({ initialNotificaciones }: Props) {
             <button
               type="button"
               onClick={() => setFiltro("inventario")}
-              className={`flex-1 py-1 px-2 rounded-lg font-medium transition-all ${
+              className={`flex-1 min-h-[36px] py-1.5 px-2 rounded-lg font-medium transition-all cursor-pointer ${
                 filtro === "inventario"
                   ? "bg-white dark:bg-zinc-800 text-slate-900 dark:text-white shadow-xs font-semibold"
                   : "text-slate-500 dark:text-zinc-400 hover:text-slate-800 dark:hover:text-zinc-200"
@@ -234,7 +234,7 @@ export function NotificationCenter({ initialNotificaciones }: Props) {
             <button
               type="button"
               onClick={() => setFiltro("proyectos")}
-              className={`flex-1 py-1 px-2 rounded-lg font-medium transition-all ${
+              className={`flex-1 min-h-[36px] py-1.5 px-2 rounded-lg font-medium transition-all cursor-pointer ${
                 filtro === "proyectos"
                   ? "bg-white dark:bg-zinc-800 text-slate-900 dark:text-white shadow-xs font-semibold"
                   : "text-slate-500 dark:text-zinc-400 hover:text-slate-800 dark:hover:text-zinc-200"

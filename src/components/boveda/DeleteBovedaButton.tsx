@@ -54,15 +54,15 @@ export function DeleteBovedaButton({ id, descripcion = "esta credencial" }: Prop
       <button
         type="button"
         onClick={handleOpen}
-        className="p-1.5 text-slate-400 hover:text-rose-600 dark:text-zinc-500 dark:hover:text-rose-400 hover:bg-rose-500/10 rounded-md transition-colors"
+        className="min-h-[36px] min-w-[36px] inline-flex items-center justify-center p-2 text-slate-400 hover:text-rose-600 dark:text-zinc-500 dark:hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors"
         title="Eliminar credencial de la bóveda"
       >
         <Trash2 className="w-4 h-4" />
       </button>
 
       {isOpen && mounted && createPortal(
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 dark:bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
-          <div className="relative w-full max-w-md rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/95 p-6 shadow-2xl backdrop-blur-xl space-y-5 animate-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 dark:bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
+          <div className="relative w-full max-w-md rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/95 p-5 sm:p-6 shadow-2xl backdrop-blur-xl space-y-4 sm:space-y-5 animate-in zoom-in-95 duration-200 max-h-[90dvh] overflow-y-auto">
             {/* Header del Modal */}
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-3">
@@ -82,7 +82,7 @@ export function DeleteBovedaButton({ id, descripcion = "esta credencial" }: Prop
                 type="button"
                 onClick={handleClose}
                 disabled={loading}
-                className="text-slate-400 hover:text-slate-600 dark:text-zinc-500 dark:hover:text-zinc-300 p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-zinc-800/60 transition-colors"
+                className="min-h-[36px] min-w-[36px] inline-flex items-center justify-center text-slate-400 hover:text-slate-600 dark:text-zinc-500 dark:hover:text-zinc-300 p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-zinc-800/60 transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -108,12 +108,12 @@ export function DeleteBovedaButton({ id, descripcion = "esta credencial" }: Prop
             )}
 
             {/* Botones de acción */}
-            <div className="flex items-center justify-end gap-3 pt-2">
+            <div className="grid grid-cols-2 gap-2 sm:flex sm:items-center sm:justify-end pt-2">
               <button
                 type="button"
                 onClick={handleClose}
                 disabled={loading}
-                className="px-4 py-2 text-xs font-medium text-slate-500 hover:text-slate-900 dark:text-zinc-400 dark:hover:text-white transition-colors"
+                className="min-h-[44px] flex items-center justify-center px-4 py-2 text-xs font-semibold text-slate-500 hover:text-slate-900 dark:text-zinc-400 dark:hover:text-white transition-colors rounded-xl border border-slate-200 dark:border-zinc-800 sm:border-0"
               >
                 Cancelar
               </button>
@@ -121,7 +121,7 @@ export function DeleteBovedaButton({ id, descripcion = "esta credencial" }: Prop
                 type="button"
                 onClick={handleDelete}
                 disabled={loading}
-                className="flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white rounded-xl text-xs font-semibold shadow-lg shadow-rose-950/20 dark:shadow-rose-950/40 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
+                className="min-h-[44px] flex items-center justify-center gap-1.5 px-4 py-2 bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white rounded-xl text-xs font-semibold shadow-md shadow-rose-950/20 dark:shadow-rose-950/40 transition-all active:scale-[0.98] disabled:opacity-50"
               >
                 {loading ? (
                   <>
@@ -131,7 +131,7 @@ export function DeleteBovedaButton({ id, descripcion = "esta credencial" }: Prop
                 ) : (
                   <>
                     <Trash2 className="w-3.5 h-3.5" />
-                    <span>Eliminar Definitivamente</span>
+                    <span>Eliminar</span>
                   </>
                 )}
               </button>

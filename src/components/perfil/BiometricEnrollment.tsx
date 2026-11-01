@@ -236,7 +236,7 @@ export function BiometricEnrollment() {
                   onChange={(e) => setNombreDispositivo(e.target.value)}
                   placeholder="Ej: Mi Celular Samsung / iPhone / PC Taller"
                   required
-                  className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-zinc-950/80 border border-slate-200 dark:border-zinc-800 rounded-xl text-sm text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-colors"
+                  className="w-full min-h-[44px] pl-10 pr-4 py-2 bg-slate-50 dark:bg-zinc-950/80 border border-slate-200 dark:border-zinc-800 rounded-xl text-base sm:text-sm text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-colors"
                 />
               </div>
               <p className="text-[11px] text-slate-500 dark:text-zinc-500">
@@ -248,7 +248,7 @@ export function BiometricEnrollment() {
               <button
                 type="submit"
                 disabled={isEnrolling || isSupported === false}
-                className="w-full sm:w-auto px-5 py-2.5 rounded-xl text-xs sm:text-sm font-medium text-white bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 transition-all flex items-center justify-center gap-2 shadow-lg shadow-cyan-950/40 disabled:opacity-50 disabled:pointer-events-none"
+                className="w-full sm:w-auto min-h-[44px] px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-white bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 transition-all flex items-center justify-center gap-2 shadow-md shadow-cyan-950/40 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none"
               >
                 {isEnrolling ? (
                   <>
@@ -272,17 +272,17 @@ export function BiometricEnrollment() {
         <div className="flex items-center justify-between">
           <h4 className="text-xs font-semibold text-slate-700 dark:text-zinc-300 uppercase tracking-wider flex items-center gap-2">
             <ShieldCheck className="w-4 h-4 text-cyan-400" />
-            Dispositivos biométricos vinculados ({dispositivos.length})
+            <span>Dispositivos biométricos vinculados ({dispositivos.length})</span>
           </h4>
         </div>
 
         {loadingList ? (
           <div className="py-8 flex items-center justify-center text-xs text-slate-500 dark:text-zinc-500 gap-2">
             <Loader2 className="w-4 h-4 animate-spin text-cyan-500" />
-            Cargando dispositivos...
+            <span>Cargando dispositivos...</span>
           </div>
         ) : dispositivos.length === 0 ? (
-          <div className="p-6 rounded-xl border border-dashed border-slate-200 dark:border-zinc-800 text-center space-y-2">
+          <div className="p-6 rounded-2xl border border-dashed border-slate-200 dark:border-zinc-800 text-center space-y-2">
             <Fingerprint className="w-8 h-8 text-slate-400 dark:text-zinc-600 mx-auto" />
             <p className="text-xs text-slate-600 dark:text-zinc-400 font-medium">
               No tienes ningún dispositivo biométrico registrado todavía.
@@ -296,7 +296,7 @@ export function BiometricEnrollment() {
             {dispositivos.map((d) => (
               <div
                 key={d.id}
-                className="p-4 rounded-xl border border-slate-200 dark:border-zinc-800/80 bg-slate-50/60 dark:bg-zinc-950/60 flex items-center justify-between gap-3 group hover:border-cyan-500/30 transition-all duration-200"
+                className="p-4 rounded-2xl border border-slate-200 dark:border-zinc-800/80 bg-slate-50/60 dark:bg-zinc-950/60 flex items-center justify-between gap-3 group hover:border-cyan-500/30 transition-all duration-200"
               >
                 <div className="flex items-center gap-3 min-w-0">
                   <div className="p-2.5 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 shrink-0">
@@ -329,7 +329,7 @@ export function BiometricEnrollment() {
                   onClick={() => handleEliminar(d.id, d.nombre)}
                   disabled={deletingId === d.id}
                   title="Desvincular dispositivo"
-                  className="p-2 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors shrink-0 disabled:opacity-50"
+                  className="min-h-[36px] min-w-[36px] inline-flex items-center justify-center p-2 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors shrink-0 disabled:opacity-50"
                 >
                   {deletingId === d.id ? (
                     <Loader2 className="w-4 h-4 animate-spin text-rose-400" />

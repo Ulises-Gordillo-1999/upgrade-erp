@@ -285,7 +285,7 @@ export function BovedaTable({ bovedaItems, tiposCredencial }: Props) {
     <div className="space-y-5">
       {/* Barra de Búsqueda, Filtros y Switch de Vista */}
       <div className="p-3.5 sm:p-4 rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 shadow-sm backdrop-blur-md space-y-3">
-        <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3">
+        <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-2.5 sm:gap-3">
           {/* Input de Búsqueda */}
           <div className="relative flex-1">
             <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-zinc-400 pointer-events-none" />
@@ -294,13 +294,13 @@ export function BovedaTable({ bovedaItems, tiposCredencial }: Props) {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Buscar por cliente, proyecto o descripción de credencial..."
-              className="w-full bg-slate-50 dark:bg-zinc-950/70 border border-slate-200 dark:border-zinc-800 rounded-xl pl-10 pr-9 py-2 text-xs sm:text-sm text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all"
+              className="w-full min-h-[44px] bg-slate-50 dark:bg-zinc-950/70 border border-slate-200 dark:border-zinc-800 rounded-xl pl-10 pr-9 py-2 text-base sm:text-xs text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all"
             />
             {searchTerm && (
               <button
                 type="button"
                 onClick={() => setSearchTerm("")}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:text-zinc-500 dark:hover:text-zinc-300 p-0.5 rounded transition-colors"
+                className="min-h-[36px] min-w-[36px] inline-flex items-center justify-center absolute right-1.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:text-zinc-500 dark:hover:text-zinc-300 p-1 rounded-lg transition-colors"
                 title="Limpiar búsqueda"
               >
                 <X className="w-4 h-4" />
@@ -309,12 +309,12 @@ export function BovedaTable({ bovedaItems, tiposCredencial }: Props) {
           </div>
 
           {/* Filtros Dropdowns */}
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-3 lg:flex items-center gap-2">
             {/* Filtro por Cliente */}
             <select
               value={clienteFiltro}
               onChange={(e) => setClienteFiltro(e.target.value)}
-              className="bg-slate-50 dark:bg-zinc-950/80 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-xs text-slate-700 dark:text-zinc-300 focus:outline-none focus:border-cyan-500 transition-colors cursor-pointer max-w-[180px] truncate"
+              className="w-full sm:w-auto min-h-[44px] bg-slate-50 dark:bg-zinc-950/80 border border-slate-200 dark:border-zinc-800 rounded-xl px-3.5 py-2 text-base sm:text-xs text-slate-700 dark:text-zinc-300 focus:outline-none focus:border-cyan-500 transition-colors cursor-pointer max-w-full sm:max-w-[180px] truncate [color-scheme:light] dark:[color-scheme:dark]"
             >
               <option value="todos">Todos los Clientes</option>
               {clientesDisponibles.map((cli) => (
@@ -328,7 +328,7 @@ export function BovedaTable({ bovedaItems, tiposCredencial }: Props) {
             <select
               value={tipoDatoFiltro}
               onChange={(e) => setTipoDatoFiltro(e.target.value)}
-              className="bg-slate-50 dark:bg-zinc-950/80 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-xs text-slate-700 dark:text-zinc-300 focus:outline-none focus:border-cyan-500 transition-colors cursor-pointer"
+              className="w-full sm:w-auto min-h-[44px] bg-slate-50 dark:bg-zinc-950/80 border border-slate-200 dark:border-zinc-800 rounded-xl px-3.5 py-2 text-base sm:text-xs text-slate-700 dark:text-zinc-300 focus:outline-none focus:border-cyan-500 transition-colors cursor-pointer [color-scheme:light] dark:[color-scheme:dark]"
             >
               <option value="todos">Todos los Tipos</option>
               {tiposCredencial && tiposCredencial.length > 0 ? (
@@ -352,7 +352,7 @@ export function BovedaTable({ bovedaItems, tiposCredencial }: Props) {
             <select
               value={adjuntoFiltro}
               onChange={(e) => setAdjuntoFiltro(e.target.value)}
-              className="bg-slate-50 dark:bg-zinc-950/80 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-xs text-slate-700 dark:text-zinc-300 focus:outline-none focus:border-cyan-500 transition-colors cursor-pointer"
+              className="w-full sm:w-auto min-h-[44px] bg-slate-50 dark:bg-zinc-950/80 border border-slate-200 dark:border-zinc-800 rounded-xl px-3.5 py-2 text-base sm:text-xs text-slate-700 dark:text-zinc-300 focus:outline-none focus:border-cyan-500 transition-colors cursor-pointer [color-scheme:light] dark:[color-scheme:dark]"
             >
               <option value="todos">Adjuntos (Todos)</option>
               <option value="con_adjunto">Con comprobante / imagen</option>
@@ -360,33 +360,33 @@ export function BovedaTable({ bovedaItems, tiposCredencial }: Props) {
             </select>
 
             {/* Selector de Modo de Visualización (Agrupado por Cliente vs Lista) */}
-            <div className="inline-flex items-center p-1 rounded-xl bg-slate-100 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700/60 shadow-xs">
+            <div className="col-span-1 sm:col-span-3 lg:col-span-1 inline-flex items-center p-1 rounded-xl bg-slate-100 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700/60 shadow-xs min-h-[44px] justify-center">
               <button
                 type="button"
                 onClick={() => setViewMode("cliente")}
-                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                className={`flex-1 sm:flex-none min-h-[36px] flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                   viewMode === "cliente"
-                    ? "bg-white dark:bg-zinc-700 text-cyan-600 dark:text-cyan-400 shadow-xs font-semibold"
+                    ? "bg-white dark:bg-zinc-700 text-cyan-600 dark:text-cyan-400 shadow-xs"
                     : "text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-200"
                 }`}
                 title="Agrupar credenciales por cliente"
               >
                 <Building2 className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">Por Cliente</span>
+                <span>Por Cliente</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => setViewMode("tabla")}
-                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                className={`flex-1 sm:flex-none min-h-[36px] flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                   viewMode === "tabla"
-                    ? "bg-white dark:bg-zinc-700 text-cyan-600 dark:text-cyan-400 shadow-xs font-semibold"
+                    ? "bg-white dark:bg-zinc-700 text-cyan-600 dark:text-cyan-400 shadow-xs"
                     : "text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-200"
                 }`}
                 title="Ver lista plana cronológica"
               >
                 <TableIcon className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">Lista Plana</span>
+                <span>Lista Plana</span>
               </button>
             </div>
 
@@ -395,7 +395,7 @@ export function BovedaTable({ bovedaItems, tiposCredencial }: Props) {
               <button
                 type="button"
                 onClick={resetFilters}
-                className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-rose-600 dark:text-rose-400 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 rounded-xl transition-all"
+                className="min-h-[44px] flex items-center justify-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-rose-600 dark:text-rose-400 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 rounded-xl transition-all active:scale-[0.98]"
                 title="Limpiar todos los filtros"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
@@ -420,7 +420,7 @@ export function BovedaTable({ bovedaItems, tiposCredencial }: Props) {
           </span>
 
           {hasActiveFilters && (
-            <span className="text-[11px] text-cyan-600 dark:text-cyan-400 flex items-center gap-1 font-medium">
+            <span className="text-[11px] text-cyan-600 dark:text-cyan-400 flex items-center gap-1 font-semibold">
               <SlidersHorizontal className="w-3 h-3" />
               Filtros activos
             </span>
@@ -626,7 +626,7 @@ export function BovedaTable({ bovedaItems, tiposCredencial }: Props) {
               filteredItems.map((item) => (
                 <div
                   key={item.id}
-                  className="rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-4 shadow-sm space-y-3 transition-colors"
+                  className="rounded-2xl border border-slate-200 dark:border-zinc-800/90 bg-white dark:bg-zinc-900/60 p-4 shadow-sm space-y-3.5 transition-colors"
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0 flex-1">

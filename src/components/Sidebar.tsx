@@ -84,7 +84,7 @@ export function Sidebar({
             key={item.name}
             href={item.href}
             onClick={onItemClick}
-            className={`group flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition-all duration-200 ${
+            className={`group flex items-center min-h-[44px] px-3.5 py-2.5 text-sm font-medium rounded-xl transition-all duration-200 ${
               isActive
                 ? "bg-cyan-500/10 text-cyan-700 dark:text-cyan-400 font-semibold border border-cyan-500/20 shadow-sm"
                 : "text-slate-600 dark:text-zinc-400 hover:bg-slate-100 dark:hover:bg-zinc-800/50 hover:text-slate-900 dark:hover:text-zinc-100"
@@ -134,7 +134,7 @@ export function Sidebar({
           <button
             type="submit"
             title="Cerrar sesión"
-            className="p-1.5 text-slate-400 dark:text-zinc-500 hover:text-rose-500 hover:bg-rose-500/10 rounded-lg transition-colors ml-1"
+            className="min-h-[36px] min-w-[36px] flex items-center justify-center p-1.5 text-slate-400 dark:text-zinc-500 hover:text-rose-500 hover:bg-rose-500/10 rounded-lg transition-colors ml-1 cursor-pointer"
           >
             <LogOut className="w-4 h-4" />
           </button>
@@ -146,18 +146,18 @@ export function Sidebar({
   return (
     <>
       {/* 1. Header Superior Móvil y Tablet (< lg) */}
-      <header className="lg:hidden flex h-14 sm:h-16 items-center justify-between px-4 sm:px-6 border-b border-slate-200 dark:border-zinc-800 bg-white/90 dark:bg-zinc-950/90 backdrop-blur-md shrink-0 z-30 transition-colors">
-        <div className="flex items-center gap-3">
+      <header className="lg:hidden flex h-14 sm:h-16 items-center justify-between px-3 sm:px-6 border-b border-slate-200 dark:border-zinc-800 bg-white/90 dark:bg-zinc-950/90 backdrop-blur-md shrink-0 z-30 transition-colors">
+        <div className="flex items-center gap-2 sm:gap-3">
           <button
             type="button"
             onClick={() => setIsMobileOpen(true)}
-            className="p-2 -ml-2 rounded-xl text-slate-600 dark:text-zinc-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-800/60 transition-colors"
+            className="min-h-[44px] min-w-[44px] flex items-center justify-center p-2 rounded-xl text-slate-600 dark:text-zinc-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-800/60 transition-colors cursor-pointer"
             aria-label="Abrir menú de navegación"
           >
             <Menu className="w-6 h-6" />
           </button>
 
-          <Link href="/" className="flex items-center gap-2.5 group">
+          <Link href="/" className="flex items-center gap-2 group">
             <div className="relative w-7 h-7 rounded-lg overflow-hidden flex items-center justify-center bg-cyan-500/10 border border-cyan-500/20 p-0.5 group-hover:border-cyan-500/40 transition-colors">
               <Image
                 src="/icon.png"
@@ -168,7 +168,7 @@ export function Sidebar({
               />
             </div>
             <div className="flex items-center gap-1.5">
-              <h1 className="text-lg sm:text-xl font-bold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 to-blue-600 dark:from-cyan-400 dark:to-blue-500 group-hover:opacity-90 transition-opacity">
+              <h1 className="text-base sm:text-xl font-bold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 to-blue-600 dark:from-cyan-400 dark:to-blue-500 group-hover:opacity-90 transition-opacity">
                 UPGRADE
               </h1>
               <span className="text-[10px] px-1.5 py-0.5 rounded bg-cyan-500/10 text-cyan-700 dark:text-cyan-400 border border-cyan-500/20 font-mono font-medium">
@@ -178,14 +178,14 @@ export function Sidebar({
           </Link>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1 sm:gap-2">
           <div className="hidden sm:flex">
             <HeaderClock className="!text-[11px]" />
           </div>
           <NotificationCenter initialNotificaciones={notificaciones} />
           <Link
             href="/perfil"
-            className="flex items-center gap-2 p-1 rounded-full hover:ring-2 hover:ring-cyan-500/30 transition-all"
+            className="min-h-[44px] min-w-[44px] flex items-center justify-center p-1 rounded-full hover:ring-2 hover:ring-cyan-500/30 transition-all cursor-pointer"
             title="Mi Perfil"
           >
             <div className="h-8 w-8 rounded-full bg-gradient-to-tr from-cyan-600 to-blue-600 flex items-center justify-center text-xs font-bold text-white shadow-inner">
@@ -241,7 +241,7 @@ export function Sidebar({
           <button
             type="button"
             onClick={() => setIsMobileOpen(false)}
-            className="p-2 -mr-2 text-slate-400 hover:text-slate-600 dark:text-zinc-500 dark:hover:text-zinc-300 rounded-xl hover:bg-slate-100 dark:hover:bg-zinc-800/60 transition-colors"
+            className="min-h-[44px] min-w-[44px] flex items-center justify-center p-2 -mr-2 text-slate-400 hover:text-slate-600 dark:text-zinc-500 dark:hover:text-zinc-300 rounded-xl hover:bg-slate-100 dark:hover:bg-zinc-800/60 transition-colors cursor-pointer"
             aria-label="Cerrar menú"
           >
             <X className="w-5 h-5" />

@@ -20,7 +20,7 @@ export default async function InventarioPage() {
             Control de stock, equipos y servicios ofrecidos.
           </p>
         </div>
-        <div className="flex items-center gap-2.5 flex-wrap">
+        <div className="grid grid-cols-2 gap-2 sm:flex sm:items-center sm:gap-2.5 w-full sm:w-auto">
           <GestionarCategoriasModal categorias={categorias} />
           <InventarioFormModal categorias={categorias} />
         </div>

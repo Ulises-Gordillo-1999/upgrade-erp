@@ -128,8 +128,8 @@ export function InventarioTable({ inventario, categorias = [] }: Props) {
   return (
     <div className="space-y-4">
       {/* Barra de Búsqueda y Filtros */}
-      <div className="p-3.5 rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 shadow-sm backdrop-blur-md space-y-3 transition-colors">
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+      <div className="p-3.5 sm:p-4 rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 shadow-sm backdrop-blur-md space-y-3 transition-colors">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 sm:gap-3">
           {/* Input de Búsqueda */}
           <div className="relative flex-1">
             <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-zinc-400 pointer-events-none" />
@@ -138,13 +138,13 @@ export function InventarioTable({ inventario, categorias = [] }: Props) {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Buscar por nombre de ítem o código SKU..."
-              className="w-full bg-slate-50 dark:bg-zinc-950/70 border border-slate-200 dark:border-zinc-800 rounded-xl pl-10 pr-9 py-2 text-xs sm:text-sm text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all"
+              className="w-full min-h-[44px] bg-slate-50 dark:bg-zinc-950/70 border border-slate-200 dark:border-zinc-800 rounded-xl pl-10 pr-9 py-2 text-base sm:text-xs text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all"
             />
             {searchTerm && (
               <button
                 type="button"
                 onClick={() => setSearchTerm("")}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:text-zinc-500 dark:hover:text-zinc-300 p-0.5 rounded transition-colors"
+                className="min-h-[36px] min-w-[36px] inline-flex items-center justify-center absolute right-1.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:text-zinc-500 dark:hover:text-zinc-300 p-1 rounded-lg transition-colors"
                 title="Limpiar búsqueda"
               >
                 <X className="w-4 h-4" />
@@ -153,12 +153,12 @@ export function InventarioTable({ inventario, categorias = [] }: Props) {
           </div>
 
           {/* Menú de Filtros Dropdowns */}
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-3 lg:flex items-center gap-2">
             {/* Tipo */}
             <select
               value={tipoFiltro}
               onChange={(e) => setTipoFiltro(e.target.value)}
-              className="bg-slate-50 dark:bg-zinc-950/80 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-xs text-slate-700 dark:text-zinc-300 focus:outline-none focus:border-cyan-500 transition-colors cursor-pointer"
+              className="w-full sm:w-auto min-h-[44px] bg-slate-50 dark:bg-zinc-950/80 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-base sm:text-xs text-slate-700 dark:text-zinc-300 focus:outline-none focus:border-cyan-500 transition-colors cursor-pointer [color-scheme:light] dark:[color-scheme:dark]"
             >
               <option value="todos">Todos los Tipos</option>
               <option value="Fijo">Fijo (Equipos)</option>
@@ -170,7 +170,7 @@ export function InventarioTable({ inventario, categorias = [] }: Props) {
             <select
               value={categoriaFiltro}
               onChange={(e) => setCategoriaFiltro(e.target.value)}
-              className="bg-slate-50 dark:bg-zinc-950/80 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-xs text-slate-700 dark:text-zinc-300 focus:outline-none focus:border-cyan-500 transition-colors cursor-pointer max-w-[200px] truncate"
+              className="w-full sm:w-auto min-h-[44px] bg-slate-50 dark:bg-zinc-950/80 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-base sm:text-xs text-slate-700 dark:text-zinc-300 focus:outline-none focus:border-cyan-500 transition-colors cursor-pointer max-w-[200px] truncate [color-scheme:light] dark:[color-scheme:dark]"
             >
               <option value="todos">Todas las Categorías</option>
               {categoriasDisponibles.map((cat) => (
@@ -185,7 +185,7 @@ export function InventarioTable({ inventario, categorias = [] }: Props) {
             <select
               value={stockFiltro}
               onChange={(e) => setStockFiltro(e.target.value)}
-              className="bg-slate-50 dark:bg-zinc-950/80 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-xs text-slate-700 dark:text-zinc-300 focus:outline-none focus:border-cyan-500 transition-colors cursor-pointer"
+              className="w-full sm:w-auto min-h-[44px] bg-slate-50 dark:bg-zinc-950/80 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-base sm:text-xs text-slate-700 dark:text-zinc-300 focus:outline-none focus:border-cyan-500 transition-colors cursor-pointer [color-scheme:light] dark:[color-scheme:dark]"
             >
               <option value="todos">Todos los Stocks</option>
               <option value="critico">⚠️ Stock Crítico / Bajo</option>
@@ -198,7 +198,7 @@ export function InventarioTable({ inventario, categorias = [] }: Props) {
               <button
                 type="button"
                 onClick={resetFilters}
-                className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-rose-600 dark:text-rose-400 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 rounded-xl transition-all"
+                className="min-h-[44px] flex items-center justify-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-rose-600 dark:text-rose-400 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 rounded-xl transition-all active:scale-[0.98]"
                 title="Limpiar todos los filtros"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
@@ -219,7 +219,7 @@ export function InventarioTable({ inventario, categorias = [] }: Props) {
           </span>
 
           {hasActiveFilters && (
-            <span className="text-[11px] text-cyan-600 dark:text-cyan-400 flex items-center gap-1 font-medium">
+            <span className="text-[11px] text-cyan-600 dark:text-cyan-400 flex items-center gap-1 font-semibold">
               <SlidersHorizontal className="w-3 h-3" />
               Filtros activos
             </span>
@@ -230,7 +230,7 @@ export function InventarioTable({ inventario, categorias = [] }: Props) {
       {/* 1. Vista Móvil: Tarjetas Táctiles (< md) */}
       <div className="md:hidden space-y-3">
         {filteredInventario.length === 0 ? (
-          <div className="rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-8 text-center text-slate-400 dark:text-zinc-500">
+          <div className="rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-8 text-center text-slate-400 dark:text-zinc-500">
             <FilterX className="w-8 h-8 mx-auto mb-2 text-slate-400 dark:text-zinc-600 stroke-1" />
             <p className="text-sm font-medium text-slate-600 dark:text-zinc-400">
               {hasActiveFilters
@@ -241,7 +241,7 @@ export function InventarioTable({ inventario, categorias = [] }: Props) {
               <button
                 type="button"
                 onClick={resetFilters}
-                className="mt-2 text-xs text-cyan-600 dark:text-cyan-400 hover:underline"
+                className="mt-2 text-xs text-cyan-600 dark:text-cyan-400 hover:underline font-semibold"
               >
                 Limpiar filtros
               </button>
@@ -256,11 +256,11 @@ export function InventarioTable({ inventario, categorias = [] }: Props) {
             return (
               <div
                 key={item.id}
-                className="rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-4 shadow-sm space-y-3 transition-colors"
+                className="rounded-2xl border border-slate-200 dark:border-zinc-800/90 bg-white dark:bg-zinc-900/60 p-4 shadow-sm space-y-3.5 transition-colors"
               >
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0 flex-1">
-                    <h4 className="text-sm font-semibold text-slate-900 dark:text-zinc-100 leading-snug">
+                    <h4 className="text-sm font-bold text-slate-900 dark:text-zinc-100 leading-snug">
                       {item.nombre}
                     </h4>
                     <div className="flex items-center gap-2 mt-1.5 flex-wrap">
@@ -285,7 +285,7 @@ export function InventarioTable({ inventario, categorias = [] }: Props) {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-1 shrink-0">
+                  <div className="flex items-center gap-1.5 shrink-0">
                     <InventarioFormModal
                       itemInicial={item as any}
                       isEdit={true}
@@ -313,7 +313,7 @@ export function InventarioTable({ inventario, categorias = [] }: Props) {
                       Stock
                     </span>
                     {item.tipo === "Servicio" ? (
-                      <span className="text-slate-400 dark:text-zinc-500">N/A</span>
+                      <span className="text-slate-400 dark:text-zinc-500 font-medium">N/A</span>
                     ) : (
                       <span
                         className={`font-semibold inline-flex items-center gap-1 ${

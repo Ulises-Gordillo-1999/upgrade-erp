@@ -135,15 +135,15 @@ export function BovedaFormModal({
       {!isEdit ? (
         <button
           onClick={openModal}
-          className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white rounded-xl transition-all text-sm font-medium shadow-lg shadow-rose-950/20 dark:shadow-rose-950/40"
+          className="w-full sm:w-auto min-h-[44px] flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white rounded-xl transition-all text-xs sm:text-sm font-semibold shadow-md shadow-rose-950/20 active:scale-[0.98]"
         >
           <KeyRound className="w-4 h-4" />
-          Nueva Credencial
+          <span>Nueva Credencial</span>
         </button>
       ) : (
         <button
           onClick={openModal}
-          className="p-1.5 text-slate-400 hover:text-rose-600 dark:text-zinc-400 dark:hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors"
+          className="min-h-[36px] min-w-[36px] inline-flex items-center justify-center p-2 text-slate-400 hover:text-rose-600 dark:text-zinc-400 dark:hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors"
           title="Editar Credencial"
         >
           <Pencil className="w-4 h-4" />
@@ -151,16 +151,16 @@ export function BovedaFormModal({
       )}
 
       {isOpen && mounted && createPortal(
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 dark:bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
-          <div className="relative w-full max-w-xl rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/95 p-6 sm:p-7 shadow-2xl backdrop-blur-xl space-y-6 animate-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 dark:bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
+          <div className="relative w-full max-w-xl rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/95 p-5 sm:p-7 shadow-2xl backdrop-blur-xl space-y-5 animate-in zoom-in-95 duration-200 max-h-[90dvh] overflow-y-auto">
             {/* Header */}
-            <div className="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-zinc-800">
+            <div className="flex items-center justify-between pb-3.5 border-b border-slate-200 dark:border-zinc-800">
               <div className="flex items-center gap-3">
                 <div className="p-2.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400">
                   <ShieldAlert className="w-5 h-5" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight">
+                  <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white tracking-tight">
                     {isEdit ? "Editar Credencial Segura" : "Guardar en Bóveda"}
                   </h2>
                   <p className="text-xs text-slate-500 dark:text-zinc-400">
@@ -171,7 +171,7 @@ export function BovedaFormModal({
 
               <button
                 onClick={closeModal}
-                className="text-slate-400 hover:text-slate-600 dark:text-zinc-500 dark:hover:text-zinc-300 p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-zinc-800/60 transition-colors"
+                className="min-h-[36px] min-w-[36px] inline-flex items-center justify-center text-slate-400 hover:text-slate-600 dark:text-zinc-500 dark:hover:text-zinc-300 p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-zinc-800/60 transition-colors"
                 type="button"
               >
                 <X className="w-5 h-5" />
@@ -192,14 +192,14 @@ export function BovedaFormModal({
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <label className="text-xs font-medium text-slate-700 dark:text-zinc-300 flex items-center gap-1.5">
+                  <label className="text-xs font-semibold text-slate-700 dark:text-zinc-300 flex items-center gap-1.5">
                     <Lock className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-500" />
                     Tipo de Credencial / Configuración *
                   </label>
                   <GestionarTiposCredencialModal
                     tiposCredencial={tiposList}
                     triggerButton={
-                      <span className="text-xs text-rose-600 dark:text-rose-400 hover:underline flex items-center gap-1 font-medium cursor-pointer">
+                      <span className="text-xs text-rose-600 dark:text-rose-400 hover:underline flex items-center gap-1 font-semibold cursor-pointer">
                         <Settings className="w-3 h-3 text-rose-500" />
                         Gestionar tipos
                       </span>
@@ -220,7 +220,7 @@ export function BovedaFormModal({
                       : ""
                   }
                   required
-                  className="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-rose-500 focus:ring-1 focus:ring-rose-500 transition-all cursor-pointer"
+                  className="w-full min-h-[44px] bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-rose-500 focus:ring-1 focus:ring-rose-500 transition-all cursor-pointer [color-scheme:light] dark:[color-scheme:dark]"
                 >
                   <option value="" disabled>
                     Seleccionar tipo...
@@ -251,7 +251,7 @@ export function BovedaFormModal({
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-slate-700 dark:text-zinc-300 block flex items-center gap-1.5">
+                <label className="text-xs font-semibold text-slate-700 dark:text-zinc-300 flex items-center gap-1.5">
                   <FileText className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-500" />
                   Descripción o Identificador *
                 </label>
@@ -261,12 +261,12 @@ export function BovedaFormModal({
                   defaultValue={credencialInicial?.descripcion}
                   placeholder="Ej: admin / Acceso a MikroTik principal o Winbox"
                   required
-                  className="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-600 focus:outline-none focus:border-rose-500 focus:ring-1 focus:ring-rose-500 transition-all"
+                  className="w-full min-h-[44px] bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-600 focus:outline-none focus:border-rose-500 focus:ring-1 focus:ring-rose-500 transition-all"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-slate-700 dark:text-zinc-300 block flex items-center gap-1.5">
+                <label className="text-xs font-semibold text-slate-700 dark:text-zinc-300 flex items-center gap-1.5">
                   <KeyRound className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-500" />
                   Valor Secreto {isEdit ? "(Dejar en blanco para conservar)" : "*"}
                 </label>
@@ -276,12 +276,12 @@ export function BovedaFormModal({
                     name="valor_real"
                     required={!isEdit}
                     placeholder={isEdit ? "•••••••• (Sin cambios)" : "••••••••"}
-                    className="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl pl-3.5 pr-10 py-2.5 text-sm text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-600 focus:outline-none focus:border-rose-500 focus:ring-1 focus:ring-rose-500 font-mono transition-all"
+                    className="w-full min-h-[44px] bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl pl-3.5 pr-11 py-2.5 text-base sm:text-sm text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-600 focus:outline-none focus:border-rose-500 focus:ring-1 focus:ring-rose-500 font-mono transition-all"
                   />
                   <button
                     type="button"
                     onClick={() => setShowSecret(!showSecret)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:text-zinc-400 dark:hover:text-zinc-200 transition-colors p-1"
+                    className="min-h-[36px] min-w-[36px] inline-flex items-center justify-center absolute right-1.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:text-zinc-400 dark:hover:text-zinc-200 transition-colors p-1 rounded-lg"
                     title={showSecret ? "Ocultar secreto" : "Mostrar secreto para verificar"}
                   >
                     {showSecret ? (
@@ -294,7 +294,7 @@ export function BovedaFormModal({
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-slate-700 dark:text-zinc-300 block flex items-center gap-1.5">
+                <label className="text-xs font-semibold text-slate-700 dark:text-zinc-300 flex items-center gap-1.5">
                   <ImageIcon className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-500" />
                   Foto / Captura Segura (Opcional)
                 </label>
@@ -308,8 +308,8 @@ export function BovedaFormModal({
                     }
                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                   />
-                  <div className="flex items-center justify-center w-full px-4 py-3 border border-slate-200 dark:border-zinc-800 border-dashed rounded-xl bg-slate-50 dark:bg-zinc-950 hover:bg-slate-100 dark:hover:bg-zinc-900 transition-colors">
-                    <Upload className="w-4 h-4 mr-2 text-slate-400 dark:text-zinc-500" />
+                  <div className="flex items-center justify-center w-full min-h-[44px] px-4 py-3 border border-slate-200 dark:border-zinc-800 border-dashed rounded-xl bg-slate-50 dark:bg-zinc-950 hover:bg-slate-100 dark:hover:bg-zinc-900 transition-colors">
+                    <Upload className="w-4 h-4 mr-2 text-slate-400 dark:text-zinc-500 shrink-0" />
                     <span className="text-xs text-slate-600 dark:text-zinc-400 truncate">
                       {fileName
                         ? fileName
@@ -320,21 +320,21 @@ export function BovedaFormModal({
               </div>
 
               {/* Botones */}
-              <div className="pt-3 flex justify-end gap-3 border-t border-slate-200 dark:border-zinc-800">
+              <div className="pt-3 grid grid-cols-2 gap-2 sm:flex sm:justify-end border-t border-slate-200 dark:border-zinc-800">
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="px-4 py-2.5 text-sm font-medium text-slate-500 hover:text-slate-900 dark:text-zinc-400 dark:hover:text-white transition-colors"
+                  className="min-h-[44px] flex items-center justify-center px-4 py-2.5 text-xs sm:text-sm font-semibold text-slate-500 hover:text-slate-900 dark:text-zinc-400 dark:hover:text-white transition-colors rounded-xl border border-slate-200 dark:border-zinc-800 sm:border-0"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
                   disabled={loading}
-                  className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 disabled:opacity-50 text-white rounded-xl text-sm font-medium shadow-lg shadow-rose-950/20 dark:shadow-rose-950/40 transition-all"
+                  className="min-h-[44px] flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 disabled:opacity-50 text-white rounded-xl text-xs sm:text-sm font-semibold shadow-md shadow-rose-950/20 active:scale-[0.98] transition-all"
                 >
                   {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-                  {isEdit ? "Actualizar Credencial" : "Cifrar y Guardar"}
+                  <span>{isEdit ? "Actualizar Credencial" : "Cifrar y Guardar"}</span>
                 </button>
               </div>
             </form>

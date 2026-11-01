@@ -152,15 +152,15 @@ export function InventarioFormModal({
       {!isEdit ? (
         <button
           onClick={openModal}
-          className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white rounded-xl transition-all text-sm font-medium shadow-lg shadow-cyan-950/20 dark:shadow-cyan-950/40"
+          className="w-full sm:w-auto min-h-[44px] flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white rounded-xl transition-all text-xs sm:text-sm font-semibold shadow-md shadow-cyan-950/20 active:scale-[0.98]"
         >
           <Plus className="w-4 h-4" />
-          Nuevo Ítem
+          <span>Nuevo Ítem</span>
         </button>
       ) : (
         <button
           onClick={openModal}
-          className="p-1.5 text-slate-400 hover:text-cyan-600 dark:text-zinc-400 dark:hover:text-cyan-400 hover:bg-cyan-500/10 rounded-lg transition-colors"
+          className="min-h-[36px] min-w-[36px] inline-flex items-center justify-center p-2 text-slate-400 hover:text-cyan-600 dark:text-zinc-400 dark:hover:text-cyan-400 hover:bg-cyan-500/10 rounded-lg transition-colors"
           title="Editar ítem"
         >
           <Pencil className="w-4 h-4" />
@@ -168,16 +168,16 @@ export function InventarioFormModal({
       )}
 
       {isOpen && mounted && createPortal(
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 dark:bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
-          <div className="relative w-full max-w-xl rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/95 p-6 sm:p-7 shadow-2xl backdrop-blur-xl space-y-6 animate-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 dark:bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
+          <div className="relative w-full max-w-xl rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/95 p-5 sm:p-7 shadow-2xl backdrop-blur-xl space-y-5 sm:space-y-6 animate-in zoom-in-95 duration-200 max-h-[90dvh] overflow-y-auto">
             {/* Header */}
-            <div className="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-zinc-800">
+            <div className="flex items-center justify-between pb-3.5 sm:pb-4 border-b border-slate-200 dark:border-zinc-800">
               <div className="flex items-center gap-3">
                 <div className="p-2.5 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-600 dark:text-cyan-400">
                   <Package className="w-5 h-5" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight">
+                  <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white tracking-tight">
                     {isEdit ? "Editar Ítem del Catálogo" : "Registrar Nuevo Ítem"}
                   </h2>
                   <p className="text-xs text-slate-500 dark:text-zinc-400">
@@ -188,7 +188,7 @@ export function InventarioFormModal({
 
               <button
                 onClick={closeModal}
-                className="text-slate-400 hover:text-slate-600 dark:text-zinc-500 dark:hover:text-zinc-300 p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-zinc-800/60 transition-colors"
+                className="min-h-[36px] min-w-[36px] inline-flex items-center justify-center text-slate-400 hover:text-slate-600 dark:text-zinc-500 dark:hover:text-zinc-300 p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-zinc-800/60 transition-colors"
                 type="button"
               >
                 <X className="w-5 h-5" />
@@ -205,7 +205,7 @@ export function InventarioFormModal({
             {/* Form */}
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-slate-700 dark:text-zinc-300 block flex items-center gap-1.5">
+                <label className="text-xs font-semibold text-slate-700 dark:text-zinc-300 flex items-center gap-1.5">
                   <Package className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-500" />
                   Nombre del Ítem o Servicio *
                 </label>
@@ -215,13 +215,13 @@ export function InventarioFormModal({
                   defaultValue={itemInicial?.nombre}
                   required
                   placeholder="Ej: Router MikroTik hEX S / Cable UTP Cat6 / Instalación"
-                  className="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-600 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all"
+                  className="w-full min-h-[44px] bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-600 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all"
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-slate-700 dark:text-zinc-300 block flex items-center gap-1.5">
+                  <label className="text-xs font-semibold text-slate-700 dark:text-zinc-300 flex items-center gap-1.5">
                     <Barcode className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-500" />
                     SKU / Código Interno
                   </label>
@@ -230,12 +230,12 @@ export function InventarioFormModal({
                     name="sku"
                     defaultValue={itemInicial?.sku || ""}
                     placeholder="Ej: RT-MIK-HEX"
-                    className="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-600 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all"
+                    className="w-full min-h-[44px] bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-600 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all font-mono"
                   />
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-slate-700 dark:text-zinc-300 block flex items-center gap-1.5">
+                  <label className="text-xs font-semibold text-slate-700 dark:text-zinc-300 flex items-center gap-1.5">
                     <Layers className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-500" />
                     Tipo de Ítem *
                   </label>
@@ -244,7 +244,7 @@ export function InventarioFormModal({
                     value={tipoItem}
                     onChange={(e) => setTipoItem(e.target.value)}
                     required
-                    className="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all cursor-pointer"
+                    className="w-full min-h-[44px] bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all cursor-pointer [color-scheme:light] dark:[color-scheme:dark]"
                   >
                     <option value="Fijo">Fijo (Equipamiento: Routers, Switches, DVR)</option>
                     <option value="Consumible">Consumible (Cables, Fichas, Insumos)</option>
@@ -256,7 +256,7 @@ export function InventarioFormModal({
               {/* Subcategoría / Categoría */}
               <div className="space-y-1.5 p-3.5 rounded-xl bg-slate-50 dark:bg-zinc-950/60 border border-slate-200 dark:border-zinc-800/80">
                 <div className="flex items-center justify-between">
-                  <label className="text-xs font-medium text-slate-700 dark:text-zinc-300 flex items-center gap-1.5">
+                  <label className="text-xs font-semibold text-slate-700 dark:text-zinc-300 flex items-center gap-1.5">
                     <FolderTree className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400" />
                     {tipoItem === "Servicio"
                       ? "Categoría de Servicio"
@@ -299,20 +299,20 @@ export function InventarioFormModal({
                           handleCreateNewCategory();
                         }
                       }}
-                      className="flex-1 bg-white dark:bg-zinc-900 border border-cyan-500/50 rounded-lg px-3 py-1.5 text-xs text-slate-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-cyan-500"
+                      className="flex-1 min-h-[38px] bg-white dark:bg-zinc-900 border border-cyan-500/50 rounded-lg px-3 py-1.5 text-base sm:text-xs text-slate-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-cyan-500"
                     />
                     <button
                       type="button"
                       onClick={handleCreateNewCategory}
                       disabled={creatingCat || !newCatName.trim()}
-                      className="px-2.5 py-1.5 bg-cyan-600 hover:bg-cyan-500 disabled:opacity-50 text-white rounded-lg text-xs font-medium flex items-center gap-1 shadow-sm transition-all"
+                      className="min-h-[38px] px-3 py-1.5 bg-cyan-600 hover:bg-cyan-500 disabled:opacity-50 text-white rounded-lg text-xs font-semibold flex items-center gap-1 shadow-sm transition-all"
                     >
                       {creatingCat ? (
                         <Loader2 className="w-3 h-3 animate-spin" />
                       ) : (
                         <Check className="w-3 h-3" />
                       )}
-                      Guardar
+                      <span>Guardar</span>
                     </button>
                     <button
                       type="button"
@@ -320,7 +320,7 @@ export function InventarioFormModal({
                         setShowNewCatInput(false);
                         setNewCatName("");
                       }}
-                      className="px-2.5 py-1.5 text-slate-500 hover:text-slate-800 dark:text-zinc-400 dark:hover:text-zinc-200 text-xs"
+                      className="min-h-[38px] px-3 py-1.5 text-slate-500 hover:text-slate-800 dark:text-zinc-400 dark:hover:text-zinc-200 text-xs font-medium"
                     >
                       Cancelar
                     </button>
@@ -330,7 +330,7 @@ export function InventarioFormModal({
                     name="categoria"
                     value={selectedCategoria}
                     onChange={(e) => setSelectedCategoria(e.target.value)}
-                    className="w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl px-3.5 py-2 text-sm text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all cursor-pointer"
+                    className="w-full min-h-[44px] bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl px-3.5 py-2 text-base sm:text-sm text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all cursor-pointer [color-scheme:light] dark:[color-scheme:dark]"
                   >
                     <option value="">
                       {tipoItem === "Servicio"
@@ -360,7 +360,7 @@ export function InventarioFormModal({
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-slate-700 dark:text-zinc-300 block flex items-center gap-1.5">
+                <label className="text-xs font-semibold text-slate-700 dark:text-zinc-300 flex items-center gap-1.5">
                   <DollarSign className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-500" />
                   Precio Unitario ($) *
                 </label>
@@ -376,7 +376,7 @@ export function InventarioFormModal({
                     defaultValue={itemInicial?.precio_unitario}
                     required
                     placeholder="0.00"
-                    className="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl pl-8 pr-3.5 py-2.5 text-sm text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-600 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all"
+                    className="w-full min-h-[44px] bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl pl-8 pr-3.5 py-2.5 text-base sm:text-sm text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-600 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all font-mono"
                   />
                 </div>
               </div>
@@ -385,7 +385,7 @@ export function InventarioFormModal({
                 <div className="space-y-4 pt-1">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-1.5">
-                      <label className="text-xs font-medium text-slate-700 dark:text-zinc-300 block flex items-center gap-1.5">
+                      <label className="text-xs font-semibold text-slate-700 dark:text-zinc-300 flex items-center gap-1.5">
                         <Boxes className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-500" />
                         Stock Actual
                       </label>
@@ -394,12 +394,12 @@ export function InventarioFormModal({
                         name="stock_actual"
                         defaultValue={itemInicial?.stock_actual ?? 0}
                         min="0"
-                        className="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-600 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all"
+                        className="w-full min-h-[44px] bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-600 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all font-mono"
                       />
                     </div>
 
                     <div className="space-y-1.5">
-                      <label className="text-xs font-medium text-slate-700 dark:text-zinc-300 block flex items-center gap-1.5">
+                      <label className="text-xs font-semibold text-slate-700 dark:text-zinc-300 flex items-center gap-1.5">
                         <ShieldAlert className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-500" />
                         Stock Mínimo (Alerta)
                       </label>
@@ -408,7 +408,7 @@ export function InventarioFormModal({
                         name="stock_minimo"
                         defaultValue={itemInicial?.stock_minimo ?? 0}
                         min="0"
-                        className="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-600 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all"
+                        className="w-full min-h-[44px] bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-600 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all font-mono"
                       />
                     </div>
                   </div>
@@ -434,21 +434,21 @@ export function InventarioFormModal({
               )}
 
               {/* Botones */}
-              <div className="pt-3 flex justify-end gap-3 border-t border-slate-200 dark:border-zinc-800">
+              <div className="pt-3 grid grid-cols-2 gap-2 sm:flex sm:justify-end border-t border-slate-200 dark:border-zinc-800">
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="px-4 py-2.5 text-sm font-medium text-slate-500 hover:text-slate-900 dark:text-zinc-400 dark:hover:text-white transition-colors"
+                  className="min-h-[44px] flex items-center justify-center px-4 py-2.5 text-xs sm:text-sm font-semibold text-slate-500 hover:text-slate-900 dark:text-zinc-400 dark:hover:text-white transition-colors rounded-xl border border-slate-200 dark:border-zinc-800 sm:border-0"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
                   disabled={loading}
-                  className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 disabled:opacity-50 text-white rounded-xl text-sm font-medium shadow-lg shadow-cyan-950/20 dark:shadow-cyan-950/40 transition-all"
+                  className="min-h-[44px] flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 disabled:opacity-50 text-white rounded-xl text-xs sm:text-sm font-semibold shadow-md shadow-cyan-950/20 active:scale-[0.98] transition-all"
                 >
                   {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-                  {isEdit ? "Guardar Cambios" : "Guardar Ítem"}
+                  <span>{isEdit ? "Guardar Cambios" : "Guardar Ítem"}</span>
                 </button>
               </div>
             </form>

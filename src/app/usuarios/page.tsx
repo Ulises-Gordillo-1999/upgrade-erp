@@ -43,34 +43,34 @@ export default async function UsuariosPage() {
       </div>
 
       {/* Mini Métricas de Equipo */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/40 shadow-sm p-5 flex items-center justify-between">
-          <div>
-            <p className="text-xs font-medium text-slate-500 dark:text-zinc-400">Total Usuarios</p>
-            <p className="text-2xl font-bold text-slate-900 dark:text-white mt-1">{totalUsuarios}</p>
+      <div className="grid grid-cols-3 gap-2 sm:gap-4">
+        <div className="rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/40 shadow-sm p-3 sm:p-5 flex items-center justify-between">
+          <div className="min-w-0">
+            <p className="text-[11px] sm:text-xs font-medium text-slate-500 dark:text-zinc-400 truncate">Total Usuarios</p>
+            <p className="text-lg sm:text-2xl font-bold text-slate-900 dark:text-white mt-0.5 sm:mt-1">{totalUsuarios}</p>
           </div>
-          <div className="p-3 rounded-xl bg-slate-100 dark:bg-zinc-800/80 text-slate-700 dark:text-zinc-300">
-            <Users className="w-5 h-5" />
-          </div>
-        </div>
-
-        <div className="rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/40 shadow-sm p-5 flex items-center justify-between">
-          <div>
-            <p className="text-xs font-medium text-slate-500 dark:text-zinc-400">Técnicos Registrados</p>
-            <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400 mt-1">{totalTecnicos}</p>
-          </div>
-          <div className="p-3 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
-            <Wrench className="w-5 h-5" />
+          <div className="hidden xs:flex p-2 sm:p-3 rounded-xl bg-slate-100 dark:bg-zinc-800/80 text-slate-700 dark:text-zinc-300 shrink-0">
+            <Users className="w-4 h-4 sm:w-5 sm:h-5" />
           </div>
         </div>
 
-        <div className="rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/40 shadow-sm p-5 flex items-center justify-between">
-          <div>
-            <p className="text-xs font-medium text-slate-500 dark:text-zinc-400">Cuentas Activas</p>
-            <p className="text-2xl font-bold text-cyan-600 dark:text-cyan-400 mt-1">{activos}</p>
+        <div className="rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/40 shadow-sm p-3 sm:p-5 flex items-center justify-between">
+          <div className="min-w-0">
+            <p className="text-[11px] sm:text-xs font-medium text-slate-500 dark:text-zinc-400 truncate">Técnicos</p>
+            <p className="text-lg sm:text-2xl font-bold text-emerald-600 dark:text-emerald-400 mt-0.5 sm:mt-1">{totalTecnicos}</p>
           </div>
-          <div className="p-3 rounded-xl bg-cyan-500/10 text-cyan-600 dark:text-cyan-400">
-            <Shield className="w-5 h-5" />
+          <div className="hidden xs:flex p-2 sm:p-3 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 shrink-0">
+            <Wrench className="w-4 h-4 sm:w-5 sm:h-5" />
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/40 shadow-sm p-3 sm:p-5 flex items-center justify-between">
+          <div className="min-w-0">
+            <p className="text-[11px] sm:text-xs font-medium text-slate-500 dark:text-zinc-400 truncate">Activas</p>
+            <p className="text-lg sm:text-2xl font-bold text-cyan-600 dark:text-cyan-400 mt-0.5 sm:mt-1">{activos}</p>
+          </div>
+          <div className="hidden xs:flex p-2 sm:p-3 rounded-xl bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 shrink-0">
+            <Shield className="w-4 h-4 sm:w-5 sm:h-5" />
           </div>
         </div>
       </div>

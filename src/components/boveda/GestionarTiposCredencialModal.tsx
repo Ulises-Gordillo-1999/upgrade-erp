@@ -160,7 +160,7 @@ export function GestionarTiposCredencialModal({
         <button
           type="button"
           onClick={openModal}
-          className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-slate-700 dark:text-zinc-200 hover:bg-slate-50 dark:hover:bg-zinc-700/80 transition-all shadow-sm"
+          className="w-full sm:w-auto min-h-[44px] inline-flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-slate-700 dark:text-zinc-200 hover:bg-slate-50 dark:hover:bg-zinc-700/80 transition-all shadow-sm active:scale-[0.98]"
         >
           <Settings className="w-4 h-4 text-rose-500 dark:text-rose-400" />
           <span>Gestionar Tipos</span>
@@ -172,7 +172,7 @@ export function GestionarTiposCredencialModal({
         createPortal(
           <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/70 backdrop-blur-sm animate-in fade-in duration-200">
             <div
-              className="relative w-full max-w-xl bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-200"
+              className="relative w-full max-w-xl bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90dvh] animate-in zoom-in-95 duration-200"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header */}
@@ -193,7 +193,7 @@ export function GestionarTiposCredencialModal({
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors"
+                  className="min-h-[36px] min-w-[36px] inline-flex items-center justify-center p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -213,18 +213,18 @@ export function GestionarTiposCredencialModal({
                   <Plus className="w-3.5 h-3.5 text-rose-500 dark:text-rose-400" />
                   Nuevo Tipo de Credencial
                 </span>
-                <form onSubmit={handleCreate} className="flex gap-2">
+                <form onSubmit={handleCreate} className="flex flex-col sm:flex-row gap-2">
                   <input
                     type="text"
                     placeholder="Ej: Clave WiFi, API Key, Licencia Windows..."
                     value={nuevoNombre}
                     onChange={(e) => setNuevoNombre(e.target.value)}
-                    className="flex-1 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-xs sm:text-sm text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-600 focus:outline-none focus:border-rose-500 transition-colors"
+                    className="flex-1 min-h-[44px] bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl px-3.5 py-2 text-base sm:text-xs text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-600 focus:outline-none focus:border-rose-500 transition-colors"
                   />
                   <button
                     type="submit"
                     disabled={isPending || !nuevoNombre.trim()}
-                    className="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs sm:text-sm font-semibold transition-colors flex items-center justify-center gap-1.5 disabled:opacity-50 shrink-0 shadow-sm"
+                    className="min-h-[44px] px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 active:scale-[0.98] text-white text-xs sm:text-sm font-semibold transition-colors flex items-center justify-center gap-1.5 disabled:opacity-50 shrink-0 shadow-sm"
                   >
                     {isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
                     <span>Agregar</span>
@@ -241,7 +241,7 @@ export function GestionarTiposCredencialModal({
                     placeholder="Buscar tipo de credencial..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full pl-8 pr-3 py-1.5 bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl text-xs text-slate-900 dark:text-zinc-100 placeholder-slate-400 focus:outline-none focus:border-rose-500"
+                    className="w-full min-h-[38px] pl-8 pr-3 py-1.5 bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl text-base sm:text-xs text-slate-900 dark:text-zinc-100 placeholder-slate-400 focus:outline-none focus:border-rose-500"
                   />
                 </div>
               </div>
@@ -266,21 +266,21 @@ export function GestionarTiposCredencialModal({
                         }`}
                       >
                         {isEditing ? (
-                          <div className="flex items-center gap-2">
+                          <div className="flex flex-col sm:flex-row items-center gap-2">
                             <input
                               type="text"
                               value={editNombre}
                               onChange={(e) => setEditNombre(e.target.value)}
-                              className="flex-1 bg-white dark:bg-zinc-950 border border-slate-200 dark:border-zinc-700 rounded-lg px-2.5 py-1.5 text-xs sm:text-sm text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-rose-500"
+                              className="flex-1 w-full min-h-[38px] bg-white dark:bg-zinc-950 border border-slate-200 dark:border-zinc-700 rounded-lg px-2.5 py-1.5 text-base sm:text-xs text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-rose-500"
                               placeholder="Nombre del tipo..."
                               autoFocus
                             />
-                            <div className="flex items-center gap-1 shrink-0">
+                            <div className="flex items-center gap-1.5 self-end sm:self-auto shrink-0">
                               <button
                                 type="button"
                                 onClick={() => handleSaveEdit(t.id)}
                                 disabled={isPending || !editNombre.trim()}
-                                className="p-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white transition-colors"
+                                className="min-h-[36px] min-w-[36px] inline-flex items-center justify-center p-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white transition-colors"
                                 title="Guardar cambios"
                               >
                                 <Check className="w-3.5 h-3.5" />
@@ -288,7 +288,7 @@ export function GestionarTiposCredencialModal({
                               <button
                                 type="button"
                                 onClick={() => setEditingId(null)}
-                                className="p-2 rounded-lg bg-slate-200 hover:bg-slate-300 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-700 dark:text-zinc-300 transition-colors"
+                                className="min-h-[36px] min-w-[36px] inline-flex items-center justify-center p-2 rounded-lg bg-slate-200 hover:bg-slate-300 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-700 dark:text-zinc-300 transition-colors"
                                 title="Cancelar"
                               >
                                 <X className="w-3.5 h-3.5" />
@@ -311,7 +311,7 @@ export function GestionarTiposCredencialModal({
                                 type="button"
                                 onClick={() => startEdit(t)}
                                 disabled={isPending}
-                                className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors"
+                                className="min-h-[36px] min-w-[36px] inline-flex items-center justify-center p-1.5 rounded-lg text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors"
                                 title="Editar nombre"
                               >
                                 <Pencil className="w-3.5 h-3.5" />
@@ -320,7 +320,7 @@ export function GestionarTiposCredencialModal({
                                 type="button"
                                 onClick={() => setItemToDelete(t)}
                                 disabled={isPending}
-                                className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors"
+                                className="min-h-[36px] min-w-[36px] inline-flex items-center justify-center p-1.5 rounded-lg text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors"
                                 title="Eliminar tipo"
                               >
                                 <Trash2 className="w-3.5 h-3.5" />
@@ -340,7 +340,7 @@ export function GestionarTiposCredencialModal({
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="px-3.5 py-1.5 rounded-xl border border-slate-200 dark:border-zinc-700 font-medium hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors text-slate-700 dark:text-zinc-200"
+                  className="min-h-[38px] px-4 py-1.5 rounded-xl border border-slate-200 dark:border-zinc-700 font-semibold hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors text-slate-700 dark:text-zinc-200"
                 >
                   Cerrar
                 </button>
@@ -354,9 +354,9 @@ export function GestionarTiposCredencialModal({
       {itemToDelete &&
         typeof document !== "undefined" &&
         createPortal(
-          <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/75 backdrop-blur-md animate-in fade-in duration-150">
+          <div className="fixed inset-0 z-[60] flex items-center justify-center p-3 sm:p-4 bg-black/75 backdrop-blur-md animate-in fade-in duration-150">
             <div
-              className="relative w-full max-w-md bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl p-5 sm:p-6 shadow-2xl animate-in zoom-in-95 duration-150 space-y-4"
+              className="relative w-full max-w-md bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl p-5 sm:p-6 shadow-2xl animate-in zoom-in-95 duration-150 space-y-4 max-h-[90dvh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-start gap-3.5">
@@ -380,12 +380,12 @@ export function GestionarTiposCredencialModal({
                 </div>
               </div>
 
-              <div className="flex items-center justify-end gap-2.5 pt-2">
+              <div className="grid grid-cols-2 gap-2 sm:flex sm:items-center sm:justify-end pt-2">
                 <button
                   type="button"
                   onClick={() => setItemToDelete(null)}
                   disabled={isPending}
-                  className="px-4 py-2 rounded-xl border border-slate-200 dark:border-zinc-700 text-xs sm:text-sm font-semibold hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-700 dark:text-zinc-300 transition-colors"
+                  className="min-h-[44px] flex items-center justify-center px-4 py-2 rounded-xl border border-slate-200 dark:border-zinc-700 text-xs sm:text-sm font-semibold hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-700 dark:text-zinc-300 transition-colors"
                 >
                   Cancelar
                 </button>
@@ -393,14 +393,14 @@ export function GestionarTiposCredencialModal({
                   type="button"
                   onClick={handleConfirmDelete}
                   disabled={isPending}
-                  className="px-4 py-2 rounded-xl bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white text-xs sm:text-sm font-semibold shadow-lg shadow-rose-950/30 transition-all flex items-center gap-1.5 disabled:opacity-50"
+                  className="min-h-[44px] px-4 py-2 rounded-xl bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white text-xs sm:text-sm font-semibold shadow-md shadow-rose-950/30 transition-all active:scale-[0.98] flex items-center justify-center gap-1.5 disabled:opacity-50"
                 >
                   {isPending ? (
                     <Loader2 className="w-4 h-4 animate-spin" />
                   ) : (
                     <Trash2 className="w-4 h-4" />
                   )}
-                  <span>Eliminar definitivamente</span>
+                  <span>Eliminar</span>
                 </button>
               </div>
             </div>

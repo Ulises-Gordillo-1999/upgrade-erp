@@ -29,7 +29,7 @@ export function UsuariosTable({ usuarios, currentUserId }: UsuariosTableProps) {
       {/* 1. Vista Móvil: Tarjetas de Usuarios (< md) */}
       <div className="md:hidden space-y-3">
         {usuarios.length === 0 ? (
-          <div className="rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-8 text-center text-slate-400 dark:text-zinc-500">
+          <div className="rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-8 text-center text-slate-400 dark:text-zinc-500">
             No hay usuarios registrados.
           </div>
         ) : (
@@ -40,7 +40,7 @@ export function UsuariosTable({ usuarios, currentUserId }: UsuariosTableProps) {
             return (
               <div
                 key={u.id}
-                className="rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-4 shadow-sm space-y-3 transition-colors"
+                className="rounded-2xl border border-slate-200 dark:border-zinc-800/90 bg-white dark:bg-zinc-900/60 p-4 shadow-sm space-y-3.5 transition-colors"
               >
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex items-center gap-3 min-w-0 flex-1">
@@ -49,7 +49,7 @@ export function UsuariosTable({ usuarios, currentUserId }: UsuariosTableProps) {
                     </div>
                     <div className="min-w-0">
                       <div className="flex items-center gap-1.5 flex-wrap">
-                        <h4 className="text-sm font-semibold text-slate-900 dark:text-zinc-100 truncate">
+                        <h4 className="text-sm font-bold text-slate-900 dark:text-zinc-100 truncate">
                           {u.nombre}
                         </h4>
                         {isSelf && (
@@ -84,7 +84,7 @@ export function UsuariosTable({ usuarios, currentUserId }: UsuariosTableProps) {
                   {u.telefono && (
                     <div className="flex items-center text-slate-700 dark:text-zinc-300">
                       <Phone className="w-3.5 h-3.5 mr-1.5 text-slate-400 dark:text-zinc-500 shrink-0" />
-                      <a href={`tel:${u.telefono}`} className="hover:underline font-mono">
+                      <a href={`tel:${u.telefono}`} className="min-h-[36px] inline-flex items-center hover:underline font-mono">
                         {u.telefono}
                       </a>
                     </div>
@@ -103,7 +103,7 @@ export function UsuariosTable({ usuarios, currentUserId }: UsuariosTableProps) {
                   <div className="flex items-center gap-2">
                     <ToggleEstadoButton id={u.id} activo={u.activo} isSelf={isSelf} />
                     <span
-                      className={`text-xs font-medium ${
+                      className={`text-xs font-semibold ${
                         u.activo ? "text-emerald-600 dark:text-emerald-400" : "text-slate-400 dark:text-zinc-500"
                       }`}
                     >
@@ -111,7 +111,7 @@ export function UsuariosTable({ usuarios, currentUserId }: UsuariosTableProps) {
                     </span>
                   </div>
 
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-1.5">
                     <UsuarioFormModal usuarioInicial={u} isEdit={true} />
                     <ResetPasswordModal usuarioId={u.id} usuarioNombre={u.nombre} />
                     <DeleteUsuarioButton id={u.id} nombre={u.nombre} isSelf={isSelf} />

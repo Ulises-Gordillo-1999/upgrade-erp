@@ -117,7 +117,7 @@ export function LoginForm() {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="nombre@upgrade.com"
               required
-              className="w-full pl-10 pr-4 py-2.5 bg-slate-50/70 dark:bg-zinc-950/70 border border-slate-200 dark:border-zinc-800 rounded-xl text-sm text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-600 focus:outline-none focus:border-cyan-500/80 focus:ring-1 focus:ring-cyan-500/80 transition-all duration-200"
+              className="w-full min-h-[44px] pl-10 pr-4 py-2.5 bg-slate-50/70 dark:bg-zinc-950/70 border border-slate-200 dark:border-zinc-800 rounded-xl text-base sm:text-sm text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-600 focus:outline-none focus:border-cyan-500/80 focus:ring-1 focus:ring-cyan-500/80 transition-all duration-200"
             />
           </div>
         </div>
@@ -142,13 +142,14 @@ export function LoginForm() {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••••••"
               required
-              className="w-full pl-10 pr-10 py-2.5 bg-slate-50/70 dark:bg-zinc-950/70 border border-slate-200 dark:border-zinc-800 rounded-xl text-sm text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-600 focus:outline-none focus:border-cyan-500/80 focus:ring-1 focus:ring-cyan-500/80 transition-all duration-200"
+              className="w-full min-h-[44px] pl-10 pr-12 py-2.5 bg-slate-50/70 dark:bg-zinc-950/70 border border-slate-200 dark:border-zinc-800 rounded-xl text-base sm:text-sm text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-600 focus:outline-none focus:border-cyan-500/80 focus:ring-1 focus:ring-cyan-500/80 transition-all duration-200"
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 dark:text-zinc-500 dark:hover:text-zinc-300 transition-colors"
+              className="min-w-[44px] min-h-[44px] absolute inset-y-0 right-0 flex items-center justify-center text-slate-400 hover:text-slate-600 dark:text-zinc-500 dark:hover:text-zinc-300 transition-colors cursor-pointer"
               tabIndex={-1}
+              aria-label={showPassword ? "Ocultar contraseña" : "Ver contraseña"}
             >
               {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
             </button>
@@ -159,7 +160,7 @@ export function LoginForm() {
         <button
           type="submit"
           disabled={isLoading || isBiometricLoading}
-          className="w-full mt-2 py-3 px-4 rounded-xl font-medium text-sm text-white bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 active:scale-[0.99] transition-all duration-200 flex items-center justify-center gap-2 shadow-lg shadow-cyan-950/20 dark:shadow-cyan-950/50 disabled:opacity-50 disabled:pointer-events-none"
+          className="w-full min-h-[44px] mt-2 py-3 px-4 rounded-xl font-medium text-sm text-white bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 active:scale-[0.99] transition-all duration-200 flex items-center justify-center gap-2 shadow-lg shadow-cyan-950/20 dark:shadow-cyan-950/50 disabled:opacity-50 disabled:pointer-events-none cursor-pointer"
         >
           {isLoading ? (
             <>
@@ -189,7 +190,7 @@ export function LoginForm() {
             type="button"
             onClick={handleBiometricLogin}
             disabled={isLoading || isBiometricLoading}
-            className="w-full py-3 px-4 rounded-xl font-medium text-sm text-slate-800 dark:text-zinc-100 bg-slate-100/80 dark:bg-zinc-900/80 hover:bg-slate-200 dark:hover:bg-zinc-800 border border-slate-200 dark:border-zinc-800 hover:border-cyan-500/50 active:scale-[0.99] transition-all duration-200 flex items-center justify-center gap-2.5 shadow-sm group disabled:opacity-50 disabled:pointer-events-none cursor-pointer"
+            className="w-full min-h-[44px] py-3 px-4 rounded-xl font-medium text-sm text-slate-800 dark:text-zinc-100 bg-slate-100/80 dark:bg-zinc-900/80 hover:bg-slate-200 dark:hover:bg-zinc-800 border border-slate-200 dark:border-zinc-800 hover:border-cyan-500/50 active:scale-[0.99] transition-all duration-200 flex items-center justify-center gap-2.5 shadow-sm group disabled:opacity-50 disabled:pointer-events-none cursor-pointer"
           >
             {isBiometricLoading ? (
               <>
