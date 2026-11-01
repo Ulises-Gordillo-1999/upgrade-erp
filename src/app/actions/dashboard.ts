@@ -2,7 +2,8 @@
 
 import { db } from "@/db";
 import { clientes, proyectos, inventario, transacciones } from "@/db/schema";
-import { count, ne, and, sql, gte, eq, desc, asc } from "drizzle-orm";
+import { count, ne, and, sql, gte, lte, eq, desc, asc } from "drizzle-orm";
+import { getPeriodoMesArgentina } from "@/utils/date";
 
 export interface StockCriticoItem {
   id: string;
@@ -70,17 +71,10 @@ export interface DashboardData {
 }
 
 export async function getDashboardData(): Promise<DashboardData> {
-  const now = new Date();
-  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0, 0);
-
-  const meses = [
-    "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
-    "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
-  ];
-  const mesNombre = `${meses[now.getMonth()]} ${now.getFullYear()}`;
+  const { startOfMonth, endOfMonth, mesNombre } = getPeriodoMesArgentina();
 
   try {
-    // 1. Finanzas del mes SOLO en ARS
+    // 1. Finanzas del mes SOLO en ARS (basado en zona horaria Argentina)
     const txMesARS = await db
       .select({
         tipo: transacciones.tipo,
@@ -91,7 +85,8 @@ export async function getDashboardData(): Promise<DashboardData> {
       .where(
         and(
           eq(transacciones.moneda, "ARS"),
-          gte(transacciones.fecha_transaccion, startOfMonth)
+          gte(transacciones.fecha_transaccion, startOfMonth),
+          lte(transacciones.fecha_transaccion, endOfMonth)
         )
       );
 

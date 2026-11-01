@@ -2,10 +2,11 @@
 
 import { db, ensureDatabaseSchema } from "@/db";
 import { transacciones, proyectos, categoriasFinanzas } from "@/db/schema";
-import { desc, eq, gte, and, asc, ilike } from "drizzle-orm";
+import { desc, eq, gte, lte, and, asc, ilike } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { saveComprobanteFile } from "@/utils/finanzasStorage";
 import { registrarAuditoria } from "./auditoria";
+import { getPeriodoMesArgentina, parseArgentinaDate } from "@/utils/date";
 import {
   Transaccion,
   TipoTransaccion,
@@ -89,7 +90,7 @@ export async function createTransaccion(data: {
     };
 
     if (data.fecha_transaccion) {
-      payload.fecha_transaccion = new Date(data.fecha_transaccion);
+      payload.fecha_transaccion = parseArgentinaDate(data.fecha_transaccion);
     }
 
     const [newRecord] = await db
@@ -125,9 +126,7 @@ export async function getBalanceMensual() {
   };
 
   try {
-    const startOfMonth = new Date();
-    startOfMonth.setDate(1);
-    startOfMonth.setHours(0, 0, 0, 0);
+    const { startOfMonth, endOfMonth } = getPeriodoMesArgentina();
 
     const rows = await db
       .select({
@@ -139,6 +138,7 @@ export async function getBalanceMensual() {
       .where(
         and(
           gte(transacciones.fecha_transaccion, startOfMonth),
+          lte(transacciones.fecha_transaccion, endOfMonth),
           eq(transacciones.estado, "Pagado")
         )
       );
@@ -188,7 +188,7 @@ export async function updateTransaccion(
     if (payload.descripcion === "") payload.descripcion = null;
     if (payload.proyecto_id === "") payload.proyecto_id = null;
     if (payload.fecha_transaccion) {
-      payload.fecha_transaccion = new Date(payload.fecha_transaccion);
+      payload.fecha_transaccion = parseArgentinaDate(payload.fecha_transaccion);
     }
 
     const [updatedRecord] = await db

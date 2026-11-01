@@ -29,6 +29,7 @@ import {
   uploadComprobante,
 } from "@/app/actions/finanzas";
 import { getProyectos } from "@/app/actions/proyectos";
+import { toArgentinaDateTimeLocal } from "@/utils/date";
 import {
   Transaccion,
   TipoTransaccion,
@@ -150,9 +151,9 @@ export function TransaccionFormModal({
     }
   }
 
-  const defaultFecha = transaccionInicial?.fecha_transaccion
-    ? new Date(transaccionInicial.fecha_transaccion).toISOString().slice(0, 16)
-    : new Date().toISOString().slice(0, 16);
+  const defaultFecha = toArgentinaDateTimeLocal(
+    transaccionInicial?.fecha_transaccion || new Date()
+  );
 
   return (
     <>

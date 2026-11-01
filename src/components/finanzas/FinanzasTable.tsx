@@ -23,6 +23,7 @@ import {
   FileText,
 } from "lucide-react";
 import { exportarFlujoCajaPDF } from "@/utils/finanzasPdfExport";
+import { formatFechaHoraArgentina, getPeriodoMesArgentina, getArgentinaParts } from "@/utils/date";
 
 import { CategoriaFinanzas } from "@/types/database";
 import { ComprobanteViewerModal } from "./ComprobanteViewerModal";
@@ -143,12 +144,16 @@ export function FinanzasTable({ transacciones, categorias = [] }: Props) {
         const now = new Date();
 
         if (periodoFiltro === "este_mes") {
-          const start = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0);
-          const end = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
-          if (fechaTx < start || fechaTx > end) return false;
+          const { startOfMonth, endOfMonth } = getPeriodoMesArgentina(now);
+          if (fechaTx < startOfMonth || fechaTx > endOfMonth) return false;
         } else if (periodoFiltro === "mes_anterior") {
-          const start = new Date(now.getFullYear(), now.getMonth() - 1, 1, 0, 0, 0);
-          const end = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59);
+          const parts = getArgentinaParts(now);
+          const prevMonth = parts.month === 1 ? 12 : parts.month - 1;
+          const prevYear = parts.month === 1 ? parts.year - 1 : parts.year;
+          const pad = (n: number) => String(n).padStart(2, "0");
+          const start = new Date(`${prevYear}-${pad(prevMonth)}-01T00:00:00.000-03:00`);
+          const lastDay = new Date(prevYear, prevMonth, 0).getDate();
+          const end = new Date(`${prevYear}-${pad(prevMonth)}-${pad(lastDay)}T23:59:59.999-03:00`);
           if (fechaTx < start || fechaTx > end) return false;
         } else if (periodoFiltro === "ultimos_30") {
           const limit = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
@@ -629,13 +634,7 @@ export function FinanzasTable({ transacciones, categorias = [] }: Props) {
               <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-zinc-800 text-[11px] text-slate-500 dark:text-zinc-400">
                 <div className="flex items-center">
                   <Calendar className="w-3 h-3 mr-1 opacity-70" />
-                  {new Date(t.fecha_transaccion!).toLocaleString("es-AR", {
-                    day: "2-digit",
-                    month: "2-digit",
-                    year: "numeric",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
+                  {formatFechaHoraArgentina(t.fecha_transaccion)}
                 </div>
 
                 <div className="flex items-center gap-1.5">
@@ -758,13 +757,7 @@ export function FinanzasTable({ transacciones, categorias = [] }: Props) {
                     <td className="px-6 py-4 text-slate-500 dark:text-zinc-400 text-xs">
                       <div className="flex items-center">
                         <Calendar className="w-3.5 h-3.5 mr-1.5 opacity-70 shrink-0" />
-                        {new Date(t.fecha_transaccion!).toLocaleString("es-AR", {
-                          day: "2-digit",
-                          month: "2-digit",
-                          year: "numeric",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
+                        {formatFechaHoraArgentina(t.fecha_transaccion)}
                       </div>
                     </td>
                     <td className="px-6 py-4 text-right">

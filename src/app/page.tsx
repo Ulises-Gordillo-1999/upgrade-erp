@@ -5,18 +5,16 @@ import { CriticalStockAlert } from "@/components/dashboard/CriticalStockAlert";
 import { QuickActions } from "@/components/dashboard/QuickActions";
 import { RecentActivity } from "@/components/dashboard/RecentActivity";
 import { Building2, Package, Wifi, ShieldCheck, Cpu } from "lucide-react";
+import { TelemetryClock } from "@/components/dashboard/TelemetryClock";
+import { formatFechaArgentina, formatHoraArgentina } from "@/utils/date";
 
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
   const data = await getDashboardData();
-
-  const fechaHoy = new Date().toLocaleDateString("es-AR", {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
+  const now = new Date();
+  const fechaHoy = formatFechaArgentina(now, true, true);
+  const horaActual = formatHoraArgentina(now, true);
 
   return (
     <div className="space-y-6 sm:space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-12">
@@ -31,6 +29,7 @@ export default async function DashboardPage() {
           <span className="text-cyan-700 dark:text-cyan-400 font-medium hidden xs:inline">SISTEMA EN LÍNEA</span>
         </div>
         <div className="flex items-center justify-between sm:justify-end gap-3 sm:gap-5 text-[10px] sm:text-[11px] pt-1.5 sm:pt-0 border-t sm:border-t-0 border-slate-100 dark:border-zinc-800/60">
+          <TelemetryClock initialHora={horaActual} />
           <span className="flex items-center gap-1.5 text-slate-600 dark:text-zinc-400">
             <Wifi className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400 shrink-0" />
             <span>LATENCIA: <strong className="text-slate-800 dark:text-zinc-200">2ms</strong></span>
@@ -39,7 +38,7 @@ export default async function DashboardPage() {
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
             <span>SEGURIDAD: <strong className="text-slate-800 dark:text-zinc-200">AES-256 + RBAC</strong></span>
           </span>
-          <span className="flex items-center gap-1.5 text-slate-600 dark:text-zinc-400">
+          <span className="hidden sm:flex items-center gap-1.5 text-slate-600 dark:text-zinc-400">
             <Cpu className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400 shrink-0" />
             <span>UPTIME: <strong className="text-emerald-600 dark:text-emerald-400 font-bold">99.99%</strong></span>
           </span>
@@ -58,8 +57,8 @@ export default async function DashboardPage() {
               Métricas en Vivo
             </span>
           </div>
-          <p className="text-slate-500 dark:text-zinc-400 text-xs sm:text-sm mt-1.5 capitalize transition-colors">
-            {fechaHoy} • Monitoreo integral de operaciones, flujo de caja e inventario.
+          <p className="text-slate-500 dark:text-zinc-400 text-xs sm:text-sm mt-1.5 transition-colors">
+            <span className="capitalize">{fechaHoy}</span> • Monitoreo integral de operaciones, flujo de caja e inventario.
           </p>
         </div>
 

@@ -11,6 +11,7 @@ import {
   BarChart3,
   Sparkles,
 } from "lucide-react";
+import { getArgentinaParts } from "@/utils/date";
 
 interface TransaccionParaGrafica {
   tipo: "Ingreso" | "Egreso";
@@ -29,9 +30,9 @@ export function FinanzasGraficaEvolucion({ transacciones }: Props) {
   const [mesesAtras, setMesesAtras] = useState<6 | 12>(6);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
-  // Generar lista de los últimos N meses (orden cronológico)
+  // Generar lista de los últimos N meses (orden cronológico basado en hora argentina)
   const monthlyData = useMemo(() => {
-    const today = new Date();
+    const todayParts = getArgentinaParts();
     const result: Array<{
       key: string;
       label: string;
@@ -41,15 +42,23 @@ export function FinanzasGraficaEvolucion({ transacciones }: Props) {
       neto: number;
     }> = [];
 
-    for (let i = mesesAtras - 1; i >= 0; i--) {
-      const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
-      const year = d.getFullYear();
-      const month = d.getMonth();
-      const monthStr = String(month + 1).padStart(2, "0");
-      const yearMonth = `${year}-${monthStr}`;
+    const mesesNombres = [
+      "Ene", "Feb", "Mar", "Abr", "May", "Jun",
+      "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"
+    ];
 
-      const monthName = d.toLocaleDateString("es-AR", { month: "short" });
-      const label = `${monthName.charAt(0).toUpperCase() + monthName.slice(1)} ${String(year).slice(-2)}`;
+    for (let i = mesesAtras - 1; i >= 0; i--) {
+      // Calcular año y mes restando i meses
+      let targetMonth = todayParts.month - i; // 1-indexed
+      let targetYear = todayParts.year;
+      while (targetMonth <= 0) {
+        targetMonth += 12;
+        targetYear -= 1;
+      }
+
+      const monthStr = String(targetMonth).padStart(2, "0");
+      const yearMonth = `${targetYear}-${monthStr}`;
+      const label = `${mesesNombres[targetMonth - 1]} ${String(targetYear).slice(-2)}`;
 
       result.push({
         key: yearMonth,
@@ -67,10 +76,8 @@ export function FinanzasGraficaEvolucion({ transacciones }: Props) {
       const fStr = t.fecha_transaccion || t.created_at;
       if (!fStr) return;
 
-      const fDate = new Date(fStr);
-      if (isNaN(fDate.getTime())) return;
-
-      const ym = `${fDate.getFullYear()}-${String(fDate.getMonth() + 1).padStart(2, "0")}`;
+      const fParts = getArgentinaParts(fStr);
+      const ym = `${fParts.year}-${String(fParts.month).padStart(2, "0")}`;
       const entry = result.find((r) => r.yearMonth === ym);
       if (!entry) return;
 

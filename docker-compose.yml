@@ -7,6 +7,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgrespassword
       POSTGRES_DB: upgrade_db
+      TZ: America/Argentina/Catamarca
     ports:
       - "5432:5432"
     volumes:

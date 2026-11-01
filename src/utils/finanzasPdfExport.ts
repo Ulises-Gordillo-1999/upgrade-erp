@@ -2,6 +2,7 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { Transaccion, RentabilidadProyecto } from "@/types/database";
 import { UPGRADE_LOGO_PNG_BASE64 } from "@/utils/logoBase64";
+import { formatFechaArgentina, TIMEZONE_ARGENTINA } from "@/utils/date";
 
 // Paleta de Colores Corporativa UPGRADE (coherente con Presupuestos PDF)
 const navyPrimary: [number, number, number] = [15, 23, 42]; // Slate 900
@@ -105,7 +106,7 @@ function drawCorporateHeader(
   doc.text("Fecha Emisión:", metaCardX + 4.5, 28);
   doc.setFont("helvetica", "bold");
   doc.setTextColor(...navyPrimary);
-  doc.text(new Date().toLocaleDateString("es-AR"), metaCardX + 23, 28);
+  doc.text(formatFechaArgentina(new Date(), false, true), metaCardX + 23, 28);
 
   // Período
   doc.setFont("helvetica", "normal");
@@ -309,6 +310,7 @@ export function exportarFlujoCajaPDF({
   const tableRows = transacciones.map((t, index) => {
     const fecha = t.fecha_transaccion
       ? new Date(t.fecha_transaccion).toLocaleDateString("es-AR", {
+          timeZone: TIMEZONE_ARGENTINA,
           day: "2-digit",
           month: "2-digit",
           year: "2-digit",

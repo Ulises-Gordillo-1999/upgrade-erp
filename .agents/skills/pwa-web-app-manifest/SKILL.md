@@ -303,3 +303,4 @@ if (
 2. **Evitar Cachear Mutaciones**: Nunca interceptar peticiones `POST`, `PUT` o `DELETE` en el Service Worker. Podría causar duplicación de facturas, transacciones o errores de idempotencia.
 3. **Control de Versiones de Caché**: Cada vez que se actualice la estructura de assets o la app sufra cambios mayores, incrementar `CACHE_NAME` (ej: `app-pwa-v1.0.1`) para forzar la invalidación del caché viejo.
 4. **Respetar la Elección del Usuario**: Almacenar en `sessionStorage` o `localStorage` el cierre del banner de instalación para no mostrarlo reiteradamente si el usuario no desea instalarla.
+

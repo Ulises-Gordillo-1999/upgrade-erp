@@ -22,6 +22,7 @@ import { SessionUser } from "@/utils/auth";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { NotificationCenter } from "@/components/notifications/NotificationCenter";
 import { ResumenNotificaciones } from "@/app/actions/notificaciones";
+import { HeaderClock } from "@/components/HeaderClock";
 
 const navigation = [
   { name: "Dashboard", href: "/", icon: LayoutDashboard, superAdminOnly: false },
@@ -178,6 +179,9 @@ export function Sidebar({
         </div>
 
         <div className="flex items-center gap-2">
+          <div className="hidden sm:flex">
+            <HeaderClock className="!text-[11px]" />
+          </div>
           <NotificationCenter initialNotificaciones={notificaciones} />
           <Link
             href="/perfil"
@@ -242,6 +246,15 @@ export function Sidebar({
           >
             <X className="w-5 h-5" />
           </button>
+        </div>
+
+        {/* Indicador de Fecha y Hora en Cajón Móvil */}
+        <div className="px-4 py-2 bg-slate-50 dark:bg-zinc-900/60 border-b border-slate-200/80 dark:border-zinc-800/80 flex items-center justify-between text-[11px]">
+          <HeaderClock className="!text-[11px]" showSeconds />
+          <span className="text-[10px] font-mono text-cyan-600 dark:text-cyan-400 font-semibold flex items-center gap-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            ART (UTC-3)
+          </span>
         </div>
 
         <nav className="flex-1 space-y-1.5 px-3 py-4 overflow-y-auto">

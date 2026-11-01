@@ -4,6 +4,7 @@ import { Download, FileText } from "lucide-react";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { UPGRADE_LOGO_PNG_BASE64 } from "@/utils/logoBase64";
+import { formatFechaArgentina } from "@/utils/date";
 
 interface Props {
   proyecto: any;
@@ -110,8 +111,8 @@ export function ExportarPDFButton({ proyecto, items }: Props) {
     doc.setFont("helvetica", "bold");
     doc.setTextColor(...navyPrimary);
     const fechaEmision = proyecto.created_at
-      ? new Date(proyecto.created_at).toLocaleDateString("es-AR")
-      : new Date().toLocaleDateString("es-AR");
+      ? formatFechaArgentina(proyecto.created_at, false, true)
+      : formatFechaArgentina(new Date(), false, true);
     doc.text(fechaEmision, metaCardX + 26, 28);
 
     doc.setFont("helvetica", "normal");

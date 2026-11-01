@@ -10,6 +10,7 @@ import {
   Building2,
 } from "lucide-react";
 import { UltimaTransaccion, UltimoProyecto } from "@/app/actions/dashboard";
+import { formatFechaArgentina } from "@/utils/date";
 
 interface Props {
   transacciones: UltimaTransaccion[];
@@ -30,12 +31,7 @@ export function RecentActivity({ transacciones, proyectos }: Props) {
 
   const formatFecha = (iso: string | null) => {
     if (!iso) return "Fecha no registrada";
-    const date = new Date(iso);
-    return date.toLocaleDateString("es-AR", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    });
+    return formatFechaArgentina(iso, false, true);
   };
 
   const getEstadoBadge = (estado: string) => {

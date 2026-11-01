@@ -5,7 +5,8 @@
 
 # 1. Base Image
 FROM node:20-alpine AS base
-RUN apk add --no-cache libc6-compat
+RUN apk add --no-cache libc6-compat tzdata
+ENV TZ=America/Argentina/Catamarca
 WORKDIR /app
 
 # 2. Dependencies Stage

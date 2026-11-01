@@ -4,6 +4,8 @@ import { db, ensureDatabaseSchema } from "@/db";
 import { inventario, proyectos } from "@/db/schema";
 import { and, ne, lte, or, eq, asc, desc } from "drizzle-orm";
 
+import { formatFechaArgentina } from "@/utils/date";
+
 export interface NotificacionItem {
   id: string;
   tipo: "stock_agotado" | "stock_critico" | "proyecto_demorado" | "borrador_bot" | "presupuesto_pendiente";
@@ -96,7 +98,7 @@ export async function getNotificaciones(): Promise<ResumenNotificaciones> {
           tipo: "proyecto_demorado",
           titulo: `Obra Demorada: ${clienteNombre}`,
           descripcion: `Lleva ${diffDias} días en ejecución. Requiere seguimiento técnico o cierre de obra con liquidación de cable/stock.`,
-          detalle: `Estado: En Ejecución • Inicio: ${fechaCreacion.toLocaleDateString("es-AR")}`,
+          detalle: `Estado: En Ejecución • Inicio: ${formatFechaArgentina(fechaCreacion, false, true)}`,
           enlace: `/proyectos/${p.id}`,
           severidad: diffDias >= 30 ? "alta" : "media",
           categoria: "proyectos",
