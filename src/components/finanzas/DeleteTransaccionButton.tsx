@@ -54,7 +54,7 @@ export function DeleteTransaccionButton({ id, descripcion = "este movimiento" }:
       <button
         type="button"
         onClick={handleOpen}
-        className="p-2 text-zinc-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-all"
+        className="min-h-[36px] min-w-[36px] flex items-center justify-center p-2 text-zinc-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-all"
         title="Eliminar movimiento"
       >
         <Trash2 className="w-4 h-4" />

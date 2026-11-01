@@ -46,12 +46,14 @@ interface Props {
   transaccionInicial?: Transaccion;
   isEdit?: boolean;
   categorias?: CategoriaFinanzas[];
+  triggerButton?: React.ReactNode;
 }
 
 export function TransaccionFormModal({
   transaccionInicial,
   isEdit = false,
   categorias = [],
+  triggerButton,
 }: Props) {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
@@ -158,17 +160,23 @@ export function TransaccionFormModal({
   return (
     <>
       {!isEdit ? (
-        <button
-          onClick={() => setIsOpen(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white rounded-xl transition-all text-sm font-medium shadow-lg shadow-emerald-950/20 dark:shadow-emerald-950/40"
-        >
-          <Plus className="w-4 h-4" />
-          Nueva Transacción
-        </button>
+        triggerButton ? (
+          <div onClick={() => setIsOpen(true)} className="cursor-pointer">
+            {triggerButton}
+          </div>
+        ) : (
+          <button
+            onClick={() => setIsOpen(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white rounded-xl transition-all text-sm font-medium shadow-lg shadow-emerald-950/20 dark:shadow-emerald-950/40"
+          >
+            <Plus className="w-4 h-4" />
+            Nueva Transacción
+          </button>
+        )
       ) : (
         <button
           onClick={() => setIsOpen(true)}
-          className="p-1.5 text-slate-400 hover:text-emerald-600 dark:text-zinc-400 dark:hover:text-emerald-400 hover:bg-emerald-500/10 rounded-lg transition-colors"
+          className="p-2 min-h-[36px] min-w-[36px] flex items-center justify-center text-slate-400 hover:text-emerald-600 dark:text-zinc-400 dark:hover:text-emerald-400 hover:bg-emerald-500/10 rounded-lg transition-colors"
           title="Editar movimiento"
         >
           <Pencil className="w-4 h-4" />

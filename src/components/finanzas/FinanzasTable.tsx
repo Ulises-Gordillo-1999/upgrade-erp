@@ -275,57 +275,57 @@ export function FinanzasTable({ transacciones, categorias = [] }: Props) {
 
   return (
     <div className="space-y-4">
-      {/* 1. Tarjetas de KPIs Dinámicos */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
-        <div className="p-4 rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 shadow-sm space-y-1">
+      {/* 1. Tarjetas de KPIs Dinámicos (Rejilla Ejecutiva 2x2 en Móvil) */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3.5">
+        <div className="p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 shadow-sm space-y-1">
           <div className="flex items-center justify-between text-xs text-slate-500 dark:text-zinc-400">
-            <span className="font-medium">Total Ingresos</span>
-            <span className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
-              <TrendingUp className="w-4 h-4" />
+            <span className="font-medium text-[11px] sm:text-xs truncate">Total Ingresos</span>
+            <span className="p-1 sm:p-1.5 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 shrink-0">
+              <TrendingUp className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </span>
           </div>
-          <div className="text-lg font-bold text-slate-900 dark:text-white">
+          <div className="text-base sm:text-lg font-bold font-mono text-slate-900 dark:text-white truncate">
             {formatCurrency(kpis.ingresosARS, "ARS")}
           </div>
           {kpis.ingresosUSDT > 0 && (
-            <div className="text-xs font-medium text-emerald-600 dark:text-emerald-400 font-mono">
+            <div className="text-[11px] sm:text-xs font-medium text-emerald-600 dark:text-emerald-400 font-mono truncate">
               + {formatCurrency(kpis.ingresosUSDT, "USDT")}
             </div>
           )}
-          <span className="text-[11px] text-slate-400 dark:text-zinc-500">
-            {kpis.cantIngresos} cobros registrados
+          <span className="text-[10px] sm:text-[11px] text-slate-400 dark:text-zinc-500 block truncate">
+            {kpis.cantIngresos} cobros
           </span>
         </div>
 
-        <div className="p-4 rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 shadow-sm space-y-1">
+        <div className="p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 shadow-sm space-y-1">
           <div className="flex items-center justify-between text-xs text-slate-500 dark:text-zinc-400">
-            <span className="font-medium">Total Egresos</span>
-            <span className="p-1.5 rounded-lg bg-rose-500/10 text-rose-600 dark:text-rose-400">
-              <TrendingDown className="w-4 h-4" />
+            <span className="font-medium text-[11px] sm:text-xs truncate">Total Egresos</span>
+            <span className="p-1 sm:p-1.5 rounded-lg bg-rose-500/10 text-rose-600 dark:text-rose-400 shrink-0">
+              <TrendingDown className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </span>
           </div>
-          <div className="text-lg font-bold text-slate-900 dark:text-white">
+          <div className="text-base sm:text-lg font-bold font-mono text-slate-900 dark:text-white truncate">
             {formatCurrency(kpis.egresosARS, "ARS")}
           </div>
           {kpis.egresosUSDT > 0 && (
-            <div className="text-xs font-medium text-rose-600 dark:text-rose-400 font-mono">
+            <div className="text-[11px] sm:text-xs font-medium text-rose-600 dark:text-rose-400 font-mono truncate">
               - {formatCurrency(kpis.egresosUSDT, "USDT")}
             </div>
           )}
-          <span className="text-[11px] text-slate-400 dark:text-zinc-500">
-            {kpis.cantEgresos} egresos imputados
+          <span className="text-[10px] sm:text-[11px] text-slate-400 dark:text-zinc-500 block truncate">
+            {kpis.cantEgresos} egresos
           </span>
         </div>
 
-        <div className="p-4 rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 shadow-sm space-y-1">
+        <div className="p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 shadow-sm space-y-1">
           <div className="flex items-center justify-between text-xs text-slate-500 dark:text-zinc-400">
-            <span className="font-medium">Balance Neto</span>
-            <span className="p-1.5 rounded-lg bg-cyan-500/10 text-cyan-600 dark:text-cyan-400">
-              <DollarSign className="w-4 h-4" />
+            <span className="font-medium text-[11px] sm:text-xs truncate">Balance Neto</span>
+            <span className="p-1 sm:p-1.5 rounded-lg bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 shrink-0">
+              <DollarSign className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </span>
           </div>
           <div
-            className={`text-lg font-bold ${
+            className={`text-base sm:text-lg font-bold font-mono truncate ${
               kpis.netoARS >= 0
                 ? "text-emerald-600 dark:text-emerald-400"
                 : "text-rose-600 dark:text-rose-400"
@@ -336,7 +336,7 @@ export function FinanzasTable({ transacciones, categorias = [] }: Props) {
           </div>
           {kpis.netoUSDT !== 0 && (
             <div
-              className={`text-xs font-medium font-mono ${
+              className={`text-[11px] sm:text-xs font-medium font-mono truncate ${
                 kpis.netoUSDT >= 0
                   ? "text-emerald-600 dark:text-emerald-400"
                   : "text-rose-600 dark:text-rose-400"
@@ -346,36 +346,36 @@ export function FinanzasTable({ transacciones, categorias = [] }: Props) {
               {formatCurrency(kpis.netoUSDT, "USDT")}
             </div>
           )}
-          <span className="text-[11px] text-slate-400 dark:text-zinc-500">
-            Flujo de fondos del período
+          <span className="text-[10px] sm:text-[11px] text-slate-400 dark:text-zinc-500 block truncate">
+            Flujo del período
           </span>
         </div>
 
-        <div className="p-4 rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 shadow-sm space-y-1">
+        <div className="p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 shadow-sm space-y-1">
           <div className="flex items-center justify-between text-xs text-slate-500 dark:text-zinc-400">
-            <span className="font-medium">Pendiente de Cobro</span>
-            <span className="p-1.5 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400">
-              <Clock className="w-4 h-4" />
+            <span className="font-medium text-[11px] sm:text-xs truncate">Por Cobrar</span>
+            <span className="p-1 sm:p-1.5 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400 shrink-0">
+              <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </span>
           </div>
-          <div className="text-lg font-bold text-amber-600 dark:text-amber-400">
+          <div className="text-base sm:text-lg font-bold font-mono text-amber-600 dark:text-amber-400 truncate">
             {formatCurrency(kpis.pendientesARS, "ARS")}
           </div>
           {kpis.pendientesUSDT > 0 && (
-            <div className="text-xs font-medium text-amber-500 font-mono">
+            <div className="text-[11px] sm:text-xs font-medium text-amber-500 font-mono truncate">
               + {formatCurrency(kpis.pendientesUSDT, "USDT")}
             </div>
           )}
-          <span className="text-[11px] text-slate-400 dark:text-zinc-500">
-            Movimientos pendientes
+          <span className="text-[10px] sm:text-[11px] text-slate-400 dark:text-zinc-500 block truncate">
+            Pendientes de cobro
           </span>
         </div>
       </div>
 
       {/* 2. Barra de Búsqueda, Períodos y Filtros */}
-      <div className="p-3.5 rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 backdrop-blur-md shadow-sm space-y-3 transition-colors">
+      <div className="p-3 sm:p-3.5 rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 backdrop-blur-md shadow-sm space-y-3 transition-colors">
         <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3">
-          {/* Input de Búsqueda */}
+          {/* Input de Búsqueda (16px base en mobile para evitar auto-zoom iOS) */}
           <div className="relative flex-1">
             <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-zinc-400 pointer-events-none" />
             <input
@@ -383,13 +383,13 @@ export function FinanzasTable({ transacciones, categorias = [] }: Props) {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Buscar por concepto, cliente, categoría o monto..."
-              className="w-full bg-slate-50 dark:bg-zinc-950/70 border border-slate-200 dark:border-zinc-800 rounded-xl pl-10 pr-9 py-2 text-xs sm:text-sm text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all"
+              className="w-full min-h-[44px] bg-slate-50 dark:bg-zinc-950/70 border border-slate-200 dark:border-zinc-800 rounded-xl pl-10 pr-9 py-2 text-base sm:text-xs text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all"
             />
             {searchTerm && (
               <button
                 type="button"
                 onClick={() => setSearchTerm("")}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:text-zinc-500 dark:hover:text-zinc-300 p-0.5 rounded transition-colors"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:text-zinc-500 dark:hover:text-zinc-300 p-1.5 rounded transition-colors"
                 title="Limpiar búsqueda"
               >
                 <X className="w-4 h-4" />
@@ -397,15 +397,15 @@ export function FinanzasTable({ transacciones, categorias = [] }: Props) {
             )}
           </div>
 
-          {/* Menú de Filtros Dropdowns */}
-          <div className="flex flex-wrap items-center gap-2">
+          {/* Menú de Filtros en Rejilla 2 Columnas Móvil y Flex en Desktop */}
+          <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2">
             {/* Filtro por Período */}
-            <div className="flex items-center gap-1.5 bg-slate-50 dark:bg-zinc-950/80 border border-slate-200 dark:border-zinc-800 rounded-xl px-2.5 py-1">
+            <div className="flex items-center gap-1.5 bg-slate-50 dark:bg-zinc-950/80 border border-slate-200 dark:border-zinc-800 rounded-xl px-2.5 py-1 min-h-[42px] col-span-1 sm:col-auto">
               <CalendarDays className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400 shrink-0" />
               <select
                 value={periodoFiltro}
                 onChange={(e) => setPeriodoFiltro(e.target.value)}
-                className="bg-transparent dark:bg-zinc-950 text-xs text-slate-700 dark:text-zinc-300 focus:outline-none cursor-pointer py-1 [&>option]:bg-white [&>option]:text-slate-900 dark:[&>option]:bg-zinc-900 dark:[&>option]:text-zinc-100 [color-scheme:light] dark:[color-scheme:dark]"
+                className="w-full bg-transparent dark:bg-zinc-950 text-base sm:text-xs text-slate-700 dark:text-zinc-300 focus:outline-none cursor-pointer py-1 [&>option]:bg-white [&>option]:text-slate-900 dark:[&>option]:bg-zinc-900 dark:[&>option]:text-zinc-100 [color-scheme:light] dark:[color-scheme:dark]"
               >
                 <option value="este_mes">Este Mes</option>
                 <option value="mes_anterior">Mes Anterior</option>
@@ -417,13 +417,24 @@ export function FinanzasTable({ transacciones, categorias = [] }: Props) {
               </select>
             </div>
 
+            {/* Moneda */}
+            <select
+              value={monedaFiltro}
+              onChange={(e) => setMonedaFiltro(e.target.value)}
+              className="w-full sm:w-auto min-h-[42px] bg-slate-50 dark:bg-zinc-950/80 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-base sm:text-xs text-slate-700 dark:text-zinc-300 focus:outline-none focus:border-cyan-500 transition-colors cursor-pointer [&>option]:bg-white [&>option]:text-slate-900 dark:[&>option]:bg-zinc-900 dark:[&>option]:text-zinc-100 [color-scheme:light] dark:[color-scheme:dark]"
+            >
+              <option value="todas">Monedas (Todas)</option>
+              <option value="ARS">Solo ARS ($)</option>
+              <option value="USDT">Solo USDT (₮)</option>
+            </select>
+
             {/* Tipo */}
             <select
               value={tipoFiltro}
               onChange={(e) => setTipoFiltro(e.target.value)}
-              className="bg-slate-50 dark:bg-zinc-950/80 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-xs text-slate-700 dark:text-zinc-300 focus:outline-none focus:border-cyan-500 transition-colors cursor-pointer [&>option]:bg-white [&>option]:text-slate-900 dark:[&>option]:bg-zinc-900 dark:[&>option]:text-zinc-100 [color-scheme:light] dark:[color-scheme:dark]"
+              className="w-full sm:w-auto min-h-[42px] bg-slate-50 dark:bg-zinc-950/80 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-base sm:text-xs text-slate-700 dark:text-zinc-300 focus:outline-none focus:border-cyan-500 transition-colors cursor-pointer [&>option]:bg-white [&>option]:text-slate-900 dark:[&>option]:bg-zinc-900 dark:[&>option]:text-zinc-100 [color-scheme:light] dark:[color-scheme:dark]"
             >
-              <option value="todos">Todos los Tipos</option>
+              <option value="todos">Tipos (Todos)</option>
               <option value="Ingreso">Ingresos (+)</option>
               <option value="Egreso">Egresos (-)</option>
             </select>
@@ -432,9 +443,9 @@ export function FinanzasTable({ transacciones, categorias = [] }: Props) {
             <select
               value={categoriaFiltro}
               onChange={(e) => setCategoriaFiltro(e.target.value)}
-              className="bg-slate-50 dark:bg-zinc-950/80 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-xs text-slate-700 dark:text-zinc-300 focus:outline-none focus:border-cyan-500 transition-colors cursor-pointer [&>option]:bg-white [&>option]:text-slate-900 dark:[&>option]:bg-zinc-900 dark:[&>option]:text-zinc-100 [color-scheme:light] dark:[color-scheme:dark]"
+              className="w-full sm:w-auto min-h-[42px] bg-slate-50 dark:bg-zinc-950/80 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-base sm:text-xs text-slate-700 dark:text-zinc-300 focus:outline-none focus:border-cyan-500 transition-colors cursor-pointer [&>option]:bg-white [&>option]:text-slate-900 dark:[&>option]:bg-zinc-900 dark:[&>option]:text-zinc-100 [color-scheme:light] dark:[color-scheme:dark]"
             >
-              <option value="todas">Todas las Categorías</option>
+              <option value="todas">Categorías (Todas)</option>
               {availableCategorias.map((catName) => (
                 <option key={catName} value={catName}>
                   {catName}
@@ -446,22 +457,11 @@ export function FinanzasTable({ transacciones, categorias = [] }: Props) {
             <select
               value={estadoFiltro}
               onChange={(e) => setEstadoFiltro(e.target.value)}
-              className="bg-slate-50 dark:bg-zinc-950/80 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-xs text-slate-700 dark:text-zinc-300 focus:outline-none focus:border-cyan-500 transition-colors cursor-pointer [&>option]:bg-white [&>option]:text-slate-900 dark:[&>option]:bg-zinc-900 dark:[&>option]:text-zinc-100 [color-scheme:light] dark:[color-scheme:dark]"
+              className={`w-full sm:w-auto min-h-[42px] bg-slate-50 dark:bg-zinc-950/80 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-base sm:text-xs text-slate-700 dark:text-zinc-300 focus:outline-none focus:border-cyan-500 transition-colors cursor-pointer [&>option]:bg-white [&>option]:text-slate-900 dark:[&>option]:bg-zinc-900 dark:[&>option]:text-zinc-100 [color-scheme:light] dark:[color-scheme:dark] ${hasActiveFilters ? "col-span-2 sm:col-auto" : "col-span-1 sm:col-auto"}`}
             >
-              <option value="todos">Todos los Estados</option>
+              <option value="todos">Estados (Todos)</option>
               <option value="Pagado">Pagado</option>
               <option value="Pendiente">Pendiente</option>
-            </select>
-
-            {/* Moneda */}
-            <select
-              value={monedaFiltro}
-              onChange={(e) => setMonedaFiltro(e.target.value)}
-              className="bg-slate-50 dark:bg-zinc-950/80 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-xs text-slate-700 dark:text-zinc-300 focus:outline-none focus:border-cyan-500 transition-colors cursor-pointer [&>option]:bg-white [&>option]:text-slate-900 dark:[&>option]:bg-zinc-900 dark:[&>option]:text-zinc-100 [color-scheme:light] dark:[color-scheme:dark]"
-            >
-              <option value="todas">Monedas (ARS/USDT)</option>
-              <option value="ARS">Solo ARS ($)</option>
-              <option value="USDT">Solo USDT (₮)</option>
             </select>
 
             {/* Botón Reset */}
@@ -469,7 +469,7 @@ export function FinanzasTable({ transacciones, categorias = [] }: Props) {
               <button
                 type="button"
                 onClick={resetFilters}
-                className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-rose-500 dark:text-rose-400 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 rounded-xl transition-all"
+                className="col-span-1 sm:col-auto min-h-[42px] flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold text-rose-500 dark:text-rose-400 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 rounded-xl transition-all active:scale-95"
                 title="Limpiar todos los filtros"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
@@ -481,7 +481,7 @@ export function FinanzasTable({ transacciones, categorias = [] }: Props) {
             <button
               type="button"
               onClick={handleExportPdf}
-              className="flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-white bg-gradient-to-r from-cyan-600 to-cyan-500 hover:from-cyan-500 hover:to-cyan-400 rounded-xl transition-all shadow-sm shadow-cyan-950/20 active:scale-95 border border-cyan-400/20"
+              className={`min-h-[42px] flex items-center justify-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-white bg-gradient-to-r from-cyan-600 to-cyan-500 hover:from-cyan-500 hover:to-cyan-400 rounded-xl transition-all shadow-sm shadow-cyan-950/20 active:scale-95 border border-cyan-400/20 ${hasActiveFilters ? "col-span-1 sm:col-auto" : "col-span-1 sm:col-auto"}`}
               title="Generar y descargar Informe Oficial en PDF (Diseño Corporativo)"
             >
               <FileText className="w-4 h-4" />

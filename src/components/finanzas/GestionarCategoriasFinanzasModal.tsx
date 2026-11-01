@@ -173,7 +173,7 @@ export function GestionarCategoriasFinanzasModal({
         createPortal(
           <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/70 backdrop-blur-sm animate-in fade-in duration-200">
             <div
-              className="relative w-full max-w-xl bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-200"
+              className="relative w-full max-w-xl bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90dvh] animate-in zoom-in-95 duration-200"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header */}
@@ -220,13 +220,13 @@ export function GestionarCategoriasFinanzasModal({
                     placeholder="Ej: Publicidad & Marketing, Licencias..."
                     value={nuevoNombre}
                     onChange={(e) => setNuevoNombre(e.target.value)}
-                    className="flex-1 bg-white dark:bg-zinc-900 border border-slate-300 dark:border-zinc-700 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all"
+                    className="flex-1 min-h-[44px] bg-white dark:bg-zinc-900 border border-slate-300 dark:border-zinc-700 rounded-xl px-3.5 py-2 text-base sm:text-sm text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all"
                   />
                   <div className="flex gap-2">
                     <select
                       value={nuevoTipo}
                       onChange={(e) => setNuevoTipo(e.target.value as any)}
-                      className="bg-white dark:bg-zinc-900 border border-slate-300 dark:border-zinc-700 rounded-xl px-2.5 py-2 text-xs font-semibold text-slate-800 dark:text-zinc-200 focus:outline-none focus:border-emerald-500 cursor-pointer"
+                      className="min-h-[44px] flex-1 sm:flex-initial bg-white dark:bg-zinc-900 border border-slate-300 dark:border-zinc-700 rounded-xl px-2.5 py-2 text-base sm:text-xs font-semibold text-slate-800 dark:text-zinc-200 focus:outline-none focus:border-emerald-500 cursor-pointer"
                     >
                       <option value="Ambos">Ambos (+/-)</option>
                       <option value="Ingreso">Solo Ingresos (+)</option>
@@ -235,7 +235,7 @@ export function GestionarCategoriasFinanzasModal({
                     <button
                       type="submit"
                       disabled={isPending || !nuevoNombre.trim()}
-                      className="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-50 text-white text-xs sm:text-sm font-semibold transition-all shadow-md shadow-emerald-950/20 flex items-center gap-1.5 shrink-0"
+                      className="min-h-[44px] px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-50 text-white text-xs sm:text-sm font-semibold transition-all shadow-md shadow-emerald-950/20 flex items-center justify-center gap-1.5 shrink-0"
                     >
                       {isPending ? (
                         <Loader2 className="w-4 h-4 animate-spin" />

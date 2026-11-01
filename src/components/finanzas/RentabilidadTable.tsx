@@ -114,57 +114,57 @@ export function RentabilidadTable({ proyectos }: Props) {
 
   return (
     <div className="space-y-4">
-      {/* KPIs de Rentabilidad Consolidada */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
-        <div className="p-4 rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 shadow-sm space-y-1">
-          <div className="flex items-center justify-between text-xs text-slate-500 dark:text-zinc-400">
-            <span className="font-medium">Total Facturado</span>
-            <span className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
-              <TrendingUp className="w-4 h-4" />
+      {/* KPIs de Rentabilidad Consolidada (Grid 2x2 en mobile, 4 cols en desktop) */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3.5">
+        <div className="p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 shadow-sm space-y-1">
+          <div className="flex items-center justify-between text-[11px] sm:text-xs text-slate-500 dark:text-zinc-400">
+            <span className="font-medium truncate">Total Facturado</span>
+            <span className="p-1 sm:p-1.5 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 shrink-0">
+              <TrendingUp className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </span>
           </div>
-          <div className="text-lg font-bold text-slate-900 dark:text-white">
+          <div className="text-sm sm:text-lg font-bold font-mono text-slate-900 dark:text-white truncate">
             {formatCurrency(totales.ingresosARS, "ARS")}
           </div>
           {totales.ingresosUSDT > 0 && (
-            <div className="text-xs font-medium text-emerald-600 dark:text-emerald-400 font-mono">
+            <div className="text-[10px] sm:text-xs font-medium text-emerald-600 dark:text-emerald-400 font-mono truncate">
               + {formatCurrency(totales.ingresosUSDT, "USDT")}
             </div>
           )}
-          <span className="text-[11px] text-slate-400 dark:text-zinc-500">
+          <span className="text-[10px] sm:text-[11px] text-slate-400 dark:text-zinc-500 block truncate">
             En {filteredProyectos.length} proyectos
           </span>
         </div>
 
-        <div className="p-4 rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 shadow-sm space-y-1">
-          <div className="flex items-center justify-between text-xs text-slate-500 dark:text-zinc-400">
-            <span className="font-medium">Costos Imputados</span>
-            <span className="p-1.5 rounded-lg bg-rose-500/10 text-rose-600 dark:text-rose-400">
-              <TrendingDown className="w-4 h-4" />
+        <div className="p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 shadow-sm space-y-1">
+          <div className="flex items-center justify-between text-[11px] sm:text-xs text-slate-500 dark:text-zinc-400">
+            <span className="font-medium truncate">Costos Imputados</span>
+            <span className="p-1 sm:p-1.5 rounded-lg bg-rose-500/10 text-rose-600 dark:text-rose-400 shrink-0">
+              <TrendingDown className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </span>
           </div>
-          <div className="text-lg font-bold text-slate-900 dark:text-white">
+          <div className="text-sm sm:text-lg font-bold font-mono text-slate-900 dark:text-white truncate">
             {formatCurrency(totales.egresosARS, "ARS")}
           </div>
           {totales.egresosUSDT > 0 && (
-            <div className="text-xs font-medium text-rose-600 dark:text-rose-400 font-mono">
+            <div className="text-[10px] sm:text-xs font-medium text-rose-600 dark:text-rose-400 font-mono truncate">
               - {formatCurrency(totales.egresosUSDT, "USDT")}
             </div>
           )}
-          <span className="text-[11px] text-slate-400 dark:text-zinc-500">
-            Gastos y compras vinculadas
+          <span className="text-[10px] sm:text-[11px] text-slate-400 dark:text-zinc-500 block truncate">
+            Compras vinculadas
           </span>
         </div>
 
-        <div className="p-4 rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 shadow-sm space-y-1">
-          <div className="flex items-center justify-between text-xs text-slate-500 dark:text-zinc-400">
-            <span className="font-medium">Ganancia Neta</span>
-            <span className="p-1.5 rounded-lg bg-cyan-500/10 text-cyan-600 dark:text-cyan-400">
-              <DollarSign className="w-4 h-4" />
+        <div className="p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 shadow-sm space-y-1">
+          <div className="flex items-center justify-between text-[11px] sm:text-xs text-slate-500 dark:text-zinc-400">
+            <span className="font-medium truncate">Ganancia Neta</span>
+            <span className="p-1 sm:p-1.5 rounded-lg bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 shrink-0">
+              <DollarSign className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </span>
           </div>
           <div
-            className={`text-lg font-bold ${
+            className={`text-sm sm:text-lg font-bold font-mono truncate ${
               totales.netoARS >= 0
                 ? "text-emerald-600 dark:text-emerald-400"
                 : "text-rose-600 dark:text-rose-400"
@@ -174,7 +174,7 @@ export function RentabilidadTable({ proyectos }: Props) {
           </div>
           {totales.netoUSDT !== 0 && (
             <div
-              className={`text-xs font-medium font-mono ${
+              className={`text-[10px] sm:text-xs font-medium font-mono truncate ${
                 totales.netoUSDT >= 0
                   ? "text-emerald-600 dark:text-emerald-400"
                   : "text-rose-600 dark:text-rose-400"
@@ -184,20 +184,20 @@ export function RentabilidadTable({ proyectos }: Props) {
               {formatCurrency(totales.netoUSDT, "USDT")}
             </div>
           )}
-          <span className="text-[11px] text-slate-400 dark:text-zinc-500">
-            Margen neto consolidado
+          <span className="text-[10px] sm:text-[11px] text-slate-400 dark:text-zinc-500 block truncate">
+            Margen consolidado
           </span>
         </div>
 
-        <div className="p-4 rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 shadow-sm space-y-1">
-          <div className="flex items-center justify-between text-xs text-slate-500 dark:text-zinc-400">
-            <span className="font-medium">Rentabilidad Promedio</span>
-            <span className="p-1.5 rounded-lg bg-purple-500/10 text-purple-600 dark:text-purple-400">
-              <Briefcase className="w-4 h-4" />
+        <div className="p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 shadow-sm space-y-1">
+          <div className="flex items-center justify-between text-[11px] sm:text-xs text-slate-500 dark:text-zinc-400">
+            <span className="font-medium truncate">Rentabilidad</span>
+            <span className="p-1 sm:p-1.5 rounded-lg bg-purple-500/10 text-purple-600 dark:text-purple-400 shrink-0">
+              <Briefcase className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </span>
           </div>
           <div
-            className={`text-lg font-bold ${
+            className={`text-sm sm:text-lg font-bold font-mono truncate ${
               totales.margenGlobalARS >= 30
                 ? "text-emerald-600 dark:text-emerald-400"
                 : totales.margenGlobalARS > 0
@@ -207,7 +207,7 @@ export function RentabilidadTable({ proyectos }: Props) {
           >
             {totales.margenGlobalARS}%
           </div>
-          <div className="w-full bg-slate-100 dark:bg-zinc-800 h-1.5 rounded-full overflow-hidden mt-2">
+          <div className="w-full bg-slate-100 dark:bg-zinc-800 h-1.5 rounded-full overflow-hidden mt-1 sm:mt-2">
             <div
               className={`h-full transition-all duration-500 ${
                 totales.margenGlobalARS >= 30
@@ -221,8 +221,8 @@ export function RentabilidadTable({ proyectos }: Props) {
               }}
             />
           </div>
-          <span className="text-[11px] text-slate-400 dark:text-zinc-500">
-            Retorno sobre ingresos
+          <span className="text-[10px] sm:text-[11px] text-slate-400 dark:text-zinc-500 block truncate">
+            Retorno s/ ingresos
           </span>
         </div>
       </div>
@@ -230,7 +230,7 @@ export function RentabilidadTable({ proyectos }: Props) {
       {/* Barra de Filtros y Botón Exportar */}
       <div className="p-3.5 rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 backdrop-blur-md shadow-sm space-y-3 transition-colors">
         <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3">
-          {/* Input de Búsqueda */}
+          {/* Input de Búsqueda (16px base font para evitar zoom en iOS) */}
           <div className="relative flex-1">
             <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-zinc-400 pointer-events-none" />
             <input
@@ -238,13 +238,13 @@ export function RentabilidadTable({ proyectos }: Props) {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Buscar por cliente o razón social..."
-              className="w-full bg-slate-50 dark:bg-zinc-950/70 border border-slate-200 dark:border-zinc-800 rounded-xl pl-10 pr-9 py-2 text-xs sm:text-sm text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all"
+              className="w-full min-h-[44px] bg-slate-50 dark:bg-zinc-950/70 border border-slate-200 dark:border-zinc-800 rounded-xl pl-10 pr-9 py-2 text-base sm:text-xs text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all"
             />
             {searchTerm && (
               <button
                 type="button"
                 onClick={() => setSearchTerm("")}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:text-zinc-500 dark:hover:text-zinc-300 p-0.5 rounded transition-colors"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:text-zinc-500 dark:hover:text-zinc-300 p-1 rounded transition-colors"
                 title="Limpiar búsqueda"
               >
                 <X className="w-4 h-4" />
@@ -252,13 +252,13 @@ export function RentabilidadTable({ proyectos }: Props) {
             )}
           </div>
 
-          {/* Menú de Filtros */}
-          <div className="flex flex-wrap items-center gap-2">
+          {/* Menú de Filtros (Grid 2 columnas en mobile, flex en desktop) */}
+          <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2">
             {/* Estado del Proyecto */}
             <select
               value={estadoFiltro}
               onChange={(e) => setEstadoFiltro(e.target.value)}
-              className="bg-slate-50 dark:bg-zinc-950/80 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-xs text-slate-700 dark:text-zinc-300 focus:outline-none focus:border-cyan-500 transition-colors cursor-pointer [&>option]:bg-white [&>option]:text-slate-900 dark:[&>option]:bg-zinc-900 dark:[&>option]:text-zinc-100 [color-scheme:light] dark:[color-scheme:dark]"
+              className="w-full sm:w-auto min-h-[44px] sm:min-h-0 bg-slate-50 dark:bg-zinc-950/80 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-base sm:text-xs text-slate-700 dark:text-zinc-300 focus:outline-none focus:border-cyan-500 transition-colors cursor-pointer [&>option]:bg-white [&>option]:text-slate-900 dark:[&>option]:bg-zinc-900 dark:[&>option]:text-zinc-100 [color-scheme:light] dark:[color-scheme:dark]"
             >
               <option value="todos">Todos los Estados</option>
               <option value="En_Ejecucion">En Ejecución</option>
@@ -273,7 +273,7 @@ export function RentabilidadTable({ proyectos }: Props) {
             <select
               value={margenFiltro}
               onChange={(e) => setMargenFiltro(e.target.value)}
-              className="bg-slate-50 dark:bg-zinc-950/80 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-xs text-slate-700 dark:text-zinc-300 focus:outline-none focus:border-cyan-500 transition-colors cursor-pointer [&>option]:bg-white [&>option]:text-slate-900 dark:[&>option]:bg-zinc-900 dark:[&>option]:text-zinc-100 [color-scheme:light] dark:[color-scheme:dark]"
+              className="w-full sm:w-auto min-h-[44px] sm:min-h-0 bg-slate-50 dark:bg-zinc-950/80 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-base sm:text-xs text-slate-700 dark:text-zinc-300 focus:outline-none focus:border-cyan-500 transition-colors cursor-pointer [&>option]:bg-white [&>option]:text-slate-900 dark:[&>option]:bg-zinc-900 dark:[&>option]:text-zinc-100 [color-scheme:light] dark:[color-scheme:dark]"
             >
               <option value="todos">Todos los Márgenes</option>
               <option value="positivo">Ganancia Neta (+)</option>
@@ -286,7 +286,7 @@ export function RentabilidadTable({ proyectos }: Props) {
               <button
                 type="button"
                 onClick={resetFilters}
-                className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-rose-500 dark:text-rose-400 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 rounded-xl transition-all"
+                className="col-span-1 sm:col-auto w-full sm:w-auto min-h-[44px] sm:min-h-0 flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-medium text-rose-500 dark:text-rose-400 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 rounded-xl transition-all"
                 title="Limpiar filtros"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
@@ -298,7 +298,9 @@ export function RentabilidadTable({ proyectos }: Props) {
             <button
               type="button"
               onClick={handleExportPdf}
-              className="flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-white bg-gradient-to-r from-cyan-600 to-cyan-500 hover:from-cyan-500 hover:to-cyan-400 rounded-xl transition-all shadow-sm shadow-cyan-950/20 active:scale-95 border border-cyan-400/20"
+              className={`${
+                hasActiveFilters ? "col-span-1 sm:col-auto" : "col-span-2 sm:col-auto"
+              } w-full sm:w-auto min-h-[44px] sm:min-h-0 flex items-center justify-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-white bg-gradient-to-r from-cyan-600 to-cyan-500 hover:from-cyan-500 hover:to-cyan-400 rounded-xl transition-all shadow-sm shadow-cyan-950/20 active:scale-95 border border-cyan-400/20`}
               title="Generar y descargar Reporte Oficial en PDF (Diseño Corporativo)"
             >
               <FileText className="w-4 h-4" />
@@ -325,8 +327,175 @@ export function RentabilidadTable({ proyectos }: Props) {
         </div>
       </div>
 
-      {/* Tabla de Rentabilidad */}
-      <div className="rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 backdrop-blur-md shadow-sm overflow-hidden transition-colors">
+      {/* VISTA MOBILE: Tarjetas Ergonómicas (Patrón Híbrido block md:hidden) */}
+      <div className="block md:hidden space-y-3">
+        {filteredProyectos.length === 0 ? (
+          <div className="p-8 text-center text-slate-400 dark:text-zinc-500 rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60">
+            <FolderGit2 className="w-8 h-8 mx-auto mb-2 text-slate-300 dark:text-zinc-600 stroke-1" />
+            <p className="text-sm font-medium text-slate-600 dark:text-zinc-400">
+              No se encontraron proyectos con los filtros aplicados.
+            </p>
+          </div>
+        ) : (
+          filteredProyectos.map((p) => {
+            const hasProfitableARS = p.netoARS >= 0;
+            const hasIncome = p.ingresosARS > 0;
+
+            return (
+              <div
+                key={p.id}
+                className="p-4 rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 backdrop-blur-md shadow-sm space-y-3 transition-colors"
+              >
+                {/* Header: Cliente & Estado */}
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0 flex-1">
+                    <h4 className="font-semibold text-slate-900 dark:text-zinc-100 text-sm leading-tight break-words">
+                      {p.clienteNombre}
+                    </h4>
+                    <div className="text-[11px] text-slate-400 dark:text-zinc-500 mt-0.5 flex flex-wrap items-center gap-1.5">
+                      <span>{p.totalMovimientos} movs</span>
+                      {p.stockDescontado && (
+                        <span className="text-cyan-600 dark:text-cyan-400 font-medium">
+                          • Obra liquidada
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <span
+                    className={`text-[10px] sm:text-[11px] px-2.5 py-0.5 rounded-full font-medium shrink-0 ${
+                      p.estado === "Finalizado"
+                        ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20"
+                        : p.estado === "En_Ejecucion"
+                        ? "bg-blue-500/10 text-blue-700 dark:text-blue-400 border border-blue-500/20"
+                        : p.estado === "Aprobado"
+                        ? "bg-cyan-500/10 text-cyan-700 dark:text-cyan-400 border border-cyan-500/20"
+                        : p.estado === "Cancelado"
+                        ? "bg-rose-500/10 text-rose-700 dark:text-rose-400 border border-rose-500/20"
+                        : "bg-zinc-500/10 text-zinc-700 dark:text-zinc-400 border border-zinc-500/20"
+                    }`}
+                  >
+                    {p.estado.replace(/_/g, " ")}
+                  </span>
+                </div>
+
+                {/* Métricas 2x2 */}
+                <div className="grid grid-cols-2 gap-2 p-2.5 rounded-xl bg-slate-50 dark:bg-zinc-950/50 border border-slate-100 dark:border-zinc-800/60">
+                  <div>
+                    <span className="text-[10px] text-slate-400 dark:text-zinc-500 uppercase tracking-wider block font-semibold">
+                      Presupuestado
+                    </span>
+                    <span className="font-mono text-xs font-semibold text-slate-700 dark:text-zinc-300">
+                      {formatCurrency(p.totalFinal || p.totalEstimado, "ARS")}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-slate-400 dark:text-zinc-500 uppercase tracking-wider block font-semibold">
+                      Ingresos
+                    </span>
+                    <span className="font-mono text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                      {formatCurrency(p.ingresosARS, "ARS")}
+                    </span>
+                    {p.ingresosUSDT > 0 && (
+                      <span className="text-[9px] text-emerald-500 font-mono block">
+                        +{formatCurrency(p.ingresosUSDT, "USDT")}
+                      </span>
+                    )}
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-slate-400 dark:text-zinc-500 uppercase tracking-wider block font-semibold">
+                      Costos
+                    </span>
+                    <span className="font-mono text-xs font-semibold text-rose-600 dark:text-rose-400">
+                      {formatCurrency(p.egresosARS, "ARS")}
+                    </span>
+                    {p.egresosUSDT > 0 && (
+                      <span className="text-[9px] text-rose-500 font-mono block">
+                        -{formatCurrency(p.egresosUSDT, "USDT")}
+                      </span>
+                    )}
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-slate-400 dark:text-zinc-500 uppercase tracking-wider block font-semibold">
+                      Ganancia Neta
+                    </span>
+                    <span
+                      className={`font-mono text-xs font-bold ${
+                        hasProfitableARS
+                          ? "text-emerald-600 dark:text-emerald-400"
+                          : "text-rose-600 dark:text-rose-400"
+                      }`}
+                    >
+                      {hasProfitableARS ? "+" : ""}
+                      {formatCurrency(p.netoARS, "ARS")}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Barra de Margen */}
+                {hasIncome ? (
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between text-[11px] font-semibold">
+                      <span
+                        className={
+                          p.margenARS >= 30
+                            ? "text-emerald-600 dark:text-emerald-400"
+                            : p.margenARS > 0
+                            ? "text-cyan-600 dark:text-cyan-400"
+                            : "text-rose-600 dark:text-rose-400"
+                        }
+                      >
+                        Margen: {p.margenARS}%
+                      </span>
+                      <span className="text-[10px] text-slate-400 dark:text-zinc-500 font-normal">
+                        {p.margenARS >= 30
+                          ? "Excelente"
+                          : p.margenARS > 0
+                          ? "Normal"
+                          : "Sobrecosto"}
+                      </span>
+                    </div>
+                    <div className="w-full bg-slate-100 dark:bg-zinc-800 h-1.5 rounded-full overflow-hidden">
+                      <div
+                        className={`h-full transition-all duration-300 ${
+                          p.margenARS >= 30
+                            ? "bg-emerald-500"
+                            : p.margenARS > 0
+                            ? "bg-cyan-500"
+                            : "bg-rose-500"
+                        }`}
+                        style={{
+                          width: `${Math.min(Math.max(p.margenARS, 0), 100)}%`,
+                        }}
+                      />
+                    </div>
+                  </div>
+                ) : p.egresosARS > 0 ? (
+                  <div className="flex items-center gap-1 text-[11px] text-rose-500 font-medium">
+                    <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
+                    <span>Gastos sin cobro registrado</span>
+                  </div>
+                ) : (
+                  <div className="text-[11px] text-slate-400 dark:text-zinc-500">
+                    Sin movimientos registrados
+                  </div>
+                )}
+
+                {/* Botón Ver Detalle de Obra */}
+                <Link
+                  href={`/proyectos/${p.id}`}
+                  className="min-h-[44px] w-full flex items-center justify-center gap-2 text-xs font-semibold rounded-xl border border-slate-200 dark:border-zinc-700 bg-slate-50 dark:bg-zinc-800 text-slate-700 dark:text-zinc-200 hover:text-cyan-600 dark:hover:text-cyan-400 active:scale-[0.98] transition-all shadow-sm"
+                >
+                  <span>Ver Detalle de Obra</span>
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </Link>
+              </div>
+            );
+          })
+        )}
+      </div>
+
+      {/* VISTA DESKTOP: Tabla Tradicional (hidden md:block) */}
+      <div className="hidden md:block rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 backdrop-blur-md shadow-sm overflow-hidden transition-colors">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
