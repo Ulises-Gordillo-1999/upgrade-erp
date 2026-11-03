@@ -93,7 +93,7 @@ export function PwaRegister() {
       {showInstallBanner && !isStandalone && (
         <aside
           aria-label="Aviso de instalación de aplicación"
-          className="fixed bottom-3 left-3 right-3 sm:left-auto sm:right-6 sm:w-96 z-50 animate-in fade-in slide-in-from-bottom-5 duration-300"
+          className="fixed bottom-[calc(0.75rem+env(safe-area-inset-bottom,0px))] left-3 right-3 sm:left-auto sm:right-6 sm:w-96 z-50 animate-in fade-in slide-in-from-bottom-5 duration-300"
         >
           <div className="p-3.5 sm:p-4 rounded-2xl bg-white/95 dark:bg-[#0c101b]/95 border border-cyan-500/30 backdrop-blur-xl shadow-2xl shadow-cyan-950/40 flex items-center justify-between gap-3">
             <div className="flex items-center gap-3 min-w-0">

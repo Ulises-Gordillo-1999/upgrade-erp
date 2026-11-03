@@ -627,7 +627,7 @@ export default async function ProyectoDetallePage({
       </div>
 
       {/* Barra de Acciones Flotante / Sticky para Móvil (Ergonomía en Terreno) */}
-      <div className="sm:hidden fixed bottom-3 inset-x-3 z-40 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-xl border border-slate-200/90 dark:border-zinc-800/90 p-2 rounded-2xl shadow-2xl flex items-center justify-between gap-2 animate-in slide-in-from-bottom-5 duration-300">
+      <div className="sm:hidden fixed bottom-[calc(0.75rem+env(safe-area-inset-bottom,0px))] inset-x-3 z-40 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-xl border border-slate-200/90 dark:border-zinc-800/90 p-2 rounded-2xl shadow-2xl flex items-center justify-between gap-2 animate-in slide-in-from-bottom-5 duration-300">
         <div className="flex-1 min-w-0">
           <CerrarObraModal
             proyectoId={id}

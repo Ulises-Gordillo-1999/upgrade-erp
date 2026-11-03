@@ -164,53 +164,55 @@ export function Sidebar({
 
   return (
     <>
-      {/* 1. Header Superior Móvil y Tablet (< lg) */}
-      <header className="lg:hidden flex h-14 sm:h-16 items-center justify-between px-3 sm:px-6 border-b border-slate-200 dark:border-zinc-800 bg-white/90 dark:bg-zinc-950/90 backdrop-blur-md shrink-0 z-30 transition-colors">
-        <div className="flex items-center gap-2 sm:gap-3">
-          <button
-            type="button"
-            onClick={() => setIsMobileOpen(true)}
-            className="min-h-[44px] min-w-[44px] flex items-center justify-center p-2 rounded-xl text-slate-600 dark:text-zinc-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-800/60 transition-colors cursor-pointer"
-            aria-label="Abrir menú de navegación"
-          >
-            <Menu className="w-6 h-6" />
-          </button>
+      {/* 1. Header Superior Móvil y Tablet (< lg) con soporte para iPhone Dynamic Island y Notch */}
+      <header className="lg:hidden flex flex-col border-b border-slate-200 dark:border-zinc-800 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-md shrink-0 z-30 transition-colors pt-[env(safe-area-inset-top,0px)]">
+        <div className="flex h-14 sm:h-16 items-center justify-between px-3 sm:px-6 w-full">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <button
+              type="button"
+              onClick={() => setIsMobileOpen(true)}
+              className="min-h-[44px] min-w-[44px] flex items-center justify-center p-2 rounded-xl text-slate-600 dark:text-zinc-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-800/60 transition-colors cursor-pointer active:scale-95"
+              aria-label="Abrir menú de navegación"
+            >
+              <Menu className="w-6 h-6" />
+            </button>
 
-          <Link href="/" className="flex items-center gap-2 group">
-            <div className="relative w-7 h-7 rounded-lg overflow-hidden flex items-center justify-center bg-cyan-500/10 border border-cyan-500/20 p-0.5 group-hover:border-cyan-500/40 transition-colors">
-              <Image
-                src="/icon.png"
-                alt="UPGRADE Logo"
-                width={28}
-                height={28}
-                className="w-full h-full object-contain"
-              />
-            </div>
-            <div className="flex items-center gap-1.5">
-              <h1 className="text-base sm:text-xl font-bold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 to-blue-600 dark:from-cyan-400 dark:to-blue-500 group-hover:opacity-90 transition-opacity">
-                UPGRADE
-              </h1>
-              <span className="text-[10px] px-1.5 py-0.5 rounded bg-cyan-500/10 text-cyan-700 dark:text-cyan-400 border border-cyan-500/20 font-mono font-medium">
-                ERP
-              </span>
-            </div>
-          </Link>
-        </div>
-
-        <div className="flex items-center gap-1 sm:gap-2">
-          <div className="hidden sm:flex">
-            <HeaderClock className="!text-[11px]" />
+            <Link href="/" className="flex items-center gap-2 group">
+              <div className="relative w-7 h-7 rounded-lg overflow-hidden flex items-center justify-center bg-cyan-500/10 border border-cyan-500/20 p-0.5 group-hover:border-cyan-500/40 transition-colors">
+                <Image
+                  src="/icon.png"
+                  alt="UPGRADE Logo"
+                  width={28}
+                  height={28}
+                  className="w-full h-full object-contain"
+                />
+              </div>
+              <div className="flex items-center gap-1.5">
+                <h1 className="text-base sm:text-xl font-bold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 to-blue-600 dark:from-cyan-400 dark:to-blue-500 group-hover:opacity-90 transition-opacity">
+                  UPGRADE
+                </h1>
+                <span className="text-[10px] px-1.5 py-0.5 rounded bg-cyan-500/10 text-cyan-700 dark:text-cyan-400 border border-cyan-500/20 font-mono font-medium">
+                  ERP
+                </span>
+              </div>
+            </Link>
           </div>
-          <NotificationCenter initialNotificaciones={notificaciones} />
-          <Link
-            href="/perfil"
-            className="min-h-[44px] min-w-[44px] flex items-center justify-center p-1 rounded-full hover:ring-2 hover:ring-cyan-500/30 transition-all cursor-pointer"
-            title="Mi Perfil"
-          >
-            <div className="h-8 w-8 rounded-full bg-gradient-to-tr from-cyan-600 to-blue-600 flex items-center justify-center text-xs font-bold text-white shadow-inner">
-              {userInitials}
+
+          <div className="flex items-center gap-1 sm:gap-2">
+            <div className="hidden sm:flex">
+              <HeaderClock className="!text-[11px]" />
             </div>
-          </Link>
+            <NotificationCenter initialNotificaciones={notificaciones} />
+            <Link
+              href="/perfil"
+              className="min-h-[44px] min-w-[44px] flex items-center justify-center p-1 rounded-full hover:ring-2 hover:ring-cyan-500/30 transition-all cursor-pointer active:scale-95"
+              title="Mi Perfil"
+            >
+              <div className="h-8 w-8 rounded-full bg-gradient-to-tr from-cyan-600 to-blue-600 flex items-center justify-center text-xs font-bold text-white shadow-inner">
+                {userInitials}
+              </div>
+            </Link>
+          </div>
         </div>
       </header>
 
@@ -227,7 +229,7 @@ export function Sidebar({
 
       {/* 3. Cajón Deslizante (Drawer) para Móvil y Tablet (< lg) */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 w-72 max-w-[85vw] flex flex-col bg-white dark:bg-zinc-950 border-r border-slate-200 dark:border-zinc-800 shadow-2xl transition-transform duration-300 ease-in-out lg:hidden ${
+        className={`fixed inset-y-0 left-0 z-50 w-72 max-w-[85vw] flex flex-col bg-white dark:bg-zinc-950 border-r border-slate-200 dark:border-zinc-800 shadow-2xl transition-transform duration-300 ease-in-out lg:hidden pt-[env(safe-area-inset-top,0px)] pb-[env(safe-area-inset-bottom,0px)] ${
           isMobileOpen ? "translate-x-0" : "-translate-x-full"
         }`}
         aria-label="Menú principal móvil"

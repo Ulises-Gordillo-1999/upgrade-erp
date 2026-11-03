@@ -77,7 +77,7 @@ export default async function RootLayout({
         />
       </head>
       <body
-        className={`${inter.variable} font-sans antialiased bg-slate-50 dark:bg-zinc-950 text-slate-900 dark:text-zinc-100 h-screen flex flex-col lg:flex-row overflow-hidden transition-colors`}
+        className={`${inter.variable} font-sans antialiased bg-slate-50 dark:bg-zinc-950 text-slate-900 dark:text-zinc-100 min-h-dvh h-dvh flex flex-col lg:flex-row overflow-hidden transition-colors`}
       >
         <ThemeProvider>
           {session ? (
@@ -86,7 +86,7 @@ export default async function RootLayout({
               <Sidebar user={session} notificaciones={notificaciones} />
               <div className="flex-1 flex flex-col min-w-0 min-h-0 overflow-hidden">
                 <Header user={session} notificaciones={notificaciones} />
-                <main className="flex-1 overflow-y-auto overflow-x-hidden min-h-0 bg-slate-50/60 dark:bg-[#07090e] text-slate-900 dark:text-zinc-100 transition-colors relative">
+                <main className="flex-1 overflow-y-auto overflow-x-hidden min-h-0 bg-slate-50/60 dark:bg-[#07090e] text-slate-900 dark:text-zinc-100 transition-colors relative pb-[calc(1rem+env(safe-area-inset-bottom,0px))]">
                   {/* Cyber Grid y Resplandor Ambiental */}
                   <div className="absolute inset-0 cyber-grid pointer-events-none opacity-80" />
                   <div className="absolute top-0 right-1/4 w-96 h-96 bg-cyan-500/5 dark:bg-cyan-500/10 rounded-full blur-[140px] pointer-events-none" />
@@ -99,7 +99,7 @@ export default async function RootLayout({
               </div>
             </>
           ) : (
-            <main className="flex-1 overflow-y-auto overflow-x-hidden w-full h-full bg-slate-50 dark:bg-zinc-950 text-slate-900 dark:text-zinc-100 transition-colors">
+            <main className="flex-1 overflow-y-auto overflow-x-hidden w-full h-full bg-slate-50 dark:bg-zinc-950 text-slate-900 dark:text-zinc-100 transition-colors pt-[env(safe-area-inset-top,0px)] pb-[calc(1rem+env(safe-area-inset-bottom,0px))]">
               {children}
             </main>
           )}
