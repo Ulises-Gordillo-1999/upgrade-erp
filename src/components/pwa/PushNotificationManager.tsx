@@ -14,8 +14,6 @@ import {
   Send,
   ShieldCheck,
   Radio,
-  Copy,
-  Check,
 } from "lucide-react";
 import {
   getVapidPublicKeyAction,
@@ -74,7 +72,6 @@ export function PushNotificationManager() {
   const [isLoading, setIsLoading] = useState(false);
   const [isTesting, setIsTesting] = useState(false);
   const [vapidMissing, setVapidMissing] = useState(false);
-  const [copiedKeys, setCopiedKeys] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error" | "info"; text: string } | null>(null);
 
   // 1. Diagnóstico de capacidades y suscripción actual
@@ -320,38 +317,16 @@ export function PushNotificationManager() {
           </div>
 
           <div className="bg-slate-900 text-zinc-300 p-3 rounded-xl font-mono text-[11px] space-y-1 overflow-x-auto">
-            <p className="text-cyan-400 font-bold">// Variables para Coolify (Project &gt; Environment Variables) o .env.local:</p>
-            <p>NEXT_PUBLIC_VAPID_PUBLIC_KEY=BImKsUYXG0g1LMC7MmgKNaTOGGDuPQXQfyuKnNk_NacwKXxJR5EBv5S3KjrMzjDIkX4Oh_DJgh1xNLRTecTWKOg</p>
-            <p>VAPID_PRIVATE_KEY=-Cd6eHKB9YDVw6U1PTB0LYeKkwCvn2P33L6gSk2GVtI</p>
+            <p className="text-cyan-400 font-bold">// Configurar en Coolify (Project &gt; Environment Variables) o .env.local:</p>
+            <p>NEXT_PUBLIC_VAPID_PUBLIC_KEY=&lt;tu_clave_publica_vapid&gt;</p>
+            <p>VAPID_PRIVATE_KEY=&lt;tu_clave_privada_vapid&gt;</p>
             <p>VAPID_SUBJECT=mailto:soporte@upgrade-informatica.com</p>
           </div>
 
           <div className="flex items-center justify-between gap-2 pt-1 text-[11px]">
             <span className="text-slate-500 dark:text-zinc-400">
-              En desarrollo local, reinicia <code className="text-cyan-600 dark:text-cyan-400">npm run dev</code> si acabas de agregarlas.
+              Genera tu propio par con <code className="text-cyan-600 dark:text-cyan-400">npx web-push generate-vapid-keys</code>.
             </span>
-            <button
-              type="button"
-              onClick={() => {
-                const text = `NEXT_PUBLIC_VAPID_PUBLIC_KEY=BImKsUYXG0g1LMC7MmgKNaTOGGDuPQXQfyuKnNk_NacwKXxJR5EBv5S3KjrMzjDIkX4Oh_DJgh1xNLRTecTWKOg\nVAPID_PRIVATE_KEY=-Cd6eHKB9YDVw6U1PTB0LYeKkwCvn2P33L6gSk2GVtI\nVAPID_SUBJECT=mailto:soporte@upgrade-informatica.com`;
-                navigator.clipboard.writeText(text);
-                setCopiedKeys(true);
-                setTimeout(() => setCopiedKeys(false), 2500);
-              }}
-              className="px-3 py-1.5 rounded-lg bg-amber-500/20 text-amber-700 dark:text-amber-300 hover:bg-amber-500/30 font-semibold flex items-center gap-1.5 shrink-0 transition-colors cursor-pointer"
-            >
-              {copiedKeys ? (
-                <>
-                  <Check className="w-3.5 h-3.5 text-emerald-500" />
-                  <span>¡Copiado!</span>
-                </>
-              ) : (
-                <>
-                  <Copy className="w-3.5 h-3.5" />
-                  <span>Copiar Variables</span>
-                </>
-              )}
-            </button>
           </div>
         </div>
       )}
