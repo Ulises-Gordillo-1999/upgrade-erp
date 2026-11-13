@@ -6,6 +6,7 @@ import { X, Loader2, Pencil, Building2, FileText } from "lucide-react";
 import { updateProyectoDetalles } from "@/app/actions/proyectos";
 import { Cliente, Proyecto } from "@/types/database";
 import { useRouter } from "next/navigation";
+import { ClienteCombobox } from "@/components/clientes/ClienteCombobox";
 
 interface Props {
   proyecto: Proyecto;
@@ -92,19 +93,13 @@ export function EditarProyectoModal({ proyecto, clientes }: Props) {
                   <Building2 className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-500" />
                   Cliente *
                 </label>
-                <select
+                <ClienteCombobox
+                  clientes={clientes}
                   name="cliente_id"
                   defaultValue={proyecto.cliente_id}
                   required
-                  className="w-full min-h-[44px] bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all [color-scheme:light] dark:[color-scheme:dark]"
-                >
-                  <option value="">Selecciona un cliente...</option>
-                  {clientes.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.nombre_razon_social} {c.cuit_cuil ? `(${c.cuit_cuil})` : ""}
-                    </option>
-                  ))}
-                </select>
+                  placeholder="Buscar cliente por nombre, CUIT o teléfono..."
+                />
               </div>
 
               <div className="space-y-1.5">

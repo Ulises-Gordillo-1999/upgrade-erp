@@ -14,6 +14,7 @@ import {
 import { createProyecto } from "@/app/actions/proyectos";
 import { Cliente, EstadoProyecto } from "@/types/database";
 import { useRouter } from "next/navigation";
+import { ClienteCombobox } from "@/components/clientes/ClienteCombobox";
 
 interface Props {
   clientes: Cliente[];
@@ -107,21 +108,12 @@ export function ProyectoFormModal({ clientes, triggerButton }: Props) {
                   <Building2 className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-500" />
                   Cliente Destino *
                 </label>
-                <select
+                <ClienteCombobox
+                  clientes={clientes}
                   name="cliente_id"
                   required
-                  defaultValue=""
-                  className="w-full min-h-[44px] bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all [color-scheme:light] dark:[color-scheme:dark]"
-                >
-                  <option value="" disabled>
-                    Selecciona un cliente...
-                  </option>
-                  {clientes.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.nombre_razon_social} {c.cuit_cuil ? `(${c.cuit_cuil})` : ""}
-                    </option>
-                  ))}
-                </select>
+                  placeholder="Buscar cliente por nombre, CUIT o teléfono..."
+                />
               </div>
 
               <div className="space-y-1.5">
