@@ -41,6 +41,7 @@ import {
 } from "@/types/database";
 import { useRouter } from "next/navigation";
 import { GestionarCategoriasFinanzasModal } from "./GestionarCategoriasFinanzasModal";
+import { ProyectoCombobox } from "@/components/proyectos/ProyectoCombobox";
 
 interface Props {
   transaccionInicial?: Transaccion;
@@ -368,29 +369,72 @@ export function TransaccionFormModal({
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-slate-700 dark:text-zinc-300 block flex items-center gap-1.5">
-                  <Briefcase className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-500" />
-                  Vincular a Proyecto (Opcional)
-                </label>
-                <select
-                  name="proyecto_id"
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-medium text-slate-700 dark:text-zinc-300 flex items-center gap-1.5">
+                    <Briefcase className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-500" />
+                    Vincular a Proyecto (Opcional)
+                  </label>
+                  {proyectoId && (
+                    <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                      Vinculado
+                    </span>
+                  )}
+                </div>
+
+                <ProyectoCombobox
+                  proyectos={proyectos}
                   value={proyectoId}
-                  onChange={(e) => {
-                    setProyectoId(e.target.value);
-                    const selected = proyectos.find((p) => p.id === e.target.value);
-                    if (selected && selected.total_final !== undefined && selected.total_final !== null) {
-                      setMonto(selected.total_final.toString());
-                    }
+                  onChange={(id) => {
+                    setProyectoId(id);
+                    // NUNCA sobreescribir el monto ingresado por el usuario
                   }}
-                  className="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
-                >
-                  <option value="">Ninguno (Gasto / Ingreso general)</option>
-                  {proyectos.map((p) => (
-                    <option key={p.id} value={p.id}>
-                      {p.clientes?.nombre_razon_social || "Proyecto"} • {p.id.substring(0, 8)}... (Total: ${p.total_final})
-                    </option>
-                  ))}
-                </select>
+                  name="proyecto_id"
+                  placeholder="Ninguno (Gasto / Ingreso general)"
+                />
+
+                {/* Feedback contextual de vinculación */}
+                {proyectoId && (() => {
+                  const selected = proyectos.find((p) => p.id === proyectoId);
+                  if (!selected) return null;
+                  const clienteNombre = selected.clientes?.nombre_razon_social || selected.cliente?.nombre_razon_social || "Proyecto";
+                  const total = selected.total_final !== undefined && selected.total_final !== null ? Number(selected.total_final) : 0;
+
+                  return (
+                    <div className="mt-2 p-2.5 rounded-xl bg-slate-100/90 dark:bg-zinc-900/90 border border-slate-200 dark:border-zinc-800 flex items-center justify-between text-xs gap-2">
+                      <div className="min-w-0 flex-1">
+                        <p className="text-[11px] text-slate-600 dark:text-zinc-300 truncate">
+                          {tipoMovimiento === "Egreso" ? (
+                            <span>
+                              Gasto imputado a: <strong className="text-slate-900 dark:text-zinc-100">{clienteNombre}</strong> (el monto ingresado se mantiene intacto)
+                            </span>
+                          ) : (
+                            <span>
+                              Ingreso vinculado a: <strong className="text-slate-900 dark:text-zinc-100">{clienteNombre}</strong>
+                            </span>
+                          )}
+                        </p>
+                        {total > 0 && (
+                          <p className="text-[10px] font-mono text-slate-500 dark:text-zinc-400">
+                            Presupuesto total del proyecto: ${total.toLocaleString("es-AR")}
+                          </p>
+                        )}
+                      </div>
+
+                      {/* Botón opcional solo para Ingresos: rellenar monto con total si el usuario lo desea */}
+                      {tipoMovimiento === "Ingreso" && total > 0 && (
+                        <button
+                          type="button"
+                          onClick={() => setMonto(total.toString())}
+                          className="px-2.5 py-1 rounded-lg text-[10px] font-semibold bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30 shrink-0 transition-colors cursor-pointer"
+                          title="Copiar el total del presupuesto al campo de monto"
+                        >
+                          Usar Total
+                        </button>
+                      )}
+                    </div>
+                  );
+                })()}
               </div>
 
               <div className="space-y-1.5">
