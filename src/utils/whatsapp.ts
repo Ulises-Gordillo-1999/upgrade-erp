@@ -63,8 +63,19 @@ export interface BudgetMessageData {
  * Genera el cuerpo formateado del mensaje de WhatsApp para presupuestos de UPGRADE
  */
 export function generateBudgetMessage(data: BudgetMessageData): string {
+  // Calcular el total a partir de los ítems si están presentes para garantizar coherencia matemática
+  const sumItems =
+    data.items && data.items.length > 0
+      ? data.items.reduce((acc, i) => acc + (Number(i.subtotal) || 0), 0)
+      : 0;
+
   const isFinalizado = data.estado === "Finalizado" || data.estado === "En_Ejecucion";
-  const total = isFinalizado && data.totalFinal > 0 ? data.totalFinal : data.totalEstimado;
+  const total =
+    sumItems > 0
+      ? sumItems
+      : isFinalizado && data.totalFinal > 0
+      ? data.totalFinal
+      : data.totalEstimado;
 
   const formatARS = (val: number) =>
     new Intl.NumberFormat("es-AR", {

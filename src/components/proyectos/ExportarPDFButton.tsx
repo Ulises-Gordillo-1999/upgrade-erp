@@ -303,12 +303,14 @@ export function ExportarPDFButton({ proyecto, items }: Props) {
     // ==========================================
     const isFinalizado =
       proyecto.estado === "Finalizado" || proyecto.estado === "En_Ejecucion";
-    const totalAMostrar = isFinalizado
-      ? Number(proyecto.total_final || 0)
-      : Number(proyecto.total_estimado || 0);
+    
+    // El total a mostrar DEBE coincidir exactamente con la suma real de los ítems impresos en la tabla
+    const totalCalculado = subtotalMateriales + subtotalServicios;
+    const totalAMostrar = totalCalculado > 0 ? totalCalculado : Number(proyecto.total_estimado || 0);
+
     const etiquetaTotal = isFinalizado
       ? "TOTAL FINAL LIQUIDADO"
-      : "TOTAL ESTIMADO PRESUPUESTO";
+      : "TOTAL DEL PRESUPUESTO";
 
     // A. Caja de Notas Técnicas (Lado Izquierdo)
     const notesBoxWidth = 92;
