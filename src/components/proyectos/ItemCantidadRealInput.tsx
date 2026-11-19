@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Check, Loader2, AlertCircle, Plus, Minus } from "lucide-react";
 import { updateItemCantidadReal } from "@/app/actions/proyectos";
 import { useRouter } from "next/navigation";
@@ -30,6 +30,14 @@ export function ItemCantidadRealInput({
   );
   const [loading, setLoading] = useState(false);
   const [saved, setSaved] = useState(false);
+
+  useEffect(() => {
+    setVal(
+      cantidadRealInicial !== null && cantidadRealInicial !== undefined
+        ? cantidadRealInicial.toString()
+        : ""
+    );
+  }, [cantidadRealInicial]);
 
   const esConsumible = tipoItem === "Consumible";
   const numVal = parseFloat(val);

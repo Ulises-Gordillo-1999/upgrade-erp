@@ -345,6 +345,54 @@ export async function addItemToProyecto(data: {
   }
 }
 
+export async function updateItemCantidadEstimada(
+  id: string,
+  proyecto_id: string,
+  cantidad_estimada: number
+) {
+  try {
+    const proyecto = await db.query.proyectos.findFirst({
+      where: eq(proyectos.id, proyecto_id),
+    });
+
+    const isPendiente =
+      proyecto?.estado === "Borrador_Bot" ||
+      proyecto?.estado === "Pendiente_Aprobacion_Cliente";
+
+    // Si aún está en fase de presupuesto inicial (sin aprobar ni ejecutar),
+    // sincronizamos/limpiamos cantidad_real para que Costo Estimado y Total Final coincidan.
+    const updatePayload: { cantidad_estimada: string; cantidad_real?: string | null } = {
+      cantidad_estimada: cantidad_estimada.toString(),
+    };
+
+    if (isPendiente) {
+      updatePayload.cantidad_real = null;
+    }
+
+    const [updated] = await db
+      .update(itemsProyecto)
+      .set(updatePayload)
+      .where(eq(itemsProyecto.id, id))
+      .returning();
+
+    await recalculateProjectTotals(proyecto_id);
+
+    revalidatePath(`/proyectos/${proyecto_id}`);
+    revalidatePath(`/proyectos`);
+
+    return {
+      ...updated,
+      precio_congelado: Number(updated.precio_congelado),
+      cantidad_estimada: Number(updated.cantidad_estimada),
+      cantidad_real: updated.cantidad_real !== null ? Number(updated.cantidad_real) : null,
+      created_at: updated.created_at ? updated.created_at.toISOString() : undefined,
+    } as unknown as ItemProyecto;
+  } catch (error: any) {
+    console.error("Error al actualizar cantidad estimada:", error);
+    throw new Error(error.message || "Error al actualizar cantidad estimada");
+  }
+}
+
 export async function updateItemCantidadReal(id: string, proyecto_id: string, cantidad_real: number) {
   try {
     const [updated] = await db

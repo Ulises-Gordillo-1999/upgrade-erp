@@ -7,6 +7,7 @@ import { EditarProyectoModal } from "@/components/proyectos/EditarProyectoModal"
 import { DeleteItemButton } from "@/components/proyectos/DeleteItemButton";
 import { CerrarObraModal } from "@/components/proyectos/CerrarObraModal";
 import { ItemCantidadRealInput } from "@/components/proyectos/ItemCantidadRealInput";
+import { ItemCantidadEstimadaInput } from "@/components/proyectos/ItemCantidadEstimadaInput";
 import { BovedaFormModal } from "@/components/boveda/BovedaFormModal";
 import { DeleteBovedaButton } from "@/components/boveda/DeleteBovedaButton";
 import { MaskedValue } from "@/components/boveda/MaskedValue";
@@ -317,12 +318,16 @@ export default async function ProyectoDetallePage({
                         </span>
                       </div>
                       <div>
-                        <span className="text-[10px] text-slate-400 dark:text-zinc-500 uppercase tracking-wider block font-semibold">
+                        <span className="text-[10px] text-slate-400 dark:text-zinc-500 uppercase tracking-wider block font-semibold mb-1">
                           Cant. Estimada
                         </span>
-                        <span className="font-mono text-xs font-semibold text-slate-700 dark:text-zinc-300">
-                          {item.cantidad_estimada} {esConsumible ? "m" : "u"}
-                        </span>
+                        <ItemCantidadEstimadaInput
+                          itemId={item.id}
+                          proyectoId={id}
+                          cantidadEstimadaInicial={item.cantidad_estimada || 1}
+                          tipoItem={item.inventario?.tipo}
+                          isEditable={isPendiente}
+                        />
                       </div>
                     </div>
 
@@ -487,7 +492,15 @@ export default async function ProyectoDetallePage({
                         </td>
 
                         <td className="px-5 py-3.5 text-center text-slate-500 dark:text-zinc-400 font-medium">
-                          {item.cantidad_estimada}
+                          <div className="flex justify-center">
+                            <ItemCantidadEstimadaInput
+                              itemId={item.id}
+                              proyectoId={id}
+                              cantidadEstimadaInicial={item.cantidad_estimada || 1}
+                              tipoItem={item.inventario?.tipo}
+                              isEditable={isPendiente}
+                            />
+                          </div>
                         </td>
 
                         <td className="px-5 py-3.5 text-center">
